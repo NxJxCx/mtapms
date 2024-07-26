@@ -1,10 +1,13 @@
 import Image from "next/image";
-import LoginTabComponent from "./tab-component";
 
-export default function LoginComponent() {
+export default function AuthPageLayout({
+  children
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <main className="lg:h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-[#0D41F8] lg:overflow-hidden">
-      <aside className="relative h-full flex items-center justify-center lg:gap-y-8 space-x-4 lg:space-x-0 lg:flex-col py-4 lg:p-0">
+      <div className="relative h-full flex items-center justify-center lg:gap-y-8 space-x-4 lg:space-x-0 lg:flex-col py-4 lg:p-0">
         <div className="z-0 w-[200px] h-full absolute -right-[100px] top-0 bg-black hidden lg:block">
           <div className="relative w-full h-full grid grid-rows-2">
             <div className="bg-[#0D41F8] z-0">
@@ -29,13 +32,13 @@ export default function LoginComponent() {
             MTAP MANAGEMENT SYSTEM
           </h1>
         </div>
-      </aside>
-      <section className="min-h-[calc(100vh-155px)] h-full relative bg-[#F6FFF1] lg:bg-transparent">
+      </div>
+      <div className="min-h-[calc(100vh-155px)] h-full relative bg-[#F6FFF1] lg:bg-transparent">
         <div className="absolute hidden lg:block top-0 w-full h-full bg-[#F6FFF1] lg:left-[100px]" />
-        <div className="h-full w-full flex flex-col items-center justify-center">
-          <LoginTabComponent />
+        <div className="*:z-10 h-full w-full flex flex-col items-center justify-center">
+          {children}
         </div>
-      </section>
+      </div>
     </main>
   )
 }
