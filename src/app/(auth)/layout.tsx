@@ -21,14 +21,14 @@ export default function AuthPageLayout({
         <div className="z-10 hidden lg:block w-[400px] h-[400px] xl:w-[600px] xl:h-[600px]">
           <Image className=" w-full h-full" src="/buena-logo.svg" alt="Municipal Logo" width={597} height={615} priority />
         </div>
-        <h1 className="z-10 hidden lg:block uppercase font-[700] px-4 leading-[40.23px] text-center text-white w-fit text-[33px]">
+        <h1 className="z-10 hidden lg:block uppercase font-[700] px-4 leading-[40.23px] text-center text-white w-fit text-[33px] drop-shadow-lg">
           MTAP MANAGEMENT SYSTEM
         </h1>
         <div className="grid grid-cols-3 gap-x-4 lg:hidden">
           <div className="z-10 w-[120px] h-[120px]">
             <Image className="w-full h-full" src="/buena-logo.svg" alt="Municipal Logo" width={597} height={615} priority />
           </div>
-          <h1 className="z-10 uppercase font-[700] leading-[40.23px] text-left text-white text-[28px] w-[100px]">
+          <h1 className="z-10 uppercase font-[700] leading-[40.23px] text-left text-white text-[28px] w-[100px] drop-shadow-lg">
             MTAP MANAGEMENT SYSTEM
           </h1>
         </div>
