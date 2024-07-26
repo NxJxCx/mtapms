@@ -1,57 +1,103 @@
 'use client'
 
-import { useCallback, useMemo } from "react";
+import { createContext, Fragment, useCallback, useContext, useMemo, useState } from "react";
 
-function AuthTabNav({
-  tabs,
-  selectedTabIndex,
+export interface TabNavTabsProp {
+  label: string;
+  key: string;
+}
+
+const TabsContext = createContext<{
+  selectedKey?: string;
+}>({})
+
+function AuthTabContent({
+  name,
   children,
-}: Readonly<{
-  tabs: string[] | React.ReactNode[] | React.ReactElement[] | (string & React.ReactNode & React.ReactElement)[];
-  selectedTabIndex: number;
-  children: any;
+  className,
+  ...props
+} : Readonly<{
+  name: string;
+  className?: string;
+  children?: React.ReactNode;
 }>) {
-  const tab = useMemo(() => tabs[selectedTabIndex], [tabs, selectedTabIndex]);
-  const child = useCallback(children?.bind(null, tab, selectedTabIndex), [children, tab, selectedTabIndex]);
+  const { selectedKey } = useContext(TabsContext);
   return (
-    <div>
-      <div className="w-[458px] h-[200px] rounded-[20px] drop-shadow-xl bg-[#F5F5F5]">
-        <div className="max-w-full h-full overflow-x-auto">
-          <div className="h-[120px] min-w-full *:capitalize *:text-center *:w-full flex flex-row text-[28px] font-[600] leading-[34.13px] text-[#00823E] hover:text-[#005644]">
-            {
-              tabs.map((item, index) => (
-                <button key={index} type="button" className={`w-[150px] h-[50px] ${index === selectedTabIndex ? 'text-gray-500 hover:text-gray-800' : ''}`}>
-                  <div className="relative">
-                    {item}
-                    { index === selectedTabIndex && <div className="absolute left-1/4 -bottom-1/2 w-1/2 h-[7px] bg-[#00823E]" /> }
-                  </div>
-                </button>
-              ))
-            }
-            <button type="button" className="text-gray-500">
-              <div className="relative">
-                Student
-                <div className="absolute left-1/4 -bottom-1/2 w-1/2 h-[7px] bg-[#00823E]" />
-              </div>
-            </button>
-            <button type="button">
-              <div className="relative">
-                Admin
-                <div className="absolute left-1/4 -bottom-1/2 w-1/2 h-[7px] bg-[#00823E]" />
-              </div>
-            </button>
-          </div>
+    <Fragment>
+      {name === selectedKey && (
+        <div className={className} {...props}>
+          {children}
         </div>
-      </div>
-      <div className="w-[458px] h-[542px] -mt-[78px] bg-white drop-shadow-2xl border rounded-[20px]">
-        {child}
-      </div>
-    </div>
+      )}
+    </Fragment>
   )
 }
 
-const tabs = {
-  AuthTabNav,
+type AuthTabContentComponent = typeof AuthTabContent;
+
+function AuthTabNav({
+  tabs = [],
+  defaultSelectedTab,
+  selectedTab,
+  children,
+  onSelectedTab,
+}: Readonly<{
+  tabs: TabNavTabsProp[];
+  defaultSelectedTab?: string;
+  selectedTab?: string;
+  children: React.ReactElement<AuthTabContentComponent>|React.ReactElement<AuthTabContentComponent>[];
+  onSelectedTab?: (tab?: string, index?: number) => void;
+}>) {
+
+  const [selTab, setSelTab] = useState<string|undefined>(defaultSelectedTab || [...tabs].shift()?.key);
+  const selectTab = useMemo(() => !selectedTab ? selTab : selectedTab, [selTab, selectedTab])
+  const handleSelectedTab = useMemo(() => typeof (onSelectedTab) === "function" ? onSelectedTab : setSelTab, [onSelectedTab])
+  const handleSelectTab = useCallback((tab: string, index: number) => {
+    if (!selectedTab && typeof (onSelectedTab) === "function") {
+      setSelTab(tab)
+    } else {
+      if (selTab !== tab && !selectedTab) {
+        setSelTab(tab)
+      }
+      handleSelectedTab(tab, index);
+    }
+  }, [handleSelectedTab, setSelTab, onSelectedTab, selectedTab, selTab])
+
+  const displayNavTabs = useCallback(() => (
+    tabs.map(({key,label}, index) => (
+      <div key={key} onClick={() => handleSelectTab(key, index)} className={`cursor-pointer mt-10 *:min-w-[150px] h-[50px] relative hover:drop-shadow ${selectTab === key ? 'text-gray-500 hover:text-gray-800' : 'text-[#00823E] hover:text-[#335644]'}`}>
+        <div className="relative">
+          {label}
+          { selectTab === key && <div className="absolute left-1/4 -bottom-1/2 w-1/2 h-[7px] bg-[#00823E]" /> }
+        </div>
+      </div>
+    ))
+  ), [selectTab, handleSelectTab, tabs])
+
+  return (
+    <TabsContext.Provider value={{
+      selectedKey: selectTab
+    }}>
+      <div className="max-w-[458px] mt-4 md:mt-0">
+        <div className="min-h-[200px] rounded-[20px] drop-shadow-xl bg-[#F5F5F5]">
+          <div className="max-w-full h-full overflow-x-auto">
+            <div className="h-[120px] min-w-full *:capitalize *:text-center *:w-full flex flex-row text-[28px] font-[600] leading-[34.13px]">
+              {displayNavTabs()}
+            </div>
+          </div>
+        </div>
+        <div className="min-h-[542px] -mt-[90px] bg-white drop-shadow-2xl border rounded-[20px]">
+          {children}
+        </div>
+      </div>
+    </TabsContext.Provider>
+  )
 }
 
-export default tabs
+
+const Tabs = {
+  AuthTabNav,
+  AuthTabContent
+}
+
+export default Tabs
