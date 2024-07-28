@@ -35,7 +35,7 @@ export function MainContainer({
         </div>
       </header>
       <div className="p-2">
-        <div className="block min-h-[calc(100vh-150px)] w-full">
+        <div className="block min-h-[calc(100vh-145px)] w-full">
           {children}
         </div>
         <footer className="bg-white/70 p-2 w-fit mx-auto my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none">
