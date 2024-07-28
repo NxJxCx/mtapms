@@ -197,7 +197,7 @@ export function SidebarComponent({
     <aside
       className={
         clsx(
-          "h-screen",
+          "h-screen overflow-x-hidden overflow-h-auto",
           "transition-[transform] ease-in-out duration-300",
           "fixed top-0 z-50",
           "w-full md:w-[265px] md:max-w-[265px]",
@@ -214,12 +214,12 @@ export function SidebarComponent({
           </button>
         </div>
         <div className="absolute top-[8%] right-0 w-0 h-[84%] rounded border-[3px] border-[#00823E]/15 z-0" />
-        <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-16 rounded-full" />
+        <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-10 rounded-full" />
         <Image src={"/default-profile.png"} alt="Profile Image" width={100} height={100} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square" />
         <h2 className="font-[700] text-[15px] leading-[36px] text-center text-[#1D1D1D] pb-2">REGINALD S. LASPINAS</h2>
         <div className="w-[81px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
         <div className="h-[16px]" />
-        <div className="min-h-[100px] max-h-[450px] overflow-y-auto overflow-x-hidden w-[97%]">
+        <div className="min-h-[100px]">
           {/* sidebar links here */}
           { sidebarLinks[role || 'none'].map(({ label, href }, index) => (
             <div
@@ -238,7 +238,7 @@ export function SidebarComponent({
             </div>
           ))}
         </div>
-        <div className="mx-auto text-center pt-6 hover:text-red-800 hover:font-semibold hover:underline">
+        <div className="mx-auto text-center py-6 hover:text-red-800 hover:font-semibold hover:underline">
           <Link href="/logout">
             <span className="inline-flex w-[24px] h-[24px] aspect-square rounded-full bg-[#00823E] p-[6.5px] items-center justify-center">
               <Image src="/logout-icon.svg" alt="Log Out" width={24} height={24} priority={true} />
