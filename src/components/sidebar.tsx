@@ -238,7 +238,7 @@ export function SidebarComponent({
             </div>
           ))}
         </div>
-        <div className="mx-auto text-center py-6 hover:text-red-800 hover:font-semibold hover:underline">
+        <div className="mx-auto text-center mt-6 hover:text-red-800 hover:font-semibold hover:underline">
           <Link href="/logout">
             <span className="inline-flex w-[24px] h-[24px] aspect-square rounded-full bg-[#00823E] p-[6.5px] items-center justify-center">
               <Image src="/logout-icon.svg" alt="Log Out" width={24} height={24} priority={true} />
@@ -246,6 +246,7 @@ export function SidebarComponent({
             <span className="pl-1">Log Out</span>
           </Link>
         </div>
+        <div className="mt-6 w-full h-[1px]" />
       </div>
     </aside>
   )
