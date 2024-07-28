@@ -26,7 +26,7 @@ export default function LoginTabComponent() {
       if (selected === 'student') {
         // random number from 0 to 1
         const rand = Math.floor(Math.random() * 2);
-        const pick = ['/dashboard', '/grantee'];
+        const pick = ['/announcements', '/grantee'];
         router.push(pick[rand])
       } else if (selected === 'admin') {
         router.push('/admin')
