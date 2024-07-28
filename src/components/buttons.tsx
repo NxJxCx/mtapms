@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 import { useFormStatus } from "react-dom";
-import AnimatedIcons from "../icons/animated";
+import AnimatedIcons from "./icons/animated";
 
-function AuthButton({
+export function AuthButton({
   type = 'button',
   label = '',
   isLoading = false,
@@ -21,7 +21,7 @@ function AuthButton({
   return <button type={type} onClick={onClick} className="disabled:bg-gray-200 disabled:text-gray-300 bg-[#0F8346] hover:bg-green-600 text-white h-[67px] leading-[29.26px] text-[24px] font-[700] p-4 rounded-2xl" disabled={loading} {...props}>{!loading ? label : <AnimatedIcons.Spinner className="w-full flex justify-center items-center" />}</button>
 }
 
-function SignupButton({
+export function SignupButton({
   type = 'button',
   label = '',
   isLoading = false,
@@ -40,7 +40,7 @@ function SignupButton({
 
 const Buttons = {
   AuthButton,
-  SignupButton
+  SignupButton,
 }
 
 export default Buttons

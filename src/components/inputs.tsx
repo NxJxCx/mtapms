@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { HTMLInputTypeAttribute, useState } from "react";
 
-function AuthInput({
+export function AuthInput({
   name,
   label,
   type = 'text',
@@ -22,7 +22,7 @@ function AuthInput({
   )
 }
 
-function SignupInput({
+export function SignupInput({
   name,
   label,
   type = 'text',
@@ -65,9 +65,10 @@ function SignupInput({
   )
 }
 
+
 const Inputs = {
   AuthInput,
-  SignupInput
+  SignupInput,
 }
 
 export default Inputs

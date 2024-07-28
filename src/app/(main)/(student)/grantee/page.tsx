@@ -1,5 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function GranteeDashboardPage() {
-  return (
-    <div>{"Grantee's"} Dashboard</div>
-  )
+  return redirect('/grantee/announcement')
 }

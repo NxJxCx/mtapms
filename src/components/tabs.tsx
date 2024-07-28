@@ -7,11 +7,11 @@ export interface TabNavTabsProp {
   key: string;
 }
 
-const TabsContext = createContext<{
+export const TabsContext = createContext<{
   selectedKey?: string;
 }>({})
 
-function AuthTabContent({
+export function AuthTabContent({
   name,
   children,
   className,
@@ -35,7 +35,7 @@ function AuthTabContent({
 
 type AuthTabContentComponent = typeof AuthTabContent;
 
-function AuthTabNav({
+export function AuthTabNav({
   tabs = [],
   defaultSelectedTab,
   selectedTab,
@@ -94,10 +94,10 @@ function AuthTabNav({
   )
 }
 
-
 const Tabs = {
+  AuthTabContent,
   AuthTabNav,
-  AuthTabContent
+  TabsContext,
 }
 
 export default Tabs
