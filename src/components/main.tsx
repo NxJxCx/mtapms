@@ -31,7 +31,7 @@ export function MainContainer({
           <div className="max-w-[300px] md:max-w-none">MUNICIPAL TERTIARY ASSISTANCE PROGRAM MANAGEMENT SYSTEM</div>
         </div>
       </header>
-      <div className="p-2 h-[700px]">
+      <div className="p-2 min-h-[calc(100vh-70px)]">
         <main className="block min-h-[calc(100vh-165px)] w-full">
           {children}
         </main>
