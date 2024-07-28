@@ -3,7 +3,7 @@ import Footer from "@app/app/footer";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import Image from "next/image";
-import { useSidebar } from "./sidebar";
+import { useSidebar } from "@app/components/sidebar";
 
 export function MainContainer({
   children

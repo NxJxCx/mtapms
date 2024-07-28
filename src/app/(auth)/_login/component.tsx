@@ -6,7 +6,7 @@ import Toaster from "@app/components/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
-import { loginAction } from "../actions/auth";
+import { loginAction } from "@app/app/(auth)/_actions/auth";
 
 export default function LoginTabComponent() {
   const router = useRouter()

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useFormStatus } from "react-dom";
-import AnimatedIcons from "./icons/animated";
+import AnimatedIcons from "@app/components/icons/animated";
 
 export function AuthButton({
   type = 'button',
