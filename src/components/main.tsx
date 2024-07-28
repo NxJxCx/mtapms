@@ -1,4 +1,5 @@
-'use client';
+'use client';;
+import Footer from "@app/app/footer";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import Image from "next/image";
@@ -31,7 +32,12 @@ export function MainContainer({
         </div>
       </header>
       <div className="p-2 h-[700px]">
-        {children}
+        <main className="block min-h-[calc(100vh-165px)] w-full">
+          {children}
+        </main>
+        <div className="bg-white/70 p-2 w-fit mx-auto my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none">
+          <Footer />
+        </div>
       </div>
     </main>
   )

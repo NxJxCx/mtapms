@@ -1,5 +1,5 @@
+import Footer from "@app/app/footer";
 import Image from "next/image";
-import FooterAuth from "./footer";
 
 export default function AuthPageLayout({
   children
@@ -39,7 +39,7 @@ export default function AuthPageLayout({
         <div className="*:z-10 h-full w-full flex flex-col items-center justify-center">
           {children}
           <div className="bg-white/70 p-2 w-fit my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none lg:m-0 lg:fixed lg:right-0 lg:bottom-5 lg:w-1/2">
-            <FooterAuth />
+            <Footer />
           </div>
         </div>
       </div>
