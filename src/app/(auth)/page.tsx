@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import LoginTabComponent from "./component";
+import LoginTabComponent from "./_login/component";
 
 export const metadata: Metadata = {
   title: 'Login'

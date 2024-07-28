@@ -6,6 +6,7 @@ import Toaster from "@app/components/toaster";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
+import { loginAction } from "../actions/auth";
 
 export default function LoginTabComponent() {
   const router = useRouter()
@@ -15,21 +16,25 @@ export default function LoginTabComponent() {
   ], [])
   const [selected, setSelected] = useState<string|undefined>(tabs?.[0]?.key)
 
-  const [state, action] = useFormState<Promise<{success: boolean}>, {}>(async function(prevState: {success: boolean}, formData: {}) {
-    console.log(prevState, formData)
-    await new Promise((res) => setTimeout(res, 2000))
-    return {
-      success: true
-    }
-  }, {
-    success: false
+  const [state, action] = useFormState(loginAction, {
+    success: false,
   })
 
   useEffect(() => {
     if (state.success) {
-      // router.push('/')
-      Toaster.success("SUCCESS! asd sadsad asdsad sad asd sad sadasd sad asd asd asdasd sad asd sadsasda")
+      Toaster.success("Logged In Successfully")
+      if (selected === 'student') {
+        // random number from 0 to 1
+        const rand = Math.floor(Math.random() * 2);
+        const pick = ['/dashboard', '/grantee'];
+        router.push(pick[rand])
+      } else if (selected === 'admin') {
+        router.push('/admin')
+      }
+    } else if (state.error?.login) {
+      Toaster.error(state.error.login)
     }
+    // eslint-disable-next-line
   }, [state, router])
 
   return (
@@ -46,6 +51,7 @@ export default function LoginTabComponent() {
             <p className="text-[#0F8346] text-[16px] font-[400] leading-[19.5px] mb-6 text-center">Effortlessly request documents online</p>
             <p className="text-[#0F8346] text-[20px] font-[700] leading-[19.5px] mb-4 text-center">{label} Access</p>
             <form action={action} className="flex flex-col gap-y-8 flex-nowrap h-full">
+              <input type="hidden" name="loginas" value={key} />
               <Inputs.AuthInput name="email" label="Email" />
               <Inputs.AuthInput type="password" name="password" label="Password" />
               <div className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-y-0 sm:gap-x-6">

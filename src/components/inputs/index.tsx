@@ -1,6 +1,7 @@
 'use client'
 
-import { HTMLInputTypeAttribute } from "react";
+import Image from "next/image";
+import { HTMLInputTypeAttribute, useState } from "react";
 
 function AuthInput({
   name,
@@ -21,8 +22,52 @@ function AuthInput({
   )
 }
 
+function SignupInput({
+  name,
+  label,
+  type = 'text',
+  iconSrc = "/email.svg",
+  placeholder,
+  className,
+  required,
+  disabled,
+}: Readonly<{
+  name?: string;
+  label?: string;
+  iconSrc?: string;
+  type?: HTMLInputTypeAttribute,
+  placeholder?: string;
+  className?: string;
+  required?: boolean;
+  disabled?: boolean;
+}>) {
+  const [viewable, setViewable] = useState<boolean>(false);
+  const toggleViewable = () => {
+    setViewable(!viewable);
+  }
+  return (
+    <div className={className}>
+      <div className="flex flex-col flex-nowrap justify-start items-start">
+      {!!label && <label htmlFor={name} className="font-[500] text-[13px] leading-[19.5px] text-[#004521]">{label}</label> }
+        <div className="relative w-full">
+          <div className="absolute left-[6px] top-[8px] w-[17px] h-[17px] z-0">
+            <Image src={iconSrc} alt={label + ' Icon'} width={20} height={20} />
+          </div>
+          <input type={type === "password" && viewable ? "text" : type} required={required} disabled={disabled} name={name} id={name} placeholder={placeholder} className="w-full bg-transparent text-[16px] font-[400] leading-[24px] text-[#004521] placeholder:text-[#00452188] focus:bg-white/30 focus:rounded-sm py-[5px] pl-[32px] pr-2 outline-none focus:border-b-[#FBBC05] border-b-[2px] border-b-[#004521]" />
+          { type === "password" && (
+            <button type="button" title={viewable ? "Hide Password" : "Show Password"} onClick={toggleViewable} className="text-[#004521] absolute right-[6px] top-[8px] w-[17px] h-[17px]">
+              <Image src={viewable ? '/visible.svg' : '/invisible.svg'} alt={'View Icon'} width={20} height={20} className="text-[#004521]" />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const Inputs = {
-  AuthInput
+  AuthInput,
+  SignupInput
 }
 
 export default Inputs
