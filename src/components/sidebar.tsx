@@ -222,20 +222,15 @@ export function SidebarComponent({
         <div className="min-h-[100px]">
           {/* sidebar links here */}
           { sidebarLinks[role || 'none'].map(({ label, href }, index) => (
-            <div
-              key={index}
-              className={
-                clsx(
-                  "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
-                  "cursor-pointer",
-                  pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
-                )
-              }
-              >
-              <Link href={href}>
-                {label}
-              </Link>
-            </div>
+            <Link key={index} href={href} className={
+              clsx(
+                "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
+                "cursor-pointer",
+                pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
+              )
+            }>
+              {label}
+            </Link>
           ))}
         </div>
         <div className="mx-auto text-center mt-6 hover:text-red-800 hover:font-semibold hover:underline">
