@@ -83,8 +83,8 @@ const sidebarLinks = {
       href: "/admin",
     },
     {
-      label: "Announcement",
-      href: "/admin/announcement",
+      label: "Announcements",
+      href: "/admin/announcements",
     },
     {
       label: "Applications",
