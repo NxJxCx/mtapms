@@ -3,7 +3,7 @@
 function success(msg: string, options?: { title?: string; timer?: number; id?: string; }) {
 
   const container = document.createElement("div")
-  container.className = "fixed top-5 left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
+  container.className = "fixed top-5 left-0 md:left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
   container.id = "toaster_" + (options?.id || '1')
 
   const toast = document.createElement("div")
@@ -74,7 +74,7 @@ function success(msg: string, options?: { title?: string; timer?: number; id?: s
 function error(msg: string, options?: { title?: string; timer?: number; id?: string; }) {
 
   const container = document.createElement("div")
-  container.className = "fixed top-5 left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
+  container.className = "fixed top-5 left-0 md:left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
   container.id = "toaster_" + (options?.id || '1')
 
   const toast = document.createElement("div")
@@ -144,7 +144,7 @@ function error(msg: string, options?: { title?: string; timer?: number; id?: str
 function warning(msg: string, options?: { title?: string; timer?: number; id?: string; }) {
 
   const container = document.createElement("div")
-  container.className = "fixed top-5 left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
+  container.className = "fixed top-5 left-0 md:left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
   container.id = "toaster_" + (options?.id || '1')
 
   const toast = document.createElement("div")
@@ -214,7 +214,7 @@ function warning(msg: string, options?: { title?: string; timer?: number; id?: s
 function info(msg: string, options?: { title?: string; timer?: number; id?: string; }) {
 
   const container = document.createElement("div")
-  container.className = "fixed top-5 left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
+  container.className = "fixed top-5 left-0 md:left-[calc(50%-200px)] z-50 min-w-[350px] max-w-[350px] transition-all translate-y-[-200px] duration-200 ease-linear"
   container.id = "toaster_" + (options?.id || '1')
 
   const toast = document.createElement("div")
