@@ -26,7 +26,7 @@ export function MainContainer({
         </button>
         <div className="ml-4 flex items-center justify-center space-x-2 flex-grow text-[12px] font-[400] md:text-[16px] md:leading-[36px] md:text-center">
           { !openDrawer &&  (
-            <div className="md:hidden min-w-[50px] min-h-[50px]">
+            <div className="min-w-[50px] min-h-[50px]">
               <Image src="/buena-logo.svg" alt="Municipal Logo" width={50} height={50} priority={true} />
             </div>
           )}
