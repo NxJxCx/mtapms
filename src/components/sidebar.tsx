@@ -217,7 +217,7 @@ export function SidebarComponent({
         <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-10 rounded-full" />
         <Image src={"/default-profile.png"} alt="Profile Image" width={100} height={100} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square" />
         <h2 className="font-[700] text-[15px] leading-[36px] text-center text-[#1D1D1D] pb-2">REGINALD S. LASPINAS</h2>
-        <div className="w-[81px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
+        <div className="w-[81px] min-w-[50px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
         <div className="h-[16px]" />
         <div className="min-h-[100px]">
           {/* sidebar links here */}
@@ -226,7 +226,7 @@ export function SidebarComponent({
               key={index}
               className={
                 clsx(
-                  "block w-[240px] ml-2 px-6 py-4 font-[700] text-[16px] hover:text-[#1D1D1D]",
+                  "block w-[240px] ml-2 px-6 py-3 font-[700] text-[16px] hover:text-[#1D1D1D]",
                   "cursor-pointer",
                   pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
                 )
