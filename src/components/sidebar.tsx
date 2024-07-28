@@ -197,7 +197,7 @@ export function SidebarComponent({
     <aside
       className={
         clsx(
-          "h-screen overflow-x-hidden overflow-h-auto",
+          "h-screen",
           "transition-[transform] ease-in-out duration-300",
           "fixed top-0 z-50",
           "w-full md:w-[265px] md:max-w-[265px]",
@@ -207,7 +207,7 @@ export function SidebarComponent({
       }
     >
       <div onClick={toggleDrawer} className={clsx(openDrawer ? "md:hidden absolute w-screen h-screen bg-black/25 cursor-pointer" : "hidden")} />
-      <div className="relative w-[265px] max-w-[265px] h-full bg-[#F6FFF1]">
+      <div className="relative w-[265px] max-w-[265px] h-full bg-[#F6FFF1] overflow-x-hidden overflow-h-auto">
         <div className="absolute top-5 right-5">
           <button type="button" className="md:hidden w-[30px] max-h-[30px] hover:bg-[#00823ECC] hover:text-gray-50 text-[#00823ECC] aspect-square rounded bg-gray-50 shadow  border" onClick={toggleDrawer} title={openDrawer ? "Close Sidebar" : "Open Sidebar"}>
             {openDrawer ? <ChevronLeftIcon fontSize={2} className="w-[30px]" /> : <ChevronRightIcon fontSize={2} className="w-[30px]" />}
