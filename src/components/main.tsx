@@ -15,8 +15,9 @@ export function MainContainer({
   return (
     <main className={
       clsx(
-        "relative min-h-screen bg-[#F6FFF1]",
+        "relative min-h-screen max-h-screen bg-[#F6FFF1]",
         "transition-[padding-left] ease-in-out duration-300",
+        "overflow-y-auto",
         openDrawer ? "md:pl-[265px]" : "pl-0",
       )
     }>
@@ -37,9 +38,9 @@ export function MainContainer({
         <div className="block min-h-[calc(100vh-165px)] w-full">
           {children}
         </div>
-        <div className="bg-white/70 p-2 w-fit mx-auto my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none">
+        <footer className="bg-white/70 p-2 w-fit mx-auto my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none">
           <Footer />
-        </div>
+        </footer>
       </div>
     </main>
   )

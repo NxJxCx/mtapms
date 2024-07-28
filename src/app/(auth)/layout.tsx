@@ -38,9 +38,9 @@ export default function AuthPageLayout({
         <div className="absolute hidden lg:block top-0 w-full h-full bg-[#F6FFF1] lg:left-[100px]" />
         <div className="*:z-10 h-full w-full flex flex-col items-center justify-center">
           {children}
-          <div className="bg-white/70 p-2 w-fit my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none lg:m-0 lg:fixed lg:right-0 lg:bottom-5 lg:w-1/2">
+          <footer className="bg-white/70 p-2 w-fit my-2 rounded-lg shadow lg:bg-transparent lg:shadow-none lg:m-0 lg:fixed lg:right-0 lg:bottom-5 lg:w-1/2">
             <Footer />
-          </div>
+          </footer>
         </div>
       </div>
     </main>
