@@ -25,9 +25,11 @@ export function MainContainer({
           {openDrawer ? <ChevronLeftIcon fontSize={2} className="w-[30px]" /> : <ChevronRightIcon fontSize={2} className="w-[30px]" />}
         </button>
         <div className="ml-4 flex items-center justify-center space-x-2 flex-grow text-[12px] font-[400] md:text-[16px] md:leading-[36px] md:text-center">
-          <div className="md:hidden min-w-[50px] min-h-[50px]">
-            <Image src="/buena-logo.svg" alt="Municipal Logo" width={50} height={50} priority={true} />
-          </div>
+          { !openDrawer &&  (
+            <div className="md:hidden min-w-[50px] min-h-[50px]">
+              <Image src="/buena-logo.svg" alt="Municipal Logo" width={50} height={50} priority={true} />
+            </div>
+          )}
           <div className="max-w-[300px] md:max-w-none">MUNICIPAL TERTIARY ASSISTANCE PROGRAM MANAGEMENT SYSTEM</div>
         </div>
       </header>
