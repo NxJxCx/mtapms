@@ -80,7 +80,7 @@ const sidebarLinks = {
   [Roles.Admin]: [
     {
       label: "Dashboard",
-      href: "/admin",
+      href: "/admin/dashboard",
     },
     {
       label: "Announcements",
