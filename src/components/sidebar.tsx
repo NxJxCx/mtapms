@@ -87,16 +87,12 @@ const sidebarLinks = {
       href: "/admin/announcements",
     },
     {
+      label: "Application Schedule",
+      href: "/admin/schedule",
+    },
+    {
       label: "Applications",
       href: "/admin/applications",
-    },
-    {
-      label: "Student Status",
-      href: "/admin/status",
-    },
-    {
-      label: "Schedule",
-      href: "/admin/schedule",
     },
     {
       label: "Results",
@@ -137,7 +133,7 @@ const sidebarLinks = {
       href: "/documents",
     },
     {
-      label: "Submission Status",
+      label: "Scholarship Status",
       href: "/status",
     },
     {
@@ -159,11 +155,11 @@ const sidebarLinks = {
       href: "/grantee/documents",
     },
     {
-      label: "Scholar Status",
+      label: "Scholarship Status",
       href: "/grantee/status",
     },
     {
-      label: "Scholar Profile",
+      label: "My Profile",
       href: "/grantee/profile",
     },
     {
