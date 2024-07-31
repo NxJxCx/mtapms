@@ -4,7 +4,7 @@ import { GranteeModel, Semester, SubmissionStatus } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 
-const GranteeSchema = new Schema({
+const GranteeSchema = new Schema<GranteeModel>({
   studentId: {
     type: Schema.Types.ObjectId,
     required: [true, 'Student ID is required'],
@@ -16,7 +16,7 @@ const GranteeSchema = new Schema({
     required: [true, 'Academic Year is required'],
   },
   semester: {
-    type: String,
+    type: Number,
     enum: Semester,
     required: [true, 'Semester is required'],
   },

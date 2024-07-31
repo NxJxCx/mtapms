@@ -50,8 +50,9 @@ export enum MimeTypes {
 export interface AdminModel extends Document {
   employeeId: string
   password: string
-  lastName: string
   firstName: string
+  middleName?: string
+  lastName: string
   createdAt?: string|Date
   updatedAt?: string|Date
 }
@@ -99,44 +100,48 @@ export interface RequirementSubmissionModel extends SubmissionProps, Document {
   submittedBy: string|StudentModel
 }
 
+export interface ApplicationFormProps extends Document {
+  scheduleId: string|ScheduleModel,
+  lastName: string
+  firstName: string
+  middleName?: string
+  dateOfBirth: string|Date
+  placeOfBirth: string
+  permanentAddress: string
+  zipCode: string
+  province: string
+  presentAddress: string
+  sex: Gender
+  civilStatus: CivilStatus
+  citizenship: string
+  mobileNo: string
+  nameOfSchoolAttended: string
+  schoolAddress: string
+  schoolSector: string
+  yearLevel: YearLevel,
+  course: string
+  tribalMembership?: string
+  typeOfDisability?: string
+  fatherLiving: boolean
+  fatherName: string
+  fatherAddress: string
+  fatherOccupation: string
+  motherLiving: boolean
+  motherName: string
+  motherAddress: string
+  motherOccupation: string
+  totalParentGrossIncome: number
+  siblings: number
+  otherEducationalFinancialAssistance: boolean
+  createdAt?: string|Date
+  updatedAt?: string|Date
+}
+
 export interface StudentModel extends Document {
   email: string
   password: string
-  emailVerified: string
-  applicationForm?: {
-    academicYearApplied: number,
-    lastName: string
-    firstName: string
-    middleName?: string
-    dateOfBirth: string
-    placeOfBirth: string
-    permanentAddress: string
-    zipCode: string
-    province: string
-    presentAddress: string
-    sex: Gender
-    civilStatus: CivilStatus
-    citizenship: string
-    mobileNo: string
-    nameOfSchoolAttended: string
-    schoolAddress: string
-    schoolSector: string
-    yearLevel: YearLevel,
-    course: string
-    tribalMembership?: string
-    typeOfDisability?: string
-    fatherLiving: boolean
-    fatherName: string
-    fatherAddress: string
-    fatherOccupation: string
-    motherLiving: boolean
-    motherName: string
-    motherAddress: string
-    motherOccupation: string
-    totalParentGrossIncome: number
-    siblings: number
-    otherEducationalFinancialAssistance: boolean
-  }
+  emailVerified?: Date
+  applicationForm?: ApplicationFormProps
   applicationSubmission: string[]|RequirementSubmissionModel[]
   isGrantee: boolean
   createdAt?: string|Date
@@ -174,4 +179,6 @@ export interface ResultModel extends Document {
   scheduleId: string|ScheduleModel
   grade: number
   remarks: GradeRemarks
+  createdAt?: string|Date
+  updatedAt?: string|Date
 }

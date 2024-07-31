@@ -1,9 +1,9 @@
 import 'only-server';
 
-import { ScheduleModel } from '@app/types';
+import { AttendanceProps, ScheduleModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
-const AttendanceSchema = new Schema({
+const AttendanceSchema = new Schema<AttendanceProps>({
   studentId: {
     type: Schema.Types.ObjectId,
     ref: 'Student',
@@ -13,7 +13,7 @@ const AttendanceSchema = new Schema({
   timestamps: true
 })
 
-const ScheduleSchema = new Schema({
+const ScheduleSchema = new Schema<ScheduleModel>({
   academicYear: {
     type: Number,
     minLength: 2020,

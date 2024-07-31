@@ -4,13 +4,11 @@ import { RequirementModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 
-const RequirementSchema = new Schema({
-  academicYear: {
-    type: Number,
-    minLength: 2020,
-    maxLength: 2050,
-    required: [true, 'Academic Year is required.'],
-    unique: true
+const RequirementSchema = new Schema<RequirementModel>({
+  scheduleId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Schedule',
+    required: [true, 'Schedule Id is required.'],
   },
   name: {
     type: String,
@@ -24,5 +22,7 @@ const RequirementSchema = new Schema({
 }, {
   timestamps: true
 })
+
+RequirementSchema.index({ academicYear: 1, name: 1, forFirstYearOnly: 1 }, { unique: true })
 
 export default models?.Requirement || model<RequirementModel>('Requirement', RequirementSchema)

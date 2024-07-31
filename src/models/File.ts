@@ -4,7 +4,7 @@ import { FileModel, MimeTypes } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 
-const FileSchema = new Schema({
+const FileSchema = new Schema<FileModel>({
   file: {
     type: Buffer,
     required: [true, 'Photo/File is required'],

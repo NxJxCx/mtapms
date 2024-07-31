@@ -5,7 +5,7 @@ import { AdminModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 
-const AdminSchema = new Schema({
+const AdminSchema = new Schema<AdminModel>({
   employeeId: {
     type: String,
     required: [true, 'Employee ID is required'],
@@ -15,15 +15,15 @@ const AdminSchema = new Schema({
     type: String,
     required: [true, 'Password is required'],
   },
-  lastName: {
-    type: String,
-    required: [true, 'Last Name is required']
-  },
   firstName: {
     type: String,
     required: [true, 'First Name is required']
   },
-  middleName: String
+  middleName: String,
+  lastName: {
+    type: String,
+    required: [true, 'Last Name is required']
+  },
 }, {
   timestamps: true
 })
