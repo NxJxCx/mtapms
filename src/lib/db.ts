@@ -29,7 +29,10 @@ export default async function mongodbConnect() {
       resolve(connection.getConnection() === 1)
     })
   } else {
-    const db = await connect(MONGODB_URI)
+    const db = await connect(MONGODB_URI, {
+      user: process.env.MONGODB_USER,
+      pass: process.env.MONGODB_PASS,
+    })
     connection.getConnection = () => db.connections[0].readyState;
     connection.isConnected = await new Promise(async (resolve) => {
       while (connection.getConnection() === 2) {
