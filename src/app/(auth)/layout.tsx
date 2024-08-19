@@ -1,9 +1,9 @@
+import { isAuthenticated } from "@app/app/(auth)/_action/session";
 import Footer from "@app/app/footer";
 import { SessionProvider } from "@app/lib/useSession";
 import { Roles } from "@app/types";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { isAuthenticated } from "./_action/session";
 
 export default async function AuthPageLayout({
   children

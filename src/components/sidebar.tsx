@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { LoadingFull } from "./loadings";
+import { LoadingSpinnerFull } from "./loadings";
 
 export interface SidebarContextProps {
   role?: Roles;
@@ -209,7 +209,7 @@ export function SidebarComponent({
         )
       }
     >
-      {status === 'loading' && <LoadingFull />}
+      {status === 'loading' && <LoadingSpinnerFull />}
       {status === 'authenticated' && (<>
         <div onClick={toggleDrawer} className={clsx(openDrawer ? "md:hidden absolute w-screen h-screen bg-black/25 cursor-pointer" : "hidden")} />
         <div className="relative w-[265px] max-w-[265px] h-full bg-[#F6FFF1] overflow-x-hidden overflow-h-auto">
