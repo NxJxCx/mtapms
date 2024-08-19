@@ -15,7 +15,10 @@ export default async function mongodbConnect() {
   }
   if (process.env.NODE_ENV === 'development') {
     if (!global._mongooseConnection) {
-      global._mongooseConnection = connect(MONGODB_URI)
+      global._mongooseConnection = connect(MONGODB_URI, {
+        user: process.env.MONGODB_USER,
+        pass: process.env.MONGODB_PASS,
+      })
     }
     const db = await global._mongooseConnection
     connection.getConnection = () => db.connections[0].readyState;
