@@ -1,4 +1,5 @@
 import { SidebarProvider } from "@app/components/sidebar";
+import { SessionProvider } from "@app/lib/useSession";
 
 export default function MainLayout({
   children
@@ -6,8 +7,10 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider>
-      {children}
-    </SidebarProvider>
+    <SessionProvider>
+      <SidebarProvider>
+        {children}
+      </SidebarProvider>
+    </SessionProvider>
   )
 }

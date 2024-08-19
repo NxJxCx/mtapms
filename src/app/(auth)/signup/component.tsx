@@ -1,4 +1,5 @@
 'use client';
+import { signupAction } from "@app/app/(auth)/_action/auth";
 import Buttons from "@app/components/buttons";
 import Inputs from "@app/components/inputs";
 import Toaster from "@app/components/toaster";
@@ -6,7 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useFormState } from "react-dom";
-import { signupAction } from "@app/app/(auth)/_actions/auth";
 
 
 export default function SignupComponent() {

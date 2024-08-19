@@ -1,10 +1,10 @@
+'use server'
 import mongodbConnect from '@app/lib/db';
 import Admin from '@app/models/Admin';
 import Student from '@app/models/Student';
 import { Roles } from '@app/types';
 import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import 'server-only';
 
 const secretKey = process.env.SESSION_SECRET
 const encodedKey = new TextEncoder().encode(secretKey)
@@ -31,8 +31,11 @@ export async function generateSessionPayload(account: Roles, userId: string, exp
   await mongodbConnect();
   try {
     const AccountModel = account === Roles.Admin ? Admin : Student;
-    const user = await AccountModel.findOne({ _id: userId }).select('-password').lean().exec()
-    if (user) {
+    const selectOnly = account === Roles.Admin ? '-password' : '-password -applicationForm -applicationSubmission';
+    const acc = await AccountModel.findOne({ _id: userId }).select(selectOnly).lean().exec();
+    if (acc) {
+      const user = JSON.parse(JSON.stringify({...acc, role: account }));
+      console.log("user session payload:", user)
       return {
         user,
         expiresAt: new Date(Date.now() + expHours * 60 * 60 * 1000)

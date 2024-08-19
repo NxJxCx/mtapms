@@ -1,4 +1,5 @@
 'use client';
+import { useSession } from "@app/lib/useSession";
 import { Roles } from "@app/types";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
@@ -6,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { LoadingFull } from "./loadings";
 
 export interface SidebarContextProps {
   role?: Roles;
@@ -177,6 +179,11 @@ export function SidebarComponent({
   role: Roles;
   defaultOpenDrawer?: boolean;
 }>) {
+
+  const { data: sessionData, status, logout } = useSession({
+    redirect: false
+  });
+
   const pathname = usePathname()
   const { role, setRole, toggleDrawer, openDrawer, setOpenDrawer } = useSidebar({ role: myRole, defaultOpenDrawer })
   const [hiddenClass, sethiddenClass] = useState("left-0");
@@ -202,43 +209,46 @@ export function SidebarComponent({
         )
       }
     >
-      <div onClick={toggleDrawer} className={clsx(openDrawer ? "md:hidden absolute w-screen h-screen bg-black/25 cursor-pointer" : "hidden")} />
-      <div className="relative w-[265px] max-w-[265px] h-full bg-[#F6FFF1] overflow-x-hidden overflow-h-auto">
-        <div className="absolute top-5 right-5">
-          <button type="button" className="md:hidden w-[30px] max-h-[30px] hover:bg-[#00823ECC] hover:text-gray-50 text-[#00823ECC] aspect-square rounded bg-gray-50 shadow  border" onClick={toggleDrawer} title={openDrawer ? "Close Sidebar" : "Open Sidebar"}>
-            {openDrawer ? <ChevronLeftIcon fontSize={2} className="w-[30px]" /> : <ChevronRightIcon fontSize={2} className="w-[30px]" />}
-          </button>
+      {status === 'loading' && <LoadingFull />}
+      {status === 'authenticated' && (<>
+        <div onClick={toggleDrawer} className={clsx(openDrawer ? "md:hidden absolute w-screen h-screen bg-black/25 cursor-pointer" : "hidden")} />
+        <div className="relative w-[265px] max-w-[265px] h-full bg-[#F6FFF1] overflow-x-hidden overflow-h-auto">
+          <div className="absolute top-5 right-5">
+            <button type="button" className="md:hidden w-[30px] max-h-[30px] hover:bg-[#00823ECC] hover:text-gray-50 text-[#00823ECC] aspect-square rounded bg-gray-50 shadow  border" onClick={toggleDrawer} title={openDrawer ? "Close Sidebar" : "Open Sidebar"}>
+              {openDrawer ? <ChevronLeftIcon fontSize={2} className="w-[30px]" /> : <ChevronRightIcon fontSize={2} className="w-[30px]" />}
+            </button>
+          </div>
+          <div className="absolute top-[8%] right-0 w-0 h-[84%] rounded border-[3px] border-[#00823E]/15 z-0" />
+          <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-10 rounded-full" />
+          <Image src={"/default-profile.png"} alt="Profile Image" width={100} height={100} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square" />
+          <h2 className="font-[700] text-[15px] leading-[36px] text-center text-[#1D1D1D] pb-2">REGINALD S. LASPINAS</h2>
+          <div className="w-[100px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
+          <div className="h-[16px]" />
+          <div className="min-h-[100px]">
+            {/* sidebar links here */}
+            { sidebarLinks[role || 'none'].map(({ label, href }, index) => (
+              <Link key={index} href={href} className={
+                clsx(
+                  "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
+                  "cursor-pointer",
+                  pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
+                )
+              }>
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div className="mx-auto text-center mt-6 hover:text-red-800 hover:font-semibold hover:underline">
+            <button type="button" onClick={logout}>
+              <span className="inline-flex w-[24px] h-[24px] aspect-square rounded-full bg-[#00823E] p-[6.5px] items-center justify-center">
+                <Image src="/logout-icon.svg" alt="Log Out" width={24} height={24} priority={true} />
+              </span>
+              <span className="pl-1">Log Out</span>
+            </button>
+          </div>
+          <div className="mt-6 w-full h-[1px]" />
         </div>
-        <div className="absolute top-[8%] right-0 w-0 h-[84%] rounded border-[3px] border-[#00823E]/15 z-0" />
-        <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-10 rounded-full" />
-        <Image src={"/default-profile.png"} alt="Profile Image" width={100} height={100} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square" />
-        <h2 className="font-[700] text-[15px] leading-[36px] text-center text-[#1D1D1D] pb-2">REGINALD S. LASPINAS</h2>
-        <div className="w-[100px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
-        <div className="h-[16px]" />
-        <div className="min-h-[100px]">
-          {/* sidebar links here */}
-          { sidebarLinks[role || 'none'].map(({ label, href }, index) => (
-            <Link key={index} href={href} className={
-              clsx(
-                "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
-                "cursor-pointer",
-                pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
-              )
-            }>
-              {label}
-            </Link>
-          ))}
-        </div>
-        <div className="mx-auto text-center mt-6 hover:text-red-800 hover:font-semibold hover:underline">
-          <Link href="/logout">
-            <span className="inline-flex w-[24px] h-[24px] aspect-square rounded-full bg-[#00823E] p-[6.5px] items-center justify-center">
-              <Image src="/logout-icon.svg" alt="Log Out" width={24} height={24} priority={true} />
-            </span>
-            <span className="pl-1">Log Out</span>
-          </Link>
-        </div>
-        <div className="mt-6 w-full h-[1px]" />
-      </div>
+      </>)}
     </aside>
   )
 }

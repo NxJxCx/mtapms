@@ -46,30 +46,30 @@ export enum MimeTypes {
   JPEG = 'image/jpeg',
   PDF = 'application/pdf',
 }
-
-export interface AdminModel extends Document {
+export interface BaseDocument extends Document {
+  _id?: string;
+  createdAt?: string|Date
+  updatedAt?: string|Date
+}
+export interface AdminModel extends BaseDocument {
   employeeId: string
   password: string
   firstName: string
   middleName?: string
   lastName: string
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
-export interface FileDocumentModel extends Document {
+export interface FileDocumentModel extends BaseDocument {
   file: string|Buffer,
-  mimeType: MimeTypes,
-  createdAt?: string|Date
-  updatedAt?: string|Date
+  mimeType: MimeTypes
 }
 
-export interface SubmissionProps extends Document {
+export interface SubmissionProps extends BaseDocument {
   photo?: string|FileDocumentModel
   status: SubmissionStatus
 }
 
-export interface GranteeModel extends Document {
+export interface GranteeModel extends BaseDocument {
   studentId: string|StudentModel
   academicYear: number
   semester: Semester
@@ -77,8 +77,6 @@ export interface GranteeModel extends Document {
   studyLoad: SubmissionProps,
   statementOfAccount: SubmissionProps,
   CONS: SubmissionProps,
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
 export interface RequirementProps {
@@ -91,16 +89,14 @@ export interface RequirementModel {
   name: string,
   description?: string,
   forFirstYearOnly: boolean,
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
-export interface RequirementSubmissionModel extends SubmissionProps, Document {
+export interface RequirementSubmissionModel extends SubmissionProps {
   requirementId: string|RequirementModel
   submittedBy: string|StudentModel
 }
 
-export interface ApplicationFormProps extends Document {
+export interface ApplicationFormProps extends BaseDocument {
   scheduleId: string|ScheduleModel,
   lastName: string
   firstName: string
@@ -133,25 +129,19 @@ export interface ApplicationFormProps extends Document {
   totalParentGrossIncome: number
   siblings: number
   otherEducationalFinancialAssistance: boolean
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
-export interface StudentModel extends Document {
+export interface StudentModel extends BaseDocument {
   email: string
   password: string
   emailVerified?: Date
   applicationForm?: ApplicationFormProps
   applicationSubmission: string[]|RequirementSubmissionModel[]
   isGrantee: boolean
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
 export interface AttendanceProps {
   studentId: string|StudentModel
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
 export interface ExamProps {
@@ -159,7 +149,7 @@ export interface ExamProps {
   percentageScore: number
 }
 
-export interface ScheduleModel extends Document {
+export interface ScheduleModel extends BaseDocument {
   academicYear: number
   range: {
     startDate: string|Date
@@ -170,15 +160,13 @@ export interface ScheduleModel extends Document {
   interviewDate?: string|Date
   orientationAttendance: AttendanceProps[]
   examScores: ExamProps[]
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
 
-export interface ResultModel extends Document {
+export interface ResultModel extends BaseDocument {
   studentId: string|StudentModel
   scheduleId: string|ScheduleModel
   grade: number
   remarks: GradeRemarks
-  createdAt?: string|Date
-  updatedAt?: string|Date
 }
+
+export type AuthenticationStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'error'
