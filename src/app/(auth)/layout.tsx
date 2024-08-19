@@ -1,12 +1,19 @@
 import Footer from "@app/app/footer";
 import { SessionProvider } from "@app/lib/useSession";
+import { Roles } from "@app/types";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { isAuthenticated } from "./_action/session";
 
-export default function AuthPageLayout({
+export default async function AuthPageLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const auth = await isAuthenticated();
+  if (auth) {
+    redirect(auth === Roles.Applicant ? '/announcements' : '/' + auth);
+  }
   return (
     <SessionProvider>
       <main className="lg:h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-[#0D41F8] lg:overflow-hidden">
