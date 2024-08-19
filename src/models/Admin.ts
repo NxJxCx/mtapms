@@ -1,4 +1,4 @@
-import 'only-server';
+import 'server-only';
 
 import { hashPassword } from '@app/lib/hash';
 import { AdminModel } from '@app/types';

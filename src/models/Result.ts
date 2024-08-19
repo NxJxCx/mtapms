@@ -1,4 +1,4 @@
-import 'only-server';
+import 'server-only';
 
 import { GradeRemarks, ResultModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';

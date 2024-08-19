@@ -1,10 +1,10 @@
-import 'only-server';
+import 'server-only';
 
-import { FileModel, MimeTypes } from '@app/types';
+import { FileDocumentModel, MimeTypes } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 
-const FileSchema = new Schema<FileModel>({
+const FileDocumentSchema = new Schema<FileDocumentModel>({
   file: {
     type: Buffer,
     required: [true, 'Photo/File is required'],
@@ -18,4 +18,4 @@ const FileSchema = new Schema<FileModel>({
   timestamps: true
 })
 
-export default models?.File || model<FileModel>('File', FileSchema)
+export default models?.FileDocument || model<FileDocumentModel>('FileDocument', FileDocumentSchema)

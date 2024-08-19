@@ -1,5 +1,6 @@
-import 'only-server';
+import 'server-only';
 
+import { hashPassword } from '@app/lib/hash';
 import { ApplicationFormProps, CivilStatus, Gender, StudentModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
@@ -159,5 +160,21 @@ const StudentSchema = new Schema<StudentModel>({
 }, {
   timestamps: true
 })
+
+StudentSchema.pre('save', function (next: any) {
+  const admin = this;
+  if (this.isModified('password') || this.isNew) {
+    hashPassword(admin.password, (hashErr, hash) => {
+      if (hashErr) {
+        return next(hashErr)
+      }
+      admin.password = hash
+      next()
+    })
+  } else {
+    return next()
+  }
+})
+
 
 export default models?.Student || model<StudentModel>('Student', StudentSchema)

@@ -57,7 +57,7 @@ export interface AdminModel extends Document {
   updatedAt?: string|Date
 }
 
-export interface FileModel extends Document {
+export interface FileDocumentModel extends Document {
   file: string|Buffer,
   mimeType: MimeTypes,
   createdAt?: string|Date
@@ -65,7 +65,7 @@ export interface FileModel extends Document {
 }
 
 export interface SubmissionProps extends Document {
-  photo?: string|FileModel
+  photo?: string|FileDocumentModel
   status: SubmissionStatus
 }
 

@@ -1,4 +1,4 @@
-import 'only-server';
+import 'server-only';
 
 import { RequirementSubmissionModel, SubmissionStatus } from '@app/types';
 import { model, models, Schema } from 'mongoose';
