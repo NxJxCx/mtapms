@@ -61,7 +61,7 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   mobileNo: {
     type: String,
     required: [true, 'Mobile Number is required'],
-    match: /^\+\d{1,3}\s*\(\d{3}\)\s*\d{3}-\d{4}$/
+    match: /^(\+639|09|9)\d{9}$/
   },
   nameOfSchoolAttended: {
     type: String,
@@ -87,7 +87,7 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   typeOfDisability: String,
   fatherLiving: {
     type: Boolean,
-    required: [true, 'Father Living is required']
+    default: false,
   },
   fatherName: {
     type: String,
@@ -103,7 +103,7 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   motherLiving: {
     type: Boolean,
-    required: [true, 'Mother Living is required']
+    default: false,
   },
   motherName: {
     type: String,
@@ -127,7 +127,7 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   otherEducationalFinancialAssistance: {
     type: Boolean,
-    required: [true, 'Other Educational Financial Assistance is required']
+    default: false,
   }
 }, {
   timestamps: true

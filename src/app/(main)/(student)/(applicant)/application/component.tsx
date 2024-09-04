@@ -9,7 +9,7 @@ import { ScholarshipApplicationAction } from "./action";
 
 export default function ApplicationComponent() {
   const [loading, setLoading] = useState(true)
-  const [data, setData] = useState<ScheduleModel>()
+  const [data, setData] = useState<ScheduleModel|true>()
   const fetchData = () => {
     setLoading(true)
     const url = new URL('/api/schedule/now', window.location.origin)
@@ -23,7 +23,7 @@ export default function ApplicationComponent() {
     fetchData();
   }, [])
 
-  const scheduleId = useMemo(() => data?._id || '', [data])
+  const scheduleId = useMemo(() => data !== true ? data?._id || '' : '', [data])
 
   const [formData, setFormData] = useState<ApplicationFormProps>({
     scheduleId,
@@ -59,14 +59,8 @@ export default function ApplicationComponent() {
     otherEducationalFinancialAssistance: false,
   })
 
-  useEffect(() => {
-    if (!!scheduleId) {
-      setFormData({ ...formData, scheduleId });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scheduleId])
-
-  const [state, action, pending] = useFormState(ScholarshipApplicationAction, undefined)
+  const actionBind = useMemo(() => ScholarshipApplicationAction.bind(null, scheduleId), [scheduleId])
+  const [state, action, pending] = useFormState(actionBind, undefined)
   useEffect(() => {
     if (!pending && state?.success) {
       Toaster.success(state?.success)
@@ -83,7 +77,12 @@ export default function ApplicationComponent() {
           <p className="text-center w-full">No Schedule for Scholarship. Come back next time for updates.</p>
         </div>
       )}
-      {!!data && (<>
+      {data === true && (
+        <div className="text-xl italic text-gray-500 text-center w-full mt-4">
+          <p className="text-center w-full">Showing Application Form for printing or display only here...</p>
+        </div>
+      )}
+      {data !== true && !!data && (<>
         <h1 className="text-2xl font-[600] mt-4">Scholarship Application Form</h1>
         <form action={action} className="mt-4 border px-16 py-8 bg-white rounded-lg shadow mb-4">
           <div className="grid grid-cols-3 gap-x-3 gap-y-2">
@@ -99,7 +98,7 @@ export default function ApplicationComponent() {
               <label htmlFor="middleName" className="font-[500]">Middle Name:</label>
               <input type="text" id="middleName" name="middleName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.middleName} onChange={(e) => setFormData({...formData, middleName: e.target.value })} />
             </div>
-            { formData.civilStatus === CivilStatus.Married && (<>
+            { formData.civilStatus === CivilStatus.Married && formData.sex === Gender.Female && (<>
               <div>
                 <label htmlFor="middleName" className="font-[500]">Maiden Name for Married Women:</label>
                 <input type="text" id="middleName" name="middleName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.maidenName} onChange={(e) => setFormData({...formData, maidenName: e.target.value })} required />
@@ -139,8 +138,8 @@ export default function ApplicationComponent() {
               </select>
             </div>
             <div>
-              <label htmlFor="sex" className="font-[500]">Civil Status:</label>
-              <select id="sex" name="sex" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.civilStatus} onChange={(e) => setFormData({...formData, civilStatus: e.target.value as CivilStatus })} required>
+              <label htmlFor="civilStatus" className="font-[500]">Civil Status:</label>
+              <select id="civilStatus" name="civilStatus" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.civilStatus} onChange={(e) => setFormData({...formData, civilStatus: e.target.value as CivilStatus })} required>
                 <option value={CivilStatus.Single}>Single</option>
                 <option value={CivilStatus.Married}>Married</option>
                 <option value={CivilStatus.Divorced}>Divorced</option>
@@ -153,7 +152,7 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="mobileNo" className="font-[500]">Mobile Number:</label>
-              <input type="tel" id="mobileNo" name="mobileNo" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.citizenship} onChange={(e) => setFormData({...formData, mobileNo: e.target.value })} required />
+              <input type="tel" id="mobileNo" name="mobileNo" className="block border border-black px-2 py-1 rounded flex-grow w-full" minLength={10} maxLength={13} value={formData.mobileNo} onChange={(e) => setFormData({...formData, mobileNo: e.target.value })} required />
             </div>
             <div>
               <label htmlFor="nameOfSchoolAttended" className="font-[500]">Name of School Attended:</label>
@@ -161,15 +160,15 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="schoolAddress" className="font-[500]">School Address:</label>
-              <input type="text" id="schoolAddress" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolAddress} onChange={(e) => setFormData({...formData, schoolAddress: e.target.value })} required />
+              <input type="text" id="schoolAddress" name="schoolAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolAddress} onChange={(e) => setFormData({...formData, schoolAddress: e.target.value })} required />
             </div>
             <div>
-              <label htmlFor="schoolSector" className="font-[500]">School Address:</label>
+              <label htmlFor="schoolSector" className="font-[500]">School Sector:</label>
               <input type="text" id="schoolSector" name="schoolSector" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolSector} onChange={(e) => setFormData({...formData, schoolSector: e.target.value })} required />
             </div>
             <div>
               <label htmlFor="yearLevel" className="font-[500]">Year Level:</label>
-              <select value={formData.yearLevel} onChange={(e) => setFormData({...formData, yearLevel: parseInt(e.target.value) })} title="Year Level" className="block border border-black px-2 py-1 rounded flex-grow w-full">
+              <select id="yearLevel" name="yearLevel" value={formData.yearLevel} onChange={(e) => setFormData({...formData, yearLevel: e.target.value !== '' ? parseInt(e.target.value) : 1 })} title="Year Level" className="block border border-black px-2 py-1 rounded flex-grow w-full">
                 <option value={1}>1st Year</option>
                 <option value={2}>2nd Year</option>
                 <option value={3}>3rd Year</option>
@@ -220,20 +219,20 @@ export default function ApplicationComponent() {
             </>)}
             <div>
               <label htmlFor="totalParentGrossIncome" className="font-[500]">Total Parent Gross Income:</label>
-              <input type="number" min={0} id="totalParentGrossIncome" name="totalParentGrossIncome" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.totalParentGrossIncome} onChange={(e) => setFormData({ ...formData, totalParentGrossIncome: parseFloat(e.target.value) })} required />
+              <input type="number" min={0} id="totalParentGrossIncome" name="totalParentGrossIncome" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.totalParentGrossIncome} onChange={(e) => setFormData({ ...formData, totalParentGrossIncome: e.target.value !== '' ? parseFloat(e.target.value) : 0 })} required />
             </div>
             <div>
               <label htmlFor="siblings" className="font-[500]">Number of Siblings:</label>
-              <input type="number" min={0} max={15} id="siblings" name="siblings" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.siblings} onChange={(e) => setFormData({ ...formData, siblings: parseInt(e.target.value) })} required />
+              <input type="number" min={0} max={15} id="siblings" name="siblings" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.siblings} onChange={(e) => setFormData({ ...formData, siblings: e.target.value !== '' ? parseInt(e.target.value) : 0 })} required />
             </div>
             <div className="col-span-3">
               <label htmlFor="otherEducationalFinancialAssistance" className="font-[500] max-w-32 text-wrap cursor-pointer mr-2">Are you enjoying other educational financial assistance?</label>
-              <input type="checkbox" id="otherEducationalFinancialAssistance" name="otherEducationalFinancialAssistance" className="cursor-pointer" checked={formData.otherEducationalFinancialAssistance} onChange={(e) => setFormData({ ...formData, otherEducationalFinancialAssistance: e.target.checked })} required />
+              <input type="checkbox" id="otherEducationalFinancialAssistance" name="otherEducationalFinancialAssistance" className="cursor-pointer" checked={formData.otherEducationalFinancialAssistance} onChange={(e) => setFormData({ ...formData, otherEducationalFinancialAssistance: e.target.checked })} />
               <span className="ml-1 font-bold">{formData.otherEducationalFinancialAssistance ? 'Yes' : 'No'}</span>
             </div>
           </div>
           <div className="max-w-64 mx-auto mt-4">
-            <Buttons.SignupButton label={"Apply for Scholarship"} />
+            <Buttons.SignupButton type="submit" label={"Apply for Scholarship"} />
           </div>
         </form>
       </>)}

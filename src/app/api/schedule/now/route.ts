@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
         const student = await Student.findById(session.user._id).exec()
         if (!student.applicationForm || student.applicationForm.scheduleId.toString() !== data._id!.toString()) {
           return NextResponse.json({ data })
+        } else if (!!student && student.applicationForm.scheduleId.toString() === data._id!.toString()) {
+          return NextResponse.json({ data: true })
         }
       }
     }
