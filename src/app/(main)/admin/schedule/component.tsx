@@ -118,10 +118,10 @@ export default function SchedulePage() {
         SCHEDULES (A.Y. {schoolYear} - {parseInt(schoolYear as string) + 1})
       </div>
       <div>
-        <label htmlFor="schoolYear" className="font-[500] text-[15px] mb-2 mr-2">Select School Year:</label>
-        <select id="schoolYear" title="School Year" value={schoolYear} onChange={(e) => setSchoolYear(e.target.value)} className="py-1 px-2 bg-white rounded text-center border border-black">
+        <label htmlFor="schoolYear" className="font-[500] text-[15px] mb-2 mr-2">Select Academic Year:</label>
+        <select id="schoolYear" title="Academic Year" value={schoolYear} onChange={(e) => setSchoolYear(e.target.value)} className="py-1 px-2 bg-white rounded text-center border border-black">
           {schoolYearList.map((sy: number) => (
-            <option key={sy} value={sy}>{sy}</option>
+            <option key={sy} value={sy}>A.Y. {sy} - {sy + 1}</option>
           ))}
         </select>
       </div>
