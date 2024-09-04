@@ -1,5 +1,3 @@
-import { Document } from "mongoose";
-
 export enum Roles {
   Applicant = 'applicant',
   Admin = 'admin',
@@ -46,7 +44,7 @@ export enum MimeTypes {
   JPEG = 'image/jpeg',
   PDF = 'application/pdf',
 }
-export interface BaseDocument extends Document {
+export interface BaseDocument {
   _id?: string;
   createdAt?: string|Date
   updatedAt?: string|Date
@@ -170,3 +168,8 @@ export interface ResultModel extends BaseDocument {
 }
 
 export type AuthenticationStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'error'
+
+export type ActionResponse = {
+  success?: string
+  error?: string
+} | undefined

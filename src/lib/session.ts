@@ -35,7 +35,6 @@ export async function generateSessionPayload(account: Roles, userId: string, exp
     const acc = await AccountModel.findOne({ _id: userId }).select(selectOnly).lean().exec();
     if (acc) {
       const user = JSON.parse(JSON.stringify({...acc, role: account }));
-      console.log("user session payload:", user)
       return {
         user,
         expiresAt: new Date(Date.now() + expHours * 60 * 60 * 1000)

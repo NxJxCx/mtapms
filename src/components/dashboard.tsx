@@ -17,7 +17,7 @@ function getGridCols(cols: number): string {
 export function StatisticNumbers({ items, className }: { items: StatisticNumbersItem[], className?: string }) {
   return (
     <div className={clsx(
-      "w-full grid bg-white rounded-lg border",
+      "w-full grid grid-cols-2 xl:grid-cols-4 bg-white rounded-lg border",
       items.length > 0 ? getGridCols(items.length) : "grid-cols-1",
       className || ""
     )}>

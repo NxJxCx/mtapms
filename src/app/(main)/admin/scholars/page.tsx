@@ -1,5 +1,7 @@
+import ScholarListPage from "./component";
+
 export default function AdminScholarsPage() {
   return (
-    <div>Admin Scholars</div>
+    <ScholarListPage />
   )
 }
