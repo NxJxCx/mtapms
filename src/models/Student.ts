@@ -19,6 +19,7 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
     required: [true, 'First Name is required']
   },
   middleName: String,
+  maidenName: String,
   dateOfBirth: {
     type: Date,
     required: [true, 'Date of Birth is required']

@@ -99,6 +99,7 @@ export interface ApplicationFormProps extends BaseDocument {
   lastName: string
   firstName: string
   middleName?: string
+  maidenName?: string
   dateOfBirth: string|Date
   placeOfBirth: string
   permanentAddress: string
