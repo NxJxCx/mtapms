@@ -67,7 +67,7 @@ export default function SchedulePage() {
     if (openDrawer) {
       toggleDrawer()
     }
-  }, [])
+  }, [openDrawer, toggleDrawer])
 
   const onCloseModal = useCallback(() => {
     formRef.current?.reset()
@@ -110,7 +110,7 @@ export default function SchedulePage() {
     if (openDrawer) {
       toggleDrawer()
     }
-  }, [])
+  }, [openDrawer, toggleDrawer])
 
   return (<>
     <div className="p-6">
