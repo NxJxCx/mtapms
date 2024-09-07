@@ -18,7 +18,7 @@ const getApplicantRequirements = async (academicYear: number, firstYearOnly: boo
       field: r.description,
       align: 'center',
       sortable: true,
-      render: (rowData: StudentModel) => (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status}</span>,
+      render: (rowData: StudentModel) => (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status || 'N/A'}</span>,
     }))
   }
   return []
