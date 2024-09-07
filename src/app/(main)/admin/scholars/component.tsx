@@ -110,18 +110,18 @@ export default function ScholarListPage() {
   const [loading, setLoading] = useState<boolean>(true)
   const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
   const [semester, setSemester] = useState<Semester>(Semester.FirstSemester)
-  const [applicantMemos, setApplicantMemos] = useState<TableColumnProps[]>([])
-  const [applicant1stYearMemos, setApplicant1stYearMemos] = useState<TableColumnProps[]>([])
-  const [granteeMemos, setGranteeMemos] = useState<TableColumnProps[]>([])
+  const [applicantColumns, setApplicant] = useState<TableColumnProps[]>([])
+  const [applicant1stYearColumns, setApplicant1stYear] = useState<TableColumnProps[]>([])
+  const [granteeColumns, setGrantee] = useState<TableColumnProps[]>([])
 
   const [dataApplicant, setDataApplicant] = useState<StudentModel[]>([])
   const [dataApplicant1stYear, setDataApplicant1stYear] = useState<StudentModel[]>([])
   const [dataGrantee, setDataGrantee] = useState<StudentModel[]>([])
 
   useEffect(() => {
-    columns('applicant', schoolYear).then(setApplicantMemos)
-    columns('applicant_firstYear', schoolYear).then(setApplicant1stYearMemos)
-    columns('grantee', schoolYear).then(setGranteeMemos)
+    columns('applicant', schoolYear).then(setApplicant)
+    columns('applicant_firstYear', schoolYear).then(setApplicant1stYear)
+    columns('grantee', schoolYear).then(setGrantee)
   }, [schoolYear])
 
   const fetchAcademicYear = async () => {
@@ -145,7 +145,13 @@ export default function ScholarListPage() {
     const response1 = await fetch(url1)
     if (response1.ok) {
       const { data } = await response1.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (ApplicationFormProps & { email: string })[] | [], item: StudentModel) => [...init, {...item.applicationForm, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
+      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+        ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
+        sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
+        nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
+        ...(Object.keys(applicantColumns).filter(key => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
+          .reduce((acc: any, key: string) => ({...acc, [key]: true }), ({})))
+      })], [])
       setDataApplicant(d);
     }
     const url2 = new URL('/api/scholarship/grantees', window.location.origin)
@@ -155,8 +161,14 @@ export default function ScholarListPage() {
     const response2 = await fetch(url2)
     if (response2.ok) {
       const { data } = await response2.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (ApplicationFormProps & { email: string })[] | [], item: StudentModel) => [...init, {...item.applicationForm, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
-      setDataApplicant(d);
+      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+        ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
+        sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
+        nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
+        ...(Object.keys(applicantColumns).filter(key => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
+          .reduce((acc: any, key: string) => ({...acc, [key]: true }), ({})))
+      })], [])
+      setDataApplicant1stYear(d);
     }
     const url3 = new URL('/api/scholarship/grantees', window.location.origin)
     url3.searchParams.append('academicYear', sy.toString())
@@ -165,11 +177,16 @@ export default function ScholarListPage() {
     const response3 = await fetch(url3)
     if (response3.ok) {
       const { data } = await response3.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (ApplicationFormProps & { email: string })[] | [], item: StudentModel) => [...init, {...item.applicationForm, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
-      setDataApplicant(d);
+      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+        ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
+        sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
+        nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
+        COG: true, studyLoad: true, statementOfAccount: true, CONS: true,
+      })], [])
+      setDataGrantee(d);
     }
     setLoading(false);
-  }, [semester])
+  }, [semester, applicantColumns])
 
   useEffect(() => {
     fetchAcademicYear()
@@ -198,31 +215,31 @@ export default function ScholarListPage() {
       <Tabs.TabNav tabs={[{ label: '1st Year New Grantees', key: 'new_firstYear'}, { label: 'New Grantees', key: 'new' }, { label: 'Old Grantees', key:'grantee' }]}>
         <Tabs.TabContent name="new">
           <div className="w-full font-[500] text-[15px] min-w-[500px] text-black">
-            {applicantMemos.length === 0 && (
+            {applicantColumns.length === 0 && (
               <LoadingSpinnerFull/>
             )}
-            {applicantMemos.length > 0 && (
-              <Table columns={applicantMemos} data={dataApplicant} searchable />
+            {applicantColumns.length > 0 && (
+              <Table columns={applicantColumns} data={dataApplicant} searchable />
             )}
           </div>
         </Tabs.TabContent>
         <Tabs.TabContent name="new_firstYear">
           <div className="w-full font-[500] text-[15px] min-w-[500px] text-black">
-            {applicant1stYearMemos.length === 0 && (
+            {applicant1stYearColumns.length === 0 && (
               <LoadingSpinnerFull/>
             )}
-            {applicant1stYearMemos.length > 0 && (
-              <Table columns={applicant1stYearMemos} data={dataApplicant1stYear} searchable />
+            {applicant1stYearColumns.length > 0 && (
+              <Table columns={applicant1stYearColumns} data={dataApplicant1stYear} searchable />
             )}
           </div>
         </Tabs.TabContent>
         <Tabs.TabContent name="grantee">
           <div className="w-full font-[500] text-[15px] min-w-[500px] text-black">
-            {granteeMemos.length === 0 && (
+            {granteeColumns.length === 0 && (
               <LoadingSpinnerFull/>
             )}
-            {granteeMemos.length > 0 && (
-              <Table columns={granteeMemos} data={dataGrantee} searchable />
+            {granteeColumns.length > 0 && (
+              <Table columns={granteeColumns} data={dataGrantee} searchable />
             )}
           </div>
         </Tabs.TabContent>
