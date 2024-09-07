@@ -3,8 +3,8 @@
 import { LoadingSpinnerFull } from "@app/components/loadings"
 import Table, { TableColumnProps } from "@app/components/tables"
 import Tabs from "@app/components/tabs"
-import { ApplicationFormProps, GranteeModel, RequirementModel, RequirementSubmissionModel, Semester, StudentModel, SubmissionStatus } from "@app/types"
-import { useCallback, useEffect, useState } from "react"
+import { ApplicationFormProps, GranteeModel, RequirementModel, RequirementSubmissionModel, ScheduleModel, Semester, StudentModel, SubmissionStatus } from "@app/types"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 const getApplicantRequirements = async (academicYear: number, firstYearOnly: boolean): Promise<TableColumnProps[]> => {
   const url = new URL('/api/scholarship/requirements', window.location.origin)
@@ -84,32 +84,60 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
       label: 'COG',
       field: 'COG',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.COG.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG.status}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.COG.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG.status || 'N/A'}</span>,
     },
     {
       label: 'StudyLoad',
       field: 'studyLoad',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.studyLoad.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG.status}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.studyLoad.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.studyLoad.status || 'N/A'}</span>,
     },
     {
       label: 'Statement of Account',
       field: 'statementOfAccount',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.statementOfAccount.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG.status}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.statementOfAccount.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.statementOfAccount.status || 'N/A'}</span>,
     },
     {
       label: 'CONS',
       field: 'CONS',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.CONS.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG.status}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.CONS.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.CONS.status || 'N/A'}</span>,
     },
   ])
 
 export default function ScholarListPage() {
   const [loading, setLoading] = useState<boolean>(true)
-  const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
-  const [semester, setSemester] = useState<Semester>(Semester.FirstSemester)
+  const [syData, setSYData] = useState<ScheduleModel[]>([])
+  const schoolYearList = useMemo<number[]>(() => {
+    let sylist: number[] = []
+    if (syData.length > 0) {
+      sylist = syData.map((item: ScheduleModel) => item.academicYear);
+    }
+    const thisYear: number = (new Date()).getFullYear();
+    if (!sylist.includes(thisYear)) {
+      sylist.unshift(thisYear);
+    }
+    sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
+    return sylist
+  }, [syData])
+  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const [semester, setSemester] = useState<Semester|string>(Semester.FirstSemester)
+
+  const getSYData = async () => {
+    setLoading(true)
+    const url = new URL('/api/schedule/data', window.location.origin)
+    const response = await fetch(url)
+    if (response.ok) {
+      const { data } = await response.json()
+      setSYData(data)
+    }
+    setLoading(false)
+  }
+  useEffect(() => {
+    getSYData()
+  }, [])
+
   const [applicantColumns, setApplicant] = useState<TableColumnProps[]>([])
   const [applicant1stYearColumns, setApplicant1stYear] = useState<TableColumnProps[]>([])
   const [granteeColumns, setGrantee] = useState<TableColumnProps[]>([])
@@ -119,27 +147,15 @@ export default function ScholarListPage() {
   const [dataGrantee, setDataGrantee] = useState<StudentModel[]>([])
 
   useEffect(() => {
-    columns('applicant', schoolYear).then(setApplicant)
-    columns('applicant_firstYear', schoolYear).then(setApplicant1stYear)
-    columns('grantee', schoolYear).then(setGrantee)
+    columns('applicant', schoolYear as number).then(setApplicant)
+    columns('applicant_firstYear', schoolYear as number).then(setApplicant1stYear)
+    columns('grantee', schoolYear as number).then(setGrantee)
   }, [schoolYear])
 
-  const fetchAcademicYear = async () => {
-    const url = new URL('/api/schedule/now', window.location.origin)
-    const response = await fetch(url)
-    let sy = (new Date()).getFullYear()
-    if (response.ok) {
-      const { data } = await response.json()
-      if (!!data) {
-        setSchoolYear(data.academicYear)
-      }
-    }
-    return sy
-  }
-  const fetchData = useCallback(async (sy: number) => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     const url1 = new URL('/api/scholarship/grantees', window.location.origin)
-    url1.searchParams.append('academicYear', sy.toString())
+    url1.searchParams.append('academicYear', schoolYear.toString())
     url1.searchParams.append('semester', semester.toString())
     url1.searchParams.append('type', 'new')
     const response1 = await fetch(url1)
@@ -155,7 +171,7 @@ export default function ScholarListPage() {
       setDataApplicant(d);
     }
     const url2 = new URL('/api/scholarship/grantees', window.location.origin)
-    url2.searchParams.append('academicYear', sy.toString())
+    url2.searchParams.append('academicYear', schoolYear.toString())
     url2.searchParams.append('semester', semester.toString())
     url2.searchParams.append('type', 'new_firstYear')
     const response2 = await fetch(url2)
@@ -171,7 +187,7 @@ export default function ScholarListPage() {
       setDataApplicant1stYear(d);
     }
     const url3 = new URL('/api/scholarship/grantees', window.location.origin)
-    url3.searchParams.append('academicYear', sy.toString())
+    url3.searchParams.append('academicYear', schoolYear.toString())
     url2.searchParams.append('semester', semester.toString())
     url3.searchParams.append('type', 'grantee')
     const response3 = await fetch(url3)
@@ -186,11 +202,10 @@ export default function ScholarListPage() {
       setDataGrantee(d);
     }
     setLoading(false);
-  }, [semester, applicantColumns])
+  }, [semester, schoolYear, applicantColumns])
 
   useEffect(() => {
-    fetchAcademicYear()
-      .then((sy) => fetchData(sy))
+    fetchData()
   }, [fetchData])
 
   const onView = useCallback((rowData: ApplicationFormProps) => {
@@ -200,14 +215,19 @@ export default function ScholarListPage() {
   return (
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-3 border-black text-black font-[700]">
-        SCHOLARSHIP STATUS A.Y. {schoolYear} - {schoolYear + 1}
+        SCHOLARSHIP STATUS A.Y. {schoolYear} - {parseInt(schoolYear.toString()) + 1}
       </div>
-      <div className="py-2 font-[500] text-[15px] leading-[19px]">
-        You can view and update the status.
+      <div className="mb-2">
+        <label htmlFor="schoolYear" className="text-[15px] mb-2 mr-2 font-bold text-lg">Academic Year:</label>
+        <select id="schoolYear" title="Academic Year" value={schoolYear} onChange={(e) => setSchoolYear(e.target.value)} className="py-1 px-2 bg-white rounded text-center border border-black">
+          {schoolYearList.map((sy: number) => (
+            <option key={sy} value={sy}>A.Y. {sy} - {sy + 1}</option>
+          ))}
+        </select>
       </div>
       <div className="py-2 font-[500] text-[15px] leading-[19px]">
         <label htmlFor="semester" className="mr-2 font-bold text-lg">Semester:</label>
-        <select name="semester" id="semester" title="Semester" className="px-2 py-1 rounded bg-white border border-gray-400 cursor-pointer">
+        <select name="semester" id="semester" title="Semester" value={semester} onChange={(e) => setSemester(e.target.value)} className="px-2 py-1 rounded bg-white border border-gray-400 cursor-pointer">
           <option value={Semester.FirstSemester}>First Semester</option>
           <option value={Semester.SecondSemester}>Second Semester</option>
         </select>
