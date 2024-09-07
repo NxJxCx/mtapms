@@ -85,11 +85,11 @@ const sidebarLinks = {
       href: "/admin/dashboard",
     },
     {
-      label: "Announcements",
-      href: "/admin/announcements",
+      label: "Requirement Management",
+      href: "/admin/requirements",
     },
     {
-      label: "Application Schedule",
+      label: "Schedules",
       href: "/admin/schedule",
     },
     {

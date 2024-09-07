@@ -149,7 +149,7 @@ export function TabNav({
             </div>
           </div>
         </div>
-        <div className="min-h-[542px] -mt-1 bg-white drop-shadow-2xl border rounded-[20px]">
+        <div className="min-h-[542px] -mt-4 bg-white drop-shadow-2xl border rounded-[20px]">
           {children}
         </div>
       </div>

@@ -12,10 +12,13 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
     if (session?.user?.role === Roles.Admin) {
       const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
-      const forFirstYearOnly = request.nextUrl.searchParams.get('firstYearOnly') === 'true'
+      const forFirstYearOnly = request.nextUrl.searchParams.get('firstYearOnly') === 'true' ? true : request.nextUrl.searchParams.get('firstYearOnly') === 'false' ? false : undefined;
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const filter: any = { scheduleId: schedule._id.toString(), forFirstYearOnly }
+        const filter: any = { scheduleId: schedule._id.toString() }
+        if (forFirstYearOnly !== undefined) {
+          filter.forFirstYearOnly = forFirstYearOnly
+        }
         const data = await Requirement.find(filter).exec()
         return NextResponse.json({ data })
       }

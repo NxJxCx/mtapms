@@ -56,8 +56,6 @@ export async function GET(request: NextRequest) {
             return sched.academicYear === academicYear && (st.applicationForm as ApplicationFormProps).yearLevel === YearLevel.FirstYear
           }).map((st: StudentModel) => ({...st, applicationSubmission: (st.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => !(req.requirementId as RequirementModel).forFirstYearOnly) }))
           : []
-        console.log(semester, type, academicYear)
-        console.log("DATA", data)
         return NextResponse.json({ data })
       }
     }

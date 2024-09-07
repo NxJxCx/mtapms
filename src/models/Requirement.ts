@@ -23,6 +23,6 @@ const RequirementSchema = new Schema<RequirementModel>({
   timestamps: true
 })
 
-RequirementSchema.index({ academicYear: 1, name: 1, forFirstYearOnly: 1 }, { unique: true })
+RequirementSchema.index({ scheduleId: 1, name: 1, forFirstYearOnly: 1 }, { unique: true })
 
 export default models?.Requirement || model<RequirementModel>('Requirement', RequirementSchema)

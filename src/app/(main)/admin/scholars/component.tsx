@@ -214,32 +214,32 @@ export default function ScholarListPage() {
       </div>
       <Tabs.TabNav tabs={[{ label: '1st Year New Grantees', key: 'new_firstYear'}, { label: 'New Grantees', key: 'new' }, { label: 'Old Grantees', key:'grantee' }]}>
         <Tabs.TabContent name="new">
-          <div className="w-full font-[500] text-[15px] min-w-[500px] text-black">
+          <div className="w-full font-[500] text-[15px] min-w-[500px] text-black p-4">
             {applicantColumns.length === 0 && (
               <LoadingSpinnerFull/>
             )}
             {applicantColumns.length > 0 && (
-              <Table columns={applicantColumns} data={dataApplicant} searchable />
+              <Table columns={applicantColumns} loading={loading} data={dataApplicant} searchable />
             )}
           </div>
         </Tabs.TabContent>
         <Tabs.TabContent name="new_firstYear">
-          <div className="w-full font-[500] text-[15px] min-w-[500px] text-black">
+          <div className="w-full font-[500] text-[15px] min-w-[500px] text-black p-4">
             {applicant1stYearColumns.length === 0 && (
               <LoadingSpinnerFull/>
             )}
             {applicant1stYearColumns.length > 0 && (
-              <Table columns={applicant1stYearColumns} data={dataApplicant1stYear} searchable />
+              <Table columns={applicant1stYearColumns} loading={loading} data={dataApplicant1stYear} searchable />
             )}
           </div>
         </Tabs.TabContent>
         <Tabs.TabContent name="grantee">
-          <div className="w-full font-[500] text-[15px] min-w-[500px] text-black">
+          <div className="w-full font-[500] text-[15px] min-w-[500px] text-black p-4">
             {granteeColumns.length === 0 && (
               <LoadingSpinnerFull/>
             )}
             {granteeColumns.length > 0 && (
-              <Table columns={granteeColumns} data={dataGrantee} searchable />
+              <Table columns={granteeColumns} loading={loading} data={dataGrantee} searchable />
             )}
           </div>
         </Tabs.TabContent>
