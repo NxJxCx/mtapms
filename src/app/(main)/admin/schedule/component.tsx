@@ -5,14 +5,14 @@ import { LoadingSpinnerFull } from "@app/components/loadings";
 import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Toaster from "@app/components/toaster";
-import { ScheduleModel } from "@app/types";
+import { Roles, ScheduleModel } from "@app/types";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { scheduleAction, scheduleUpdateAction } from "./action";
 
 export default function SchedulePage() {
-  const { openDrawer, toggleDrawer } = useSidebar()
+  const { openDrawer, toggleDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<ScheduleModel[]>([])
   const schoolYearList = useMemo<number[]>(() => {

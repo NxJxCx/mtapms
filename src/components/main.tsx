@@ -18,7 +18,7 @@ export function MainContainer({
     redirect: true
   })
   const pathname = usePathname()
-  const { openDrawer, toggleDrawer } = useSidebar()
+  const { openDrawer, toggleDrawer } = useSidebar({ role: role })
 
   if (status === 'authenticated' && !pathname.startsWith('/' + Roles.Admin) && role === Roles.Admin) {
     console.log('redirect to /' + role);

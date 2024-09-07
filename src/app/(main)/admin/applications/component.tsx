@@ -115,14 +115,13 @@ export default function ApplicationListPage() {
   const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
   const [data, setData] = useState<StudentModel[]>([])
   const fetchAcademicYear = async () => {
-    const url = new URL('/api/schedule/data', window.location.origin)
+    const url = new URL('/api/schedule/now', window.location.origin)
     const response = await fetch(url)
     let sy = (new Date()).getFullYear()
     if (response.ok) {
       const { data } = await response.json()
-      if (data?.length > 0) {
-        sy = Math.max(...data.map((item: any) => parseInt(item.academicYear)))
-        setSchoolYear(sy)
+      if (!!data) {
+        setSchoolYear(data.academicYear)
       }
     }
     return sy
@@ -144,6 +143,7 @@ export default function ApplicationListPage() {
     fetchAcademicYear()
       .then((sy) => fetchData(sy))
   }, [])
+
   const onView = useCallback((rowData: ApplicationFormProps) => {
     console.log('Viewing application form for:', rowData)
   }, [])

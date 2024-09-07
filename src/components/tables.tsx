@@ -117,7 +117,7 @@ export default function Table({ data = [], columns = [], loading = false, sorted
   }, [sortBy, sortDirection, onSortDirection]);
 
   const tools = useMemo<React.ReactElement[]>(() => searchable ? [
-      <div key={"search_1"} className="min-w-[300px] flex flex-nowrap items-center">
+      <div key={"search_1"} className="min-w-[300px] flex flex-nowrap items-center z-10">
         <label htmlFor="search" className="text-white">
           Search
         </label>
@@ -163,7 +163,7 @@ export default function Table({ data = [], columns = [], loading = false, sorted
           </tr>
         </thead>
         <tbody>
-          { sortedData.map((item: any, index: number) => (
+          { !loading && sortedData.map((item: any, index: number) => (
             <tr key={index} className={clsx("border-b hover:bg-gray-50", index % 2 === 0 ? "bg-white" : "bg-gray-200")}>
               {columns.map((col: any, i: number) => (
                 <td
@@ -183,12 +183,12 @@ export default function Table({ data = [], columns = [], loading = false, sorted
               ))}
             </tr>
           ))}
-          { sortedData.length === 0 && !loading && (
+          { !loading && sortedData.length === 0 && (
             <tr className="bg-white border-b hover:bg-gray-50">
               <td scope="row" colSpan={columns.length} className="py-4 font-medium text-gray-500 whitespace-nowrap text-center text-lg">No Data</td>
             </tr>
           )}
-          { sortedData.length === 0 && loading && (
+          { loading && (
             <tr className="bg-white border-b hover:bg-gray-50">
               <td scope="row" colSpan={columns.length} className="py-4 font-medium text-gray-500 whitespace-nowrap text-center text-lg">Loading...</td>
             </tr>

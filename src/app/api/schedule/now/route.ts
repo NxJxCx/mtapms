@@ -12,16 +12,21 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
     if (session?.user?.role === Roles.Applicant) {
-      const result: ScheduleModel = await Schedule.findOne({ academicYear: (new Date()).getFullYear() }).select('academicYear range orientationDate examDate interviewDate').exec()
-      const data = !!result && (new Date(result.range.startDate)).getTime() <= (new Date()).getTime() && (new Date(result.range.endDate)).getTime() >= (new Date()).getTime() ? result : null
+      const result = await Schedule.find({}).select('academicYear range orientationDate examDate interviewDate').exec()
+      const dataRecent: ScheduleModel = result.length === 0 ? null : JSON.parse(JSON.stringify(result)).reduce((init: ScheduleModel, item: ScheduleModel) => !init ? item : item.academicYear > init.academicYear ? item : init, null)
+      const data = !!dataRecent && (new Date(dataRecent.range.startDate)).getTime() <= (new Date()).getTime() && (new Date(dataRecent.range.endDate)).getTime() >= (new Date()).getTime() ? dataRecent : null
       if (!!data) {
         const student = await Student.findById(session.user._id).exec()
-        if (!student.applicationForm || student.applicationForm.scheduleId.toString() !== data._id!.toString()) {
+        if (!student.applicationForm || student.applicationForm.scheduleId.toString() !== data._id as string) {
           return NextResponse.json({ data })
         } else if (!!student && student.applicationForm.scheduleId.toString() === data._id!.toString()) {
           return NextResponse.json({ data: true })
         }
       }
+    } else if (session?.user?.role === Roles.Admin) {
+      const result = await Schedule.find({}).select('academicYear range orientationDate examDate interviewDate').exec()
+      const data: ScheduleModel = result.length === 0 ? null : JSON.parse(JSON.stringify(result)).reduce((init: ScheduleModel, item: ScheduleModel) => !init ? item : item.academicYear > init.academicYear ? item : init, null)
+      return NextResponse.json({ data })
     }
   } catch (e) {
     console.log(e)

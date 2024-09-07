@@ -56,7 +56,7 @@ export default function LoginTabComponent() {
       onSelectedTab={setSelected}
     >
       {tabs.map(({label, key}) => (
-        <Tabs.AuthTabContent key={key} name={key}>
+        <Tabs.TabContent key={key} name={key}>
           <div className="p-12">
             <h1 className="text-[#0F8346] text-[28px] uppercase font-[800] leading-[34.13px] text-center mb-1">LOG IN YOUR ACCOUNT</h1>
             <p className="text-[#0F8346] text-[16px] font-[400] leading-[19.5px] mb-6 text-center">Effortlessly request documents online</p>
@@ -71,7 +71,7 @@ export default function LoginTabComponent() {
               </div>
             </form>
           </div>
-        </Tabs.AuthTabContent>
+        </Tabs.TabContent>
       ))}
     </Tabs.AuthTabNav>
   )

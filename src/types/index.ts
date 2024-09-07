@@ -170,7 +170,9 @@ export interface ResultModel extends BaseDocument {
 
 export type AuthenticationStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'error'
 
-export type ActionResponse = {
+export interface ActionResponseInterface {
   success?: string
   error?: string
-} | undefined
+}
+
+export type ActionResponse = ActionResponseInterface | undefined

@@ -101,10 +101,6 @@ const sidebarLinks = {
       href: "/admin/results",
     },
     {
-      label: "Results Ranking",
-      href: "/admin/ranking",
-    },
-    {
       label: "Scholar Information",
       href: "/admin/scholars",
     },
@@ -172,6 +168,68 @@ const sidebarLinks = {
   'none': []
 }
 
+function AdminAdditionalSidebar() {
+  const pathname = usePathname()
+  const [addSidebars, setAddSidebars] = useState<{ label: string, href: string }[]>([])
+  const fetchAcademicYear = async () => {
+    let additionalSidebars = []
+    const url = new URL('/api/schedule/now', window.location.origin)
+    const response = await fetch(url)
+    if (response.ok) {
+      const { data } = await response.json()
+      if (!!data) {
+        const dateNow = new Date()
+        dateNow.setHours(0, 0, 0, 0)
+        const orientationDate = new Date(data.orientationDate)
+        orientationDate.setHours(0,0,0,0)
+        if (dateNow.getTime() === orientationDate.getTime()) {
+          additionalSidebars.push({
+            label: 'Orientation Attendance',
+            href: '/admin/orientation'
+          })
+        }
+        const examDate = new Date(data.examDate)
+        examDate.setHours(0,0,0,0)
+        if (dateNow.getTime() === examDate.getTime()) {
+          additionalSidebars.push({
+            label: 'Exam Attendance',
+            href: '/admin/exam'
+          })
+        }
+        const interviewDate = new Date(data.interviewDate)
+        interviewDate.setHours(0,0,0,0)
+        if (dateNow.getTime() === interviewDate.getTime()) {
+          additionalSidebars.push({
+            label: 'Interview Attendance',
+            href: '/admin/interview'
+          })
+        }
+      }
+    }
+    setAddSidebars(additionalSidebars)
+  }
+
+  useEffect(() => {
+    fetchAcademicYear()
+  }, [])
+
+  return addSidebars.length === 0 ? null : (
+    <>
+      {addSidebars.map((item, index) => (
+        <Link key={index} href={item.href} className={
+          clsx(
+            "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
+            "cursor-pointer",
+            pathname.startsWith(item.href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
+          )
+        }>
+          {item.label}
+        </Link>
+      ))}
+    </>
+  )
+}
+
 export function SidebarComponent({
   role: myRole,
   defaultOpenDrawer,
@@ -187,7 +245,7 @@ export function SidebarComponent({
   const pathname = usePathname()
   const { role, setRole, toggleDrawer, openDrawer, setOpenDrawer } = useSidebar({ role: myRole, defaultOpenDrawer })
   const [hiddenClass, sethiddenClass] = useState("left-0");
-  const fullName = useMemo(() => role === Roles.Admin ? sessionData?.user?.firstName?.toUpperCase() + ' ' + sessionData?.user?.lastName?.toUpperCase() : sessionData?.user?.email, [sessionData])
+  const fullName = useMemo(() => role === Roles.Admin ? sessionData?.user?.firstName?.toUpperCase() + ' ' + sessionData?.user?.lastName?.toUpperCase() : sessionData?.user?.email, [sessionData, role])
 
   useEffect(() => {
     if (openDrawer) {
@@ -227,6 +285,7 @@ export function SidebarComponent({
           <div className="h-[16px]" />
           <div className="min-h-[100px]">
             {/* sidebar links here */}
+            { role === Roles.Admin && <AdminAdditionalSidebar />}
             { sidebarLinks[role || 'none'].map(({ label, href }, index) => (
               <Link key={index} href={href} className={
                 clsx(
