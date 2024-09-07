@@ -130,6 +130,7 @@ export default function ApplicationListPage() {
     setLoading(true)
     const url = new URL('/api/scholarship/applications', window.location.origin)
     url.searchParams.append('academicYear', sy.toString())
+    url.searchParams.append('application', 'applicant')
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()

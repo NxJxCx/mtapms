@@ -82,7 +82,7 @@ export interface RequirementProps {
   description?: string
 }
 
-export interface RequirementModel {
+export interface RequirementModel extends BaseDocument {
   scheduleId: string|ScheduleModel
   name: string,
   description?: string,

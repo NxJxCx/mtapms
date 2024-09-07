@@ -21,13 +21,10 @@ export function MainContainer({
   const { openDrawer, toggleDrawer } = useSidebar({ role: role })
 
   if (status === 'authenticated' && !pathname.startsWith('/' + Roles.Admin) && role === Roles.Admin) {
-    console.log('redirect to /' + role);
     redirect('/' + role);
   } else if (status === 'authenticated' && !pathname.startsWith('/' + Roles.Grantee) && role === Roles.Grantee) {
-    console.log('redirect to /' + role);
     redirect('/' + role);
   } else if (status === 'authenticated' && (pathname.startsWith('/' + Roles.Applicant) || pathname.startsWith('/' + Roles.Grantee)) && role === Roles.Applicant) {
-    console.log('redirect to /announcements');
     redirect('/announcements');
   }
   return (

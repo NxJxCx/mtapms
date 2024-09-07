@@ -1,9 +1,8 @@
-'use server'
-
+'use server';
 import mongodbConnect from "@app/lib/db";
 import { getSession } from "@app/lib/session";
+import Requirement from "@app/models/Requirement";
 import Schedule from "@app/models/Schedule";
-import Student from "@app/models/Student";
 import { Roles } from "@app/types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,10 +12,11 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
     if (session?.user?.role === Roles.Admin) {
       const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
+      const forFirstYearOnly = request.nextUrl.searchParams.get('firstYearOnly') === 'true'
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const filter: any = { 'applicationForm.scheduleId': schedule._id.toString(), isGrantee: false }
-        const data = await Student.find(filter).select('email applicationForm').exec()
+        const filter: any = { scheduleId: schedule._id.toString(), forFirstYearOnly }
+        const data = await Requirement.find(filter).exec()
         return NextResponse.json({ data })
       }
     }

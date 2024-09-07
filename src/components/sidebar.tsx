@@ -190,18 +190,10 @@ function AdminAdditionalSidebar() {
         }
         const examDate = new Date(data.examDate)
         examDate.setHours(0,0,0,0)
-        if (dateNow.getTime() === examDate.getTime()) {
+        if (dateNow.getTime() >= examDate.getTime() && dateNow.getTime() <= examDate.getTime() + (1000 * 60 * 60 * 24 * 180)) {
           additionalSidebars.push({
-            label: 'Exam Attendance',
+            label: 'Exam Scores',
             href: '/admin/exam'
-          })
-        }
-        const interviewDate = new Date(data.interviewDate)
-        interviewDate.setHours(0,0,0,0)
-        if (dateNow.getTime() === interviewDate.getTime()) {
-          additionalSidebars.push({
-            label: 'Interview Attendance',
-            href: '/admin/interview'
           })
         }
       }

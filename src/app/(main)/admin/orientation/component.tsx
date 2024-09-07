@@ -4,7 +4,7 @@ import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
 import Tabs from "@app/components/tabs";
 import Toaster from "@app/components/toaster";
-import { Roles, StudentModel } from "@app/types";
+import { Roles } from "@app/types";
 import { ArrowPathIcon, CheckIcon } from "@heroicons/react/16/solid";
 import { useCallback, useEffect, useState } from "react";
 import { attendOrientation } from "./action";
@@ -75,8 +75,8 @@ export default function OrientationAttendancePage() {
   const [loading, setLoading] = useState<boolean>(true)
   const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
 
-  const [notAttended, setNotAttended] = useState<StudentModel[]>([])
-  const [attended, setAttended] = useState<StudentModel[]>([])
+  const [notAttended, setNotAttended] = useState<any[]>([])
+  const [attended, setAttended] = useState<any[]>([])
   const [selectedAttendance, setSelectedAttendance] = useState<any>()
 
   const fetchAttendance = useCallback(async (attended: boolean = false) => {

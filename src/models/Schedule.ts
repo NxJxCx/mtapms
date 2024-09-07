@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { AttendanceProps, ScheduleModel } from '@app/types';
-import { model, models, Schema } from 'mongoose';
+import { AttendanceProps, ScheduleModel, StudentModel } from '@app/types';
+import { isObjectIdOrHexString, model, models, Schema } from 'mongoose';
 
 const AttendanceSchema = new Schema<AttendanceProps>({
   studentId: {
@@ -44,6 +44,15 @@ const ScheduleSchema = new Schema<ScheduleModel>({
         type: Schema.Types.ObjectId,
         ref: 'Student',
         required: [true, 'Student Id is required.'],
+        unique: true,
+        validate: {
+          async validator(value: string|StudentModel) {
+            if (!isObjectIdOrHexString(value)) return false;
+            const student = await models?.Student?.findById(value).exec()
+            return !!student && !student.isGrantee && student.applicationForm?.scheduleId?.toString() === (this as any)._id.toString()
+          },
+          message: 'Invalid Student Id.'
+        }
       },
       percentageScore: {
         type: Number,

@@ -12,7 +12,7 @@ const RequirementSchema = new Schema<RequirementModel>({
   },
   name: {
     type: String,
-    required: [true, 'name for the first year requirement is required.'],
+    required: [true, 'name for the requirement is required.'],
   },
   description: String,
   forFirstYearOnly: {
