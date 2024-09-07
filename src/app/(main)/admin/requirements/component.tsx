@@ -99,6 +99,10 @@ export default function RequirementsPage() {
     setOpenDelete(id)
   }, [openDrawer, toggleDrawer])
 
+  const onCloseDelete = useCallback(() => {
+    setOpenDelete(undefined)
+  }, [])
+
   const onConfirmDelete = useCallback(async () => {
     try {
       const deleteAction = removeRequirement.bind(null, openDelete!)
@@ -113,11 +117,7 @@ export default function RequirementsPage() {
     } catch (e) {
       Toaster.error('Failed to delete requirement.')
     }
-  }, [openDelete])
-
-  const onCloseDelete = useCallback(() => {
-    setOpenDelete(undefined)
-  }, [])
+  }, [openDelete, getRequirements, onCloseDelete])
 
   return (<>
     <div className="p-6">
