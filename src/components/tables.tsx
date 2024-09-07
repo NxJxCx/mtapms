@@ -1,6 +1,7 @@
 'use client';
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
 import clsx from 'clsx';
+import { Montserrat, Poppins } from 'next/font/google';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 export interface TableColumnProps {
@@ -15,6 +16,9 @@ export interface TableColumnProps {
 
 export type SortDirection = 'asc' | 'desc'
 export type ChevronDirection = 'both' | 'up' | 'down'
+
+const poppins = Poppins({ weight: '300', subsets: ['latin-ext', 'latin'] })
+const montserrat = Montserrat({ weight: '500', subsets: ['latin-ext', 'latin'] })
 
 export function SortButton({ direction, ...props }: { direction: ChevronDirection }) {
   return (
@@ -44,6 +48,8 @@ function Toolbars({ columnCount, toolbars = [] }: { columnCount: number, toolbar
   )
 }
 
+export type RowsPerPage = 10 | 20 | 30 | 50 | 100
+
 export default function Table({ data = [], columns = [], loading = false, sortedBy, sortedDirection, searchable = false, searchString = "", toolbars = [], onSearch = (search: string) => {}, onSort = (sortBy: any) => {}, onSortDirection = (sortDirection: SortDirection) => {} }: Readonly<{ data: any[], columns: TableColumnProps[], loading?: boolean, sortedBy?: any, sortedDirection?: SortDirection, searchable?: boolean, searchString?: string, toolbars?: React.ReactElement[], onSearch?: (search: string) => void, onSort?: (sortBy: any) => void, onSortDirection?: (sortDirection: SortDirection) => void }>) {
   const [search, setSearch] = useState(searchString)
   const [sortBy, setSortedBy] = useState<string>(sortedBy || columns?.[0]?.field || "");
@@ -70,6 +76,10 @@ export default function Table({ data = [], columns = [], loading = false, sorted
       ): false;
     }
   ))), [columns, data, search])
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = useMemo(() => Math.ceil(filteredData.length / 10), [filteredData])
+
   const sortedData = useMemo(() => [...filteredData].sort((a: any, b: any) => {
     if (typeof (a[sortBy]) === "string" && typeof (b[sortBy]) === "string") {
       return sortDirection === "asc" ? a[sortBy].localeCompare(b[sortBy].toString()) : b[sortBy].localeCompare(a[sortBy].toString());
@@ -82,6 +92,12 @@ export default function Table({ data = [], columns = [], loading = false, sorted
     }
     return 0;
   }), [filteredData, sortBy, sortDirection]);
+
+  const finalDataTable = useMemo(() => {
+    const startIndex = (currentPage - 1) * 10;
+    const endIndex = startIndex + 10;
+    return sortedData.slice(startIndex, endIndex);
+  }, [sortedData, currentPage]);
 
   useEffect(() => {
     if (sortedBy) {
@@ -137,6 +153,9 @@ export default function Table({ data = [], columns = [], loading = false, sorted
     ] : toolbars
   , [searchable, search, toolbars]);
 
+  const nextPage = useCallback(() => setCurrentPage(finalDataTable.length === 0 ? 0 : Math.min(Math.max(1, currentPage + 1), totalPages)), [currentPage, finalDataTable, totalPages]);
+  const previousPage = useCallback(() => setCurrentPage(finalDataTable.length === 0 ? 0 : Math.min(Math.max(1, currentPage - 1), totalPages)), [currentPage, finalDataTable, totalPages]);
+
   return (
     <div className="relative overflow-x-auto shadow-md">
       <table className="text-xs w-full text-gray-700">
@@ -163,7 +182,7 @@ export default function Table({ data = [], columns = [], loading = false, sorted
           </tr>
         </thead>
         <tbody>
-          { !loading && sortedData.map((item: any, index: number) => (
+          { !loading && finalDataTable.map((item: any, index: number) => (
             <tr key={index} className={clsx("border-b hover:bg-gray-50", index % 2 === 0 ? "bg-white" : "bg-gray-200")}>
               {columns.map((col: any, i: number) => (
                 <td
@@ -183,7 +202,7 @@ export default function Table({ data = [], columns = [], loading = false, sorted
               ))}
             </tr>
           ))}
-          { !loading && sortedData.length === 0 && (
+          { !loading && finalDataTable.length === 0 && (
             <tr className="bg-white border-b hover:bg-gray-50">
               <td scope="row" colSpan={columns.length} className="py-4 font-medium text-gray-500 whitespace-nowrap text-center text-lg">No Data</td>
             </tr>
@@ -195,6 +214,30 @@ export default function Table({ data = [], columns = [], loading = false, sorted
           )}
         </tbody>
       </table>
+      {/* Pagination */}
+      <div className={clsx(poppins.className, "p-2 flex flex-between items-center")}>
+        <div className="text-[#6C6C6C] font-[300] italic text-[13px] leading-[19px] flex-grow">
+          viewing {Math.min(finalDataTable.length, currentPage * 10)} of {filteredData.length}
+        </div>
+        <div className={montserrat.className}>
+          <button
+            type="button"
+            disabled={currentPage === 1}
+            className={"px-4 py-1 text-white bg-[#00823E] rounded hover:bg-green-800 disabled:opacity-50"}
+            onClick={previousPage}
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            disabled={currentPage === totalPages}
+            className={"px-4 py-1 ml-2 text-white bg-[#00823E] rounded hover:bg-green-800 disabled:opacity-50"}
+            onClick={nextPage}
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
