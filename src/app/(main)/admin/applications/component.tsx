@@ -5,12 +5,12 @@ import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
 import { ApplicationFormProps, Roles, StudentModel, YearLevel } from '@app/types';
-import { CheckIcon, EyeIcon } from "@heroicons/react/16/solid";
+import { CheckIcon, EyeIcon, PrinterIcon } from "@heroicons/react/16/solid";
 import clsx from 'clsx';
 import { Montserrat } from 'next/font/google';
 import { useCallback, useEffect, useState } from "react";
 
-const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number }) => void): TableColumnProps[] => [
+const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) => void): TableColumnProps[] => [
   {
     label: 'Email',
     field: 'email',
@@ -40,7 +40,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     field: 'dateOfBirth',
     sortable: true,
     searchable: true,
-    render(rowData: StudentModel & ApplicationFormProps & { age: number }) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
       return new Date(rowData.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     }
   },
@@ -85,7 +85,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     field: 'yearLevel',
     sortable: true,
     searchable: true,
-    render(rowData: StudentModel & ApplicationFormProps & { age: number }) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
       return rowData.yearLevel === YearLevel.FirstYear
         ? '1st Year'
         : rowData.yearLevel === YearLevel.SecondYear
@@ -106,7 +106,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
   {
     label: 'Action',
     field: 'action',
-    render(rowData: StudentModel & ApplicationFormProps & { age: number }) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
       return (
         <button type="button" onClick={() => onView(rowData)} title="View and Print Application Form" className="text-[#00823E]"><EyeIcon className="w-5 h-5 inline" /> View</button>
       )
@@ -114,7 +114,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
   }
 ]
 
-function displayFullName(student?: StudentModel & ApplicationFormProps & { age: number }) {
+function displayFullName(student?: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
   if (!student) return undefined
   return (`${student.lastName}, ${student.firstName} ` +  (student.middleName ? `${student.middleName}` : '')).trim()
 }
@@ -158,7 +158,7 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
+      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studentId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studentId: item._id, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
       setData(d);
     }
     setLoading(false);
@@ -169,20 +169,37 @@ export default function ApplicationListPage() {
       .then((sy) => fetchData(sy))
   }, [])
 
-  const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number })|undefined>()
+  const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number, studentId: string })|undefined>()
   const onCloseViewModal = () => {
     setOpenViewModal(undefined)
   }
-  const onOpenViewModal = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number }) => {
+  const onOpenViewModal = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) => {
     if (openDrawer) {
       toggleDrawer()
     }
     setOpenViewModal(rowData)
   }, [openDrawer, toggleDrawer])
 
-  const onView = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number }) => {
+  const onView = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) => {
     onOpenViewModal(rowData)
   }, [onOpenViewModal])
+
+  const onPrint = useCallback(() => {
+    const url = new URL('/print', window.location.origin)
+    url.searchParams.append('template', 'application')
+    url.searchParams.append('studentId', openViewModal?.studentId || '')
+    url.searchParams.append('academicYear', schoolYear.toString())
+    // open new window no toolbars for printing only
+    const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
+    if (win) {
+      win.onafterprint = () => {
+        win?.close()
+      }
+      win.onload = () => {
+        win?.print()
+      }
+    }
+  }, [openViewModal, schoolYear])
 
   return (<>
     <div className="p-6">
@@ -294,6 +311,14 @@ export default function ApplicationListPage() {
             </tr>
           </tbody>
         </table>
+        <div className="flex justify-end py-2 gap-x-2">
+          <button type="button" onClick={onPrint} className="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+            <PrinterIcon className="w-4 h-4 inline" /> Print
+          </button>
+          <button type="button" onClick={onCloseViewModal} className="border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded">
+            Close
+          </button>
+        </div>
       </div>
     </Modal>
   </>)

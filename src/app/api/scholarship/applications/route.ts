@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
     const session = await getSession();
+    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
     if (session?.user?.role === Roles.Admin) {
-      const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
         const filter: any = { 'applicationForm.scheduleId': schedule._id.toString(), isGrantee: false }
