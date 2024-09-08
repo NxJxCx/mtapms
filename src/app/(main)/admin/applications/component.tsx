@@ -181,8 +181,8 @@ export default function ApplicationListPage() {
   }, [openDrawer, toggleDrawer])
 
   const onView = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number }) => {
-    setOpenViewModal(rowData)
-  }, [])
+    onOpenViewModal(rowData)
+  }, [onOpenViewModal])
 
   return (<>
     <div className="p-6">
@@ -211,7 +211,7 @@ export default function ApplicationListPage() {
             </tr>
             <tr className="*:px-2">
               <td className="pt-2 border-l border-black">Date of Birth:</td>
-              <td>{new Date(openViewModal?.dateOfBirth || '1990-01-01').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })?? 'N/A'}</td>
+              <td>{new Date(openViewModal?.dateOfBirth || '1990-01-01').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })?? 'N/A'}</td>
               <td className="border-l border-black">Present Address:</td>
               <td colSpan={2}>{openViewModal?.presentAddress || 'N/A'}</td>
               <td rowSpan={8} className="border-l border-black align-top pt-1">Province:</td>
@@ -256,7 +256,7 @@ export default function ApplicationListPage() {
               <td>{openViewModal?.tribalMembership || 'N/A'}</td>
             </tr>
             <tr className="border border-black">
-              <td colSpan={6} className="text-center">
+              <td colSpan={7} className="text-center">
                 <h1 className="font-[700] mx-auto py-1">Family Background</h1>
               </td>
             </tr>
