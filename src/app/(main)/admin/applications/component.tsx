@@ -1,13 +1,16 @@
 'use client'
 
 import { LoadingSpinnerFull } from "@app/components/loadings";
+import { Modal } from "@app/components/modals";
+import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
-import { StudentModel, YearLevel } from "@app/types";
-import { EyeIcon } from "@heroicons/react/16/solid";
+import { ApplicationFormProps, Roles, StudentModel, YearLevel } from '@app/types';
+import { CheckIcon, EyeIcon } from "@heroicons/react/16/solid";
+import clsx from 'clsx';
+import { Montserrat } from 'next/font/google';
 import { useCallback, useEffect, useState } from "react";
-import { ApplicationFormProps } from '../../../../types/index';
 
-const columns = (onView: (rowData: ApplicationFormProps) => void): TableColumnProps[] => [
+const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number }) => void): TableColumnProps[] => [
   {
     label: 'Email',
     field: 'email',
@@ -37,7 +40,7 @@ const columns = (onView: (rowData: ApplicationFormProps) => void): TableColumnPr
     field: 'dateOfBirth',
     sortable: true,
     searchable: true,
-    render(rowData: ApplicationFormProps) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number }) {
       return new Date(rowData.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     }
   },
@@ -82,7 +85,7 @@ const columns = (onView: (rowData: ApplicationFormProps) => void): TableColumnPr
     field: 'yearLevel',
     sortable: true,
     searchable: true,
-    render(rowData: ApplicationFormProps) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number }) {
       return rowData.yearLevel === YearLevel.FirstYear
         ? '1st Year'
         : rowData.yearLevel === YearLevel.SecondYear
@@ -103,14 +106,35 @@ const columns = (onView: (rowData: ApplicationFormProps) => void): TableColumnPr
   {
     label: 'Action',
     field: 'action',
-    render(rowData: ApplicationFormProps) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number }) {
       return (
-        <button type="button" onClick={() => onView(rowData)} title="View and Print Application Form"><EyeIcon className="w-4 h-4" /></button>
+        <button type="button" onClick={() => onView(rowData)} title="View and Print Application Form" className="text-[#00823E]"><EyeIcon className="w-5 h-5 inline" /> View</button>
       )
     }
   }
 ]
+
+function displayFullName(student?: StudentModel & ApplicationFormProps & { age: number }) {
+  if (!student) return undefined
+  return (`${student.lastName}, ${student.firstName} ` +  (student.middleName ? `${student.middleName}` : '')).trim()
+}
+
+function displayYearLevel(yr?: YearLevel) {
+  return YearLevel.FirstYear === yr
+  ? '1st Year'
+  : YearLevel.SecondYear === yr
+  ? '2nd Year'
+  : YearLevel.ThirdYear === yr
+  ? '3rd Year'
+  : YearLevel.FourthYear === yr
+  ? '4th Year'
+  : undefined
+}
+
+const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '700'] })
+
 export default function ApplicationListPage() {
+  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState<boolean>(true)
   const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
   const [data, setData] = useState<StudentModel[]>([])
@@ -134,7 +158,7 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (ApplicationFormProps & { email: string })[] | [], item: StudentModel) => [...init, {...item.applicationForm, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
+      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
       setData(d);
     }
     setLoading(false);
@@ -145,8 +169,19 @@ export default function ApplicationListPage() {
       .then((sy) => fetchData(sy))
   }, [])
 
-  const onView = useCallback((rowData: ApplicationFormProps) => {
-    console.log('Viewing application form for:', rowData)
+  const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number })|undefined>()
+  const onCloseViewModal = () => {
+    setOpenViewModal(undefined)
+  }
+  const onOpenViewModal = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number }) => {
+    if (openDrawer) {
+      toggleDrawer()
+    }
+    setOpenViewModal(rowData)
+  }, [openDrawer, toggleDrawer])
+
+  const onView = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number }) => {
+    setOpenViewModal(rowData)
   }, [])
 
   return (<>
@@ -155,7 +190,111 @@ export default function ApplicationListPage() {
         SCHOLARSHIP APPLICATIONS (A.Y. {schoolYear} - {schoolYear + 1})
       </div>
       { loading && <LoadingSpinnerFull />}
-      <Table columns={columns(onView)} data={data} />
+      <Table columns={columns(onView)} data={data} searchable />
     </div>
+    <Modal title="Scholar Applicant Information" open={!!openViewModal} onClose={onCloseViewModal}>
+      <div className={clsx(montserrat.className, "text-[15px] leading-[19px] w-full p-4")}>
+        <table className="w-full border-collapse">
+          <tbody>
+            <tr>
+              <td colSpan={7} className="text-center">
+                <h1 className="font-[700] mx-auto py-1">Personal Information</h1>
+              </td>
+            </tr>
+            <tr className="*:px-2 border-t border-black">
+              <td className="pt-2 border-l border-black">Name:</td>
+              <td>{displayFullName(openViewModal) || 'N/A'}</td>
+              <td className="border-l border-black">PermanentAddress:</td>
+              <td colSpan={2}>{openViewModal?.permanentAddress || 'N/A'}</td>
+              <td className="border-l border-black">Zip Code:</td>
+              <td className="border-r border-black">{openViewModal?.zipCode || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Date of Birth:</td>
+              <td>{new Date(openViewModal?.dateOfBirth || '1990-01-01').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })?? 'N/A'}</td>
+              <td className="border-l border-black">Present Address:</td>
+              <td colSpan={2}>{openViewModal?.presentAddress || 'N/A'}</td>
+              <td rowSpan={8} className="border-l border-black align-top pt-1">Province:</td>
+              <td rowSpan={8} className="border-r border-black align-top pt-1">{openViewModal?.province || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Place of Birth:</td>
+              <td>{openViewModal?.placeOfBirth || 'N/A'}</td>
+              <td className="border-l border-black">Name of School Attended</td>
+              <td colSpan={2}>{openViewModal?.nameOfSchoolAttended || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Sex:</td>
+              <td>{openViewModal?.sex?? 'N/A'}</td>
+              <td className="border-l border-black">School Address:</td>
+              <td colSpan={2}>{openViewModal?.schoolAddress || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Civil Status:</td>
+              <td>{openViewModal?.civilStatus || 'N/A'}</td>
+              <td className="border-l border-black">School Sector:</td>
+              <td colSpan={2}>{openViewModal?.schoolSector || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Mobile Number:</td>
+              <td>{openViewModal?.mobileNo || 'N/A'}</td>
+              <td className="border-l border-black">Year Level:</td>
+              <td colSpan={2}>{displayYearLevel(openViewModal?.yearLevel) || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Email Address:</td>
+              <td>{openViewModal?.email|| 'N/A'}</td>
+              <td rowSpan={3} className="border-l border-black align-top pt-1">Course:</td>
+              <td colSpan={2} rowSpan={3} className="align-top pt-1">{openViewModal?.course || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Type of Disability (if applicable):</td>
+              <td>{openViewModal?.typeOfDisability || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2 border-b border-black">
+              <td className="py-2 border-l border-black">Tribal Membership (if applicable):</td>
+              <td>{openViewModal?.tribalMembership || 'N/A'}</td>
+            </tr>
+            <tr className="border border-black">
+              <td colSpan={6} className="text-center">
+                <h1 className="font-[700] mx-auto py-1">Family Background</h1>
+              </td>
+            </tr>
+            <tr className="*:px-2 border-t border-black">
+              <td className="pt-2 border-l border-black">&nbsp;</td>
+              <td colSpan={3} className="border-x border-black text-center">Father: ({openViewModal?.fatherLiving ? <CheckIcon className="w-4 h-4 text-green-700 inline" /> : ' '}) Living ({!openViewModal?.fatherLiving ? <CheckIcon className="w-4 h-4 text-green-700 inline" /> : ' '}) Deceased</td>
+              <td colSpan={3} className="border-r border-black text-center">Mother: ({openViewModal?.motherLiving ? <CheckIcon className="w-4 h-4 text-green-700 inline" /> : ' '}) Living ({!openViewModal?.motherLiving ? <CheckIcon className="w-4 h-4 text-green-700 inline" /> : ' '}) Deceased</td>
+            </tr>
+            <tr className="*:px-2 border-t border-black">
+              <td className="pt-2 border-l border-black">Name:</td>
+              <td colSpan={3} className="border-x border-black">{openViewModal?.fatherName || 'N/A'}</td>
+              <td colSpan={3} className="border-r border-black">{openViewModal?.motherName || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Address:</td>
+              <td colSpan={3} className="border-x border-black">{openViewModal?.fatherAddress || 'N/A'}</td>
+              <td colSpan={3} className="border-r border-black">{openViewModal?.motherAddress || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2">
+              <td className="pt-2 border-l border-black">Occupation:</td>
+              <td colSpan={3} className="border-x border-b border-black">{openViewModal?.fatherOccupation || 'N/A'}</td>
+              <td colSpan={3} className="border-r border-b border-black">{openViewModal?.motherOccupation || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2 border-b border-black">
+              <td className="pt-2 border-l border-black">Total Parents Income:</td>
+              <td colSpan={6} className="border-x border-black">{openViewModal?.totalParentGrossIncome?.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' }) || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2 border border-black">
+              <td colSpan={2} className="py-1">No. of Siblings in the family:</td>
+              <td colSpan={5} className="font-[700]">{openViewModal?.siblings || 'N/A'}</td>
+            </tr>
+            <tr className="*:px-2 border border-black">
+              <td colSpan={2} className="py-1">Are you enjoying other educational financial assistance?</td>
+              <td colSpan={5} className="font-[700]">{openViewModal?.otherEducationalFinancialAssistance ? 'YES' : 'NO'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </Modal>
   </>)
 }

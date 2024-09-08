@@ -3,7 +3,7 @@ import { AuthenticationStatus, Roles } from "@app/types";
 import { type JWTPayload } from "jose";
 import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { destroySession, updateSession } from "../lib/session";
+import { destroySession, updateSession } from "@app/lib/session";
 
 export const SessionContext = createContext<{
   error: Error | undefined;
