@@ -12,16 +12,14 @@ export default function Print({ template, data, ...props }: { template: string, 
     <div className="w-[8.5in] h-[13in] p-8 bg-white text-black text-[11pt] font-sans">
       {/* Header */}
       <div className="grid grid-cols-3 items-center pb-2 w-full">
-        {/* <div className="flex items-center space-x-4"> */}
-          <Image width={200} height={200} src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
-          <div className="text-center">
-            <p>The Republic of the Philippines</p>
-            <p>Province of Agusan del Norte</p>
-            <p>Municipality of Buenavista</p>
-            <p className="font-bold">Office of the Municipal Mayor</p>
-          </div>
-          <Image width={200} height={200} src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
-        {/* </div> */}
+        <Image width={200} height={200} src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
+        <div className="text-center">
+          <p>The Republic of the Philippines</p>
+          <p>Province of Agusan del Norte</p>
+          <p>Municipality of Buenavista</p>
+          <p className="font-bold">Office of the Municipal Mayor</p>
+        </div>
+        <Image width={200} height={200} src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
       </div>
 
       {/* Title */}
