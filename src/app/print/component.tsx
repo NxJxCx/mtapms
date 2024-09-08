@@ -48,7 +48,6 @@ export default function Print({ template, data, ...props }: { template: string, 
           <div className="border px-1 col-span-2 text-center">Permanent Address</div>
           <div className="border px-1 text-center">Zip Code</div>
 
-
           <div className="border px-1 row-span-2"><div className="flex h-full items-center">Place of Birth</div></div>
           <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{studentData.placeOfBirth}</div></div>
           <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.presentAddress}</div>
