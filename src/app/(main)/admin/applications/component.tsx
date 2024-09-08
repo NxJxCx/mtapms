@@ -1,5 +1,6 @@
 'use client'
 
+import { displayFullName, displayYearLevel } from "@app/components/display";
 import { LoadingSpinnerFull } from "@app/components/loadings";
 import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
@@ -113,23 +114,6 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     }
   }
 ]
-
-function displayFullName(student?: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
-  if (!student) return undefined
-  return (`${student.lastName}, ${student.firstName} ` +  (student.middleName ? `${student.middleName}` : '')).trim()
-}
-
-function displayYearLevel(yr?: YearLevel) {
-  return YearLevel.FirstYear === yr
-  ? '1st Year'
-  : YearLevel.SecondYear === yr
-  ? '2nd Year'
-  : YearLevel.ThirdYear === yr
-  ? '3rd Year'
-  : YearLevel.FourthYear === yr
-  ? '4th Year'
-  : undefined
-}
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '700'] })
 

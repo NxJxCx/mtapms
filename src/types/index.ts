@@ -28,6 +28,11 @@ export enum YearLevel {
   FourthYear = 4
 }
 
+export enum SchoolSector {
+  Public = 'Public',
+  Private = 'Private',
+}
+
 export enum SubmissionStatus {
   Pending = 'Pending',
   Approved = 'Approved',
@@ -112,8 +117,8 @@ export interface ApplicationFormProps extends BaseDocument {
   mobileNo: string
   nameOfSchoolAttended: string
   schoolAddress: string
-  schoolSector: string
-  yearLevel: YearLevel,
+  schoolSector: SchoolSector
+  yearLevel: YearLevel
   course: string
   tribalMembership?: string
   typeOfDisability?: string

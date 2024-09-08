@@ -2,7 +2,7 @@
 import Buttons from "@app/components/buttons";
 import { LoadingFull } from "@app/components/loadings";
 import Toaster from "@app/components/toaster";
-import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, YearLevel } from "@app/types";
+import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, YearLevel } from "@app/types";
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { ScholarshipApplicationAction } from "./action";
@@ -43,7 +43,7 @@ export default function ApplicationComponent() {
     mobileNo: '',
     nameOfSchoolAttended: '',
     schoolAddress: '',
-    schoolSector: '',
+    schoolSector: SchoolSector.Public,
     yearLevel: YearLevel.FirstYear,
     course: '',
     fatherLiving: false,
@@ -164,7 +164,10 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="schoolSector" className="font-[500]">School Sector:</label>
-              <input type="text" id="schoolSector" name="schoolSector" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolSector} onChange={(e) => setFormData({...formData, schoolSector: e.target.value })} required />
+              <select id="schoolSector" name="schoolSector" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolSector} onChange={(e) => setFormData({...formData, schoolSector: e.target.value as SchoolSector })} required>
+                <option value={SchoolSector.Public}>Public</option>
+                <option value={SchoolSector.Private}>Private</option>
+              </select>
             </div>
             <div>
               <label htmlFor="yearLevel" className="font-[500]">Year Level:</label>

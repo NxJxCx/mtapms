@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { hashPassword } from '@app/lib/hash';
-import { ApplicationFormProps, CivilStatus, Gender, StudentModel } from '@app/types';
+import { ApplicationFormProps, CivilStatus, Gender, SchoolSector, StudentModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 const ApplicationFormSchema = new Schema<ApplicationFormProps>({
@@ -73,6 +73,7 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   schoolSector: {
     type: String,
+    enum: SchoolSector,
     required: [true, 'School Sector is required']
   },
   yearLevel: {
