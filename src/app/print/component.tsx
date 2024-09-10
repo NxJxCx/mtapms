@@ -9,7 +9,7 @@ export default function Print({ template, data, ...props }: { template: string, 
   if (template === 'application') {
     const studentData: StudentModel & ApplicationFormProps & { studentId: string } = data
     return (
-    <div className="w-[8.5in] h-[13in] p-8 bg-white text-black text-[11pt] font-sans">
+    <div className="w-[8.5in] min-h-[13in] bg-white text-black text-[11pt] font-sans">
       {/* Header */}
       <div className="grid grid-cols-3 items-center pb-2 w-full">
         <Image width={200} height={200} src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />

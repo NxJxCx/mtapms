@@ -1,13 +1,17 @@
 'use client';;
+import Print from "@app/app/print/component";
 import Buttons from "@app/components/buttons";
-import { LoadingFull } from "@app/components/loadings";
+import { LoadingFull, LoadingSpinnerFull } from "@app/components/loadings";
 import Toaster from "@app/components/toaster";
-import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, YearLevel } from "@app/types";
-import { useEffect, useMemo, useState } from "react";
+import { useSession } from "@app/lib/useSession";
+import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
+import { PrinterIcon } from "@heroicons/react/16/solid";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { ScholarshipApplicationAction } from "./action";
 
 export default function ApplicationComponent() {
+  const { data: sessionData, status } = useSession({ redirect: false });
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<ScheduleModel|true>()
   const fetchData = () => {
@@ -70,6 +74,39 @@ export default function ApplicationComponent() {
     }
   }, [state, pending])
 
+  const [applicationData, setApplicationData] = useState<StudentModel & ApplicationFormProps & { studentId: string }|undefined>()
+  const fetchApplicationData = useCallback(() => {
+    if (status === 'authenticated' && !!sessionData?.user) {
+      const url = new URL('/api/scholarship/applications/profile/' + (sessionData?.user?._id), window.location.origin);
+      url.searchParams.append('populate', 'schedule')
+      fetch(url)
+        .then(res => res.json())
+        .then(({ data }) => setApplicationData(data))
+        .catch((e) => console.log(e))
+    }
+  }, [sessionData, status])
+  useEffect(() => {
+    fetchApplicationData();
+  }, [fetchApplicationData])
+
+
+  const onPrint = useCallback(() => {
+    const url = new URL('/print', window.location.origin)
+    url.searchParams.append('template', 'application')
+    url.searchParams.append('studentId', applicationData?.studentId || '')
+    url.searchParams.append('academicYear', (applicationData?.scheduleId as ScheduleModel)?.academicYear.toString())
+    // open new window no toolbars for printing only
+    const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
+    if (win) {
+      win.onafterprint = () => {
+        win?.close()
+      }
+      win.onload = () => {
+        win?.print()
+      }
+    }
+  }, [applicationData])
+
   return loading ? <LoadingFull /> : (
     <div className="min-h-[600px] flex flex-col items-center justify-center">
       {!data && (
@@ -79,7 +116,16 @@ export default function ApplicationComponent() {
       )}
       {data === true && (
         <div className="text-xl italic text-gray-500 text-center w-full mt-4">
-          <p className="text-center w-full">Showing Application Form for printing or display only here...</p>
+          {!applicationData ? <LoadingSpinnerFull /> : (
+            <div className="relative font-normal block">
+              <div className="absolute left-4 top-1">
+                <Buttons.SignupButton type="button" onClick={onPrint} label={<div className="font-bold"><PrinterIcon className="w-6 h-6 inline" /> Print</div>} />
+              </div>
+              <div className="mx-auto w-fit shadow border p-8 bg-white">
+                <Print template="application" data={applicationData} />
+              </div>
+            </div>
+          )}
         </div>
       )}
       {data !== true && !!data && (<>
