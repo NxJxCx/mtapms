@@ -32,61 +32,61 @@ export default function Print({ template, data, ...props }: { template: string, 
       <div className="border border-black text-[10pt]">
         <div className="grid grid-cols-5 border-collapse">
           <div className="border px-1 row-span-2"><div className="flex h-full items-center">Name</div></div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.lastName}</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.firstName}</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.middleName}</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.maidenName}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.lastName}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.firstName}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.middleName}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.maidenName}</div>
           <div className="border px-1 text-center text-[8pt]">(Last Name)</div>
           <div className="border px-1 text-center text-[8pt]">(First Name)</div>
           <div className="border px-1 text-center text-[8pt]">(Middle Name)</div>
           <div className="border px-1 text-center text-[6pt]">(Maiden Name for Married Women)</div>
 
           <div className="border px-1 row-span-2"><div className="flex h-full items-center">Date of Birth</div></div>
-          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{(new Date(studentData.dateOfBirth)).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</div></div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.permanentAddress}</div>
-          <div className="border px-1 text-center font-[500] text-wrap break-words">{studentData.zipCode}</div>
+          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{(new Date(studentData?.dateOfBirth)).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</div></div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.permanentAddress}</div>
+          <div className="border px-1 text-center font-[500] text-wrap break-words">{studentData?.zipCode}</div>
           <div className="border px-1 col-span-2 text-center">Permanent Address</div>
           <div className="border px-1 text-center">Zip Code</div>
 
           <div className="border px-1 row-span-2"><div className="flex h-full items-center">Place of Birth</div></div>
-          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{studentData.placeOfBirth}</div></div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.presentAddress}</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.province}</div>
+          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{studentData?.placeOfBirth}</div></div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.presentAddress}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.province}</div>
           <div className="border px-1 col-span-2 text-center">Present Address</div>
           <div className="border px-1 text-center">Province</div>
 
           <div className="border px-1">Sex</div>
           <div className="border px-1 flex">
-            <div>({studentData.sex === Gender.Male ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Male</div>
-            <div className="ml-2">({studentData.sex === Gender.Female ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Female</div>
+            <div>({studentData?.sex === Gender.Male ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Male</div>
+            <div className="ml-2">({studentData?.sex === Gender.Female ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Female</div>
           </div>
           <div className="border px-1 text-[9pt]">Name of School Attended</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.nameOfSchoolAttended}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.nameOfSchoolAttended}</div>
 
           <div className="border px-1">Status</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.civilStatus}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.civilStatus}</div>
           <div className="border px-1">School Address</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.schoolAddress}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.schoolAddress}</div>
 
           <div className="border px-1">Citizenship</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.citizenship}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.citizenship}</div>
           <div className="border px-1">School Sector</div>
           <div className="border px-1 flex text-[9pt]">
-            <div>({studentData.schoolSector === SchoolSector.Public ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Public</div>
-            <div className="ml-2">({studentData.schoolSector === SchoolSector.Private ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Private</div>
+            <div>({studentData?.schoolSector === SchoolSector.Public ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Public</div>
+            <div className="ml-2">({studentData?.schoolSector === SchoolSector.Private ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Private</div>
           </div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.tribalMembership}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.tribalMembership}</div>
 
           <div className="border px-1">Mobile Number</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.mobileNo}</div>
-          <div className="border px-1">Year Level: {displayYearLevel(studentData.yearLevel)}</div>
-          <div className="border px-1">Course: {studentData.course}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.mobileNo}</div>
+          <div className="border px-1">Year Level: {displayYearLevel(studentData?.yearLevel)}</div>
+          <div className="border px-1">Course: {studentData?.course}</div>
           <div className="border px-2 text-center text-[9px]">Tribal Membership (if applicable)</div>
 
           <div className="border px-1">E-mail Address</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words text-[10pt]">{studentData.email}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words text-[10pt]">{studentData?.email}</div>
           <div className="border px-1 text-[9pt]">Type of Disability <br />(if applicable)</div>
-          <div className="border px-1 font-[500] text-wrap break-words">{studentData.typeOfDisability}</div>
+          <div className="border px-1 font-[500] text-wrap break-words">{studentData?.typeOfDisability}</div>
         </div>
       </div>
 
@@ -95,25 +95,25 @@ export default function Print({ template, data, ...props }: { template: string, 
         <div className="text-center font-bold text-[11pt]">FAMILY BACKGROUND</div>
         <div className="grid grid-cols-5 gap-px border border-black">
           <div></div>
-          <div className="border px-1 text-center col-span-2">Father: ({studentData.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
-          <div className="border px-1 text-center col-span-2">Mother: ({studentData.motherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
+          <div className="border px-1 text-center col-span-2">Father: ({studentData?.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData?.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
+          <div className="border px-1 text-center col-span-2">Mother: ({studentData?.motherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData?.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
 
           <div className="border px-1">Name</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.fatherName}</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.motherName}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.fatherName}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.motherName}</div>
 
           <div className="border px-1">Address</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.fatherAddress}</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.motherAddress}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.fatherAddress}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.motherAddress}</div>
 
           <div className="border px-1">Occupation</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.fatherOccupation}</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.motherOccupation}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.fatherOccupation}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.motherOccupation}</div>
 
           <div className="border px-1">Total Parents Gross Income</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData.totalParentGrossIncome.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' })}</div>
-          <div className="border px-1 col-span-2 row-span-2"><div className="flex h-full items-center">No. of Siblings in the Family: <span className="font-[500] text-wrap break-words ml-2">{studentData.siblings}</span></div></div>
-          <div className="border px-1 col-span-3 text-[10pt]">Are you enjoying other educational financial assistance? ({studentData.otherEducationalFinancialAssistance ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Yes ({!studentData.otherEducationalFinancialAssistance ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) No</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.totalParentGrossIncome.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' })}</div>
+          <div className="border px-1 col-span-2 row-span-2"><div className="flex h-full items-center">No. of Siblings in the Family: <span className="font-[500] text-wrap break-words ml-2">{studentData?.siblings}</span></div></div>
+          <div className="border px-1 col-span-3 text-[10pt]">Are you enjoying other educational financial assistance? ({studentData?.otherEducationalFinancialAssistance ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Yes ({!studentData?.otherEducationalFinancialAssistance ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) No</div>
         </div>
       </div>
 
@@ -155,7 +155,7 @@ export default function Print({ template, data, ...props }: { template: string, 
         {/* Date Section */}
         <div className="w-full">
           <div className="mx-auto w-64">
-            <div className="text-center w-64">{(new Date(studentData.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+            <div className="text-center w-64">{(new Date(studentData?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
             <p className="text-center mt-1 border-t border-black w-64">Date Accomplished</p>
           </div>
         </div>

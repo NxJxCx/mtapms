@@ -13,7 +13,6 @@ export async function ScholarshipApplicationAction(scheduleId: string, prevState
     if (session?.user?.role === Roles.Applicant) {
       const data = Object.fromEntries(Object.entries(Object.fromEntries(formData.entries())).map(([key, value]: [string, any]) => [key, (key === 'fatherLiving' || key === 'motherLiving' || key === 'otherEducationalFinancialAssistance') ? (value === 'on' ? true : false) : value]))
       data.scheduleId = scheduleId
-      console.log(data)
       const applicant = await Student.findById(session.user._id).exec()
       if (!!applicant?._id) {
         applicant.applicationForm = { ...data }
