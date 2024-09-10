@@ -78,7 +78,7 @@ export default function DocumentRequirementsPage() {
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
       url.searchParams.append('academicYear', schoolYear.toString())
-      url.searchParams.append('type', studentData?.applicationForm?.yearLevel === YearLevel.FirstYear ? "new_firstYear" : "new")
+      url.searchParams.append('type', studentData?.applicationForm?.yearLevel !== YearLevel.FirstYear ? "applicant" : "applicant_firstYear")
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
