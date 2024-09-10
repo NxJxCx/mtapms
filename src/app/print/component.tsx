@@ -42,7 +42,7 @@ export default function Print({ template, data, ...props }: { template: string, 
           <div className="border px-1 text-center text-[6pt]">(Maiden Name for Married Women)</div>
 
           <div className="border px-1 row-span-2"><div className="flex h-full items-center">Date of Birth</div></div>
-          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{(new Date(studentData?.dateOfBirth)).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</div></div>
+          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{(new Date(studentData?.dateOfBirth))?.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</div></div>
           <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.permanentAddress}</div>
           <div className="border px-1 text-center font-[500] text-wrap break-words">{studentData?.zipCode}</div>
           <div className="border px-1 col-span-2 text-center">Permanent Address</div>
@@ -111,7 +111,7 @@ export default function Print({ template, data, ...props }: { template: string, 
           <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.motherOccupation}</div>
 
           <div className="border px-1">Total Parents Gross Income</div>
-          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.totalParentGrossIncome.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' })}</div>
+          <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.totalParentGrossIncome?.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' })}</div>
           <div className="border px-1 col-span-2 row-span-2"><div className="flex h-full items-center">No. of Siblings in the Family: <span className="font-[500] text-wrap break-words ml-2">{studentData?.siblings}</span></div></div>
           <div className="border px-1 col-span-3 text-[10pt]">Are you enjoying other educational financial assistance? ({studentData?.otherEducationalFinancialAssistance ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Yes ({!studentData?.otherEducationalFinancialAssistance ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) No</div>
         </div>
@@ -155,7 +155,7 @@ export default function Print({ template, data, ...props }: { template: string, 
         {/* Date Section */}
         <div className="w-full">
           <div className="mx-auto w-64">
-            <div className="text-center w-64">{(new Date(studentData?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+            <div className="text-center w-64">{(new Date(studentData?.updatedAt!))?.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
             <p className="text-center mt-1 border-t border-black w-64">Date Accomplished</p>
           </div>
         </div>
