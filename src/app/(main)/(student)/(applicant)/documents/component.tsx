@@ -133,6 +133,8 @@ export default function DocumentRequirementsPage() {
     }
   }, [fileSubmission, selectedRequirement, onCloseModal, refreshData])
 
+  const getURLForSubmission = useCallback((photoId?: string) => (new URL("/api/user/photo/" + photoId, window.location.origin)).toString(), [])
+
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
@@ -177,7 +179,7 @@ export default function DocumentRequirementsPage() {
                 Last update: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
               </div>
               <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
-                <img src={!!selectedRequirement?.submission?.photo ? (new URL("/api/user/photo/" +  selectedRequirement.submission.photo), window.location.origin).toString() : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
+                <img src={!!selectedRequirement?.submission?.photo ? getURLForSubmission(selectedRequirement.submission.photo as string) : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
               </div>
             </div>
           )}
@@ -201,7 +203,7 @@ export default function DocumentRequirementsPage() {
               </div>
             )}
             <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
-              <img src={!!selectedRequirement?.submission?.photo ? (new URL("/api/user/photo/" +  selectedRequirement.submission.photo), window.location.origin).toString() : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
+              <img src={!!selectedRequirement?.submission?.photo ? getURLForSubmission(selectedRequirement.submission.photo as string) : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
             </div>
           </div>
         )}
