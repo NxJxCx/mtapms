@@ -4,7 +4,15 @@ import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
-import { ApplicationFormProps, RequirementModel, RequirementSubmissionModel, Roles, ScheduleModel, StudentModel, SubmissionStatus, YearLevel } from "@app/types";
+import {
+  RequirementModel,
+  RequirementSubmissionModel,
+  Roles,
+  ScheduleModel,
+  StudentModel,
+  SubmissionStatus,
+  YearLevel,
+} from "@app/types";
 import { CheckBadgeIcon, ClockIcon, ExclamationCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import Image from "next/image";
@@ -15,7 +23,6 @@ export default function DocumentRequirementsPage() {
   const { data: sessionData, status } = useSession({ redirect: false })
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Applicant });
   const [loading, setLoading] = useState<boolean>(false)
-  const [studentData, setStudentData] = useState<StudentModel & ApplicationFormProps>();
   const [data, setData] = useState<StudentModel>();
 
   const [syData, setSYData] = useState<ScheduleModel[]>([])
@@ -36,36 +43,33 @@ export default function DocumentRequirementsPage() {
     return ''
   }
 
-  const fetchStudentData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
-    const url = new URL('/api/scholarship/applications', window.location.origin)
-    url.searchParams.append('studentId', sessionData.user._id)
-    url.searchParams.append('academicYear', schoolYear.toString())
-    const response = await fetch(url)
-    if (response.ok) {
-      const { data: st } = await response.json()
-      setStudentData(st)
-    }
-  }, [sessionData.user._id, schoolYear])
-
-  const fetchRequirements = useCallback(async () => {
+    let student = null
+    try {
+      const url = new URL('/api/scholarship/applications', window.location.origin)
+      url.searchParams.append('studentId', sessionData.user._id)
+      url.searchParams.append('academicYear', schoolYear.toString())
+      const response = await fetch(url)
+      if (response.ok) {
+        const { data: st } = await response.json()
+        student = st
+      }
+    } catch (e) {}
     try {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
       url.searchParams.append('academicYear', schoolYear.toString() || '')
-      url.searchParams.append('firstYearOnly', studentData?.yearLevel == YearLevel.FirstYear ? "true" : "false")
+      url.searchParams.append('firstYearOnly', student?.yearLevel == YearLevel.FirstYear ? "true" : "false")
       const response = await fetch(url)
       if (response.ok) {
         const { data: req } = await response.json()
         setRequirements(req)
       }
     } catch (e) {}
-  }, [schoolYear, studentData])
-
-  const fetchData = useCallback(async () => {
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
       url.searchParams.append('academicYear', schoolYear?.toString() || '')
-      url.searchParams.append('type', studentData?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
+      url.searchParams.append('type', student?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
@@ -73,18 +77,13 @@ export default function DocumentRequirementsPage() {
       }
     } catch (e) {}
     setLoading(false)
-  }, [schoolYear, studentData])
+  }, [sessionData.user._id, schoolYear])
 
-  const refreshData = useCallback(async () => {
-    await getSYData()
-    await fetchStudentData()
-  }, [fetchStudentData])
-
-  useEffect(() => {
-    fetchRequirements()
+  const refreshData = useCallback(() => {
+    getSYData()
       .then(fetchData)
       .catch(() => setLoading(false))
-  }, [fetchRequirements, fetchData])
+  }, [fetchData])
 
   useEffect(() => {
     if (status === 'authenticated') {
