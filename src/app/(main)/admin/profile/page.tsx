@@ -1,5 +1,5 @@
-export default function AdminProfilePage() {
-  return (
-    <div>Admin Profile</div>
-  )
+import ProfilePage from "./component";
+
+export default function GranteeProfilePage() {
+  return <ProfilePage />
 }

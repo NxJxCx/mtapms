@@ -60,6 +60,7 @@ export interface AdminModel extends BaseDocument {
   firstName: string
   middleName?: string
   lastName: string
+  photo?: string|FileDocumentModel|null
 }
 
 export interface FileDocumentModel extends BaseDocument {
@@ -142,6 +143,7 @@ export interface StudentModel extends BaseDocument {
   applicationForm?: ApplicationFormProps
   applicationSubmission: string[]|RequirementSubmissionModel[]
   isGrantee: boolean
+  photo?: string|FileDocumentModel|null
 }
 
 export interface AttendanceProps {

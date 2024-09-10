@@ -1,6 +1,6 @@
 'use client';
 import { useSession } from "@app/lib/useSession";
-import { Roles } from "@app/types";
+import { AdminModel, ApplicationFormProps, Roles, StudentModel } from "@app/types";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import Image from "next/image";
@@ -239,6 +239,32 @@ export function SidebarComponent({
   const [hiddenClass, sethiddenClass] = useState("left-0");
   const fullName = useMemo(() => role === Roles.Admin ? sessionData?.user?.firstName?.toUpperCase() + ' ' + sessionData?.user?.lastName?.toUpperCase() : sessionData?.user?.email, [sessionData, role])
 
+  const [user, setUser] = useState<StudentModel & ApplicationFormProps | AdminModel>(sessionData?.user);
+
+  const photoURL = useMemo(() => !!user ? (new URL('/api/user/photo/' + (user.photo || 'default'), window.location.origin)).toString() : '/api/user/photo/default', [user])
+
+  const getUserData = useCallback(() => {
+    if (sessionData?.user?._id) {
+      if (role === Roles.Admin) {
+        const url = new URL('/api/admin/profile/' + (sessionData?.user?._id), window.location.origin);
+        fetch(url)
+          .then(res => res.json())
+          .then(({ data: userData }) => setUser(userData))
+          .catch((e) => console.log(e))
+      } else {
+        const url = new URL('/api/scholarship/applications/profile/' + (sessionData?.user?._id), window.location.origin);
+        fetch(url)
+          .then(res => res.json())
+          .then(({ data: userData }) => setUser(userData))
+          .catch((e) => console.log(e))
+      }
+    }
+  }, [sessionData?.user?._id, role]);
+
+  useEffect(() => {
+    getUserData();
+  }, [getUserData]);
+
   useEffect(() => {
     if (openDrawer) {
       sethiddenClass("left-0");
@@ -271,7 +297,7 @@ export function SidebarComponent({
           </div>
           <div className="absolute top-[8%] right-0 w-0 h-[84%] rounded border-[3px] border-[#00823E]/15 z-0" />
           <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-10 rounded-full" />
-          <Image src={"/default-profile.png"} alt="Profile Image" width={100} height={100} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square" />
+          <img src={photoURL} alt="Profile Image" width={200} height={200} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square bg-white" />
           <h2 className="font-[700] text-[15px] leading-[36px] text-center text-[#1D1D1D] pb-2">{fullName}</h2>
           <div className="w-[100px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
           <div className="h-[16px]" />

@@ -24,6 +24,11 @@ const AdminSchema = new Schema<AdminModel>({
     type: String,
     required: [true, 'Last Name is required']
   },
+  photo: {
+    type: Schema.Types.ObjectId,
+    ref: 'FileDocument',
+    default: null
+  }
 }, {
   timestamps: true
 })

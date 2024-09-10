@@ -1,5 +1,5 @@
-export default function ApplicantProfilePage() {
-  return (
-    <div>Applicant Profile</div>
-  )
+import ProfilePage from "./component";
+
+export default function GranteeProfilePage() {
+  return <ProfilePage />
 }

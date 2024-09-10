@@ -159,6 +159,11 @@ const StudentSchema = new Schema<StudentModel>({
     type: Boolean,
     default: false
   },
+  photo: {
+    type: Schema.Types.ObjectId,
+    ref: 'FileDocument',
+    default: null
+  }
 }, {
   timestamps: true
 })
