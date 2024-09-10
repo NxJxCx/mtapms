@@ -1,5 +1,5 @@
-export default function GranteeDocumentsPage() {
-  return (
-    <div>Grantee Documents</div>
-  )
+import DocumentRequirementsPage from "./component";
+
+export default function ApplicantDocumentsPage() {
+  return <DocumentRequirementsPage />
 }

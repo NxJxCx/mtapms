@@ -1,8 +1,20 @@
 import 'server-only';
 
-import { GranteeModel, Semester, SubmissionStatus } from '@app/types';
+import { GranteeModel, Semester, SubmissionProps, SubmissionStatus } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
+
+const GranteeRequirement = new Schema<SubmissionProps>({
+  photo: {
+    type: Schema.Types.ObjectId,
+    ref: 'File',
+  },
+  status: {
+    type: String,
+    enum: SubmissionStatus,
+    default: SubmissionStatus.Pending,
+  }
+}, { timestamps: true });
 
 const GranteeSchema = new Schema<GranteeModel>({
   studentId: {
@@ -20,50 +32,10 @@ const GranteeSchema = new Schema<GranteeModel>({
     enum: Semester,
     required: [true, 'Semester is required'],
   },
-  COG: {
-    photo: {
-      type: Schema.Types.ObjectId,
-      ref: 'File',
-    },
-    status: {
-      type: String,
-      enum: SubmissionStatus,
-      default: SubmissionStatus.Pending,
-    }
-  },
-  studyLoad: {
-    photo: {
-      type: Schema.Types.ObjectId,
-      ref: 'File',
-    },
-    status: {
-      type: String,
-      enum: SubmissionStatus,
-      default: SubmissionStatus.Pending,
-    }
-  },
-  statementOfAccount: {
-    photo: {
-      type: Schema.Types.ObjectId,
-      ref: 'File',
-    },
-    status: {
-      type: String,
-      enum: SubmissionStatus,
-      default: SubmissionStatus.Pending,
-    }
-  },
-  CONS: {
-    photo: {
-      type: Schema.Types.ObjectId,
-      ref: 'File',
-    },
-    status: {
-      type: String,
-      enum: SubmissionStatus,
-      default: SubmissionStatus.Pending,
-    }
-  },
+  COG: GranteeRequirement,
+  studyLoad: GranteeRequirement,
+  statementOfAccount: GranteeRequirement,
+  CONS: GranteeRequirement,
 }, {
   timestamps: true
 })

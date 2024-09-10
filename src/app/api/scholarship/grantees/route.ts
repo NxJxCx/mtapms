@@ -80,6 +80,18 @@ export async function GET(request: NextRequest) {
         }
       }
       return NextResponse.json({ data: null })
+    } else if (session?.user?.role === Roles.Grantee) {
+      const semester = request.nextUrl.searchParams.get('semester') as Semester|null
+      const schedule = await Schedule.findOne({ academicYear }).exec()
+      if (!!schedule?._id) {
+        const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission').lean<StudentModel>().exec()
+        if (!!student?._id) {
+          const data: (StudentModel & any) = type === 'grantee'
+            ? ({...student, applicationSubmission: [], granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: student._id?.toString() }).exec())})
+            : null
+          return NextResponse.json({ data })
+        }
+      }
     }
   } catch (e) {
     console.log(e)
