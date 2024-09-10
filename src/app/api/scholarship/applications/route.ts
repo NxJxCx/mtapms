@@ -19,6 +19,15 @@ export async function GET(request: NextRequest) {
         const data = await Student.find(filter).select('email applicationForm').exec()
         return NextResponse.json({ data })
       }
+    } else if (session?.user?.role === Roles.Applicant || session?.user?.role === Roles.Grantee) {
+      const studentId = session?.user?._id?.toString()
+      const schedule = await Schedule.findOne({ academicYear }).exec()
+      if (!!schedule?._id) {
+        const student = await Student.findById(studentId).select('email applicationForm').exec()
+        if (!!student && student.applicationForm.scheduleId.toString() === schedule._id.toString()) {
+          return NextResponse.json({ data: student.applicationForm })
+        }
+      }
     }
   } catch (e) {
     console.log(e)

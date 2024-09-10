@@ -22,18 +22,19 @@ export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
     const session = await getSession();
+    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
+    const type = request.nextUrl.searchParams.get('type') as string
     if (session?.user?.role === Roles.Admin) {
-      const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
       const semester = request.nextUrl.searchParams.get('semester') as Semester|null
-      const type = request.nextUrl.searchParams.get('type') as string
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const filter: any = { isGrantee: true }
+        const filter: any = { }
         if (type === 'new_firstYear') {
           filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': YearLevel.FirstYear }]
         } else if (type === 'new') {
           filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': { $ne: YearLevel.FirstYear }}]
         } else {
+          filter.isGrantee = true
           filter.applicationForm = { $exists: true }
         }
         const students = await Student.find(filter).select('email applicationForm isGrantee applicationSubmission').populate('applicationForm.scheduleId applicationSubmission applicationSubmission.requirementId').lean<StudentModel[]>().exec()
@@ -58,6 +59,20 @@ export async function GET(request: NextRequest) {
           : []
         return NextResponse.json({ data })
       }
+    } else if (session?.user?.role === Roles.Applicant) {
+      const schedule = await Schedule.findOne({ academicYear }).exec()
+      if (!!schedule?._id) {
+        const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).lean<StudentModel>().exec()
+        if (!!student?._id) {
+          const data: StudentModel & any = type === 'new_firstYear'
+            ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => (req.requirementId as RequirementModel).forFirstYearOnly) })
+            : type === 'new'
+            ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => !(req.requirementId as RequirementModel).forFirstYearOnly) })
+            : null
+          return NextResponse.json({ data })
+        }
+      }
+      return NextResponse.json({ data: null })
     }
   } catch (e) {
     console.log(e)

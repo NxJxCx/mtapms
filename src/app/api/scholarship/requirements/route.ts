@@ -10,9 +10,9 @@ export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
     const session = await getSession();
-    if (session?.user?.role === Roles.Admin) {
-      const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
-      const forFirstYearOnly = request.nextUrl.searchParams.get('firstYearOnly') === 'true' ? true : request.nextUrl.searchParams.get('firstYearOnly') === 'false' ? false : undefined;
+    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
+    const forFirstYearOnly = request.nextUrl.searchParams.get('firstYearOnly') === 'true' ? true : request.nextUrl.searchParams.get('firstYearOnly') === 'false' ? false : undefined;
+    if ([Roles.Admin, Roles.Applicant, Roles.Grantee].includes(session?.user?.role)) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
         const filter: any = { scheduleId: schedule._id.toString() }

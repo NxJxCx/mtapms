@@ -1,5 +1,5 @@
+import DocumentRequirementsPage from "./component";
+
 export default function ApplicantDocumentsPage() {
-  return (
-    <div>Applicant Documents</div>
-  )
+  return <DocumentRequirementsPage />
 }
