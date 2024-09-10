@@ -242,7 +242,7 @@ export function SidebarComponent({
 
   const [user, setUser] = useState<StudentModel & ApplicationFormProps | AdminModel>(sessionData?.user);
 
-  const photoURL = useMemo(() => !!user ? (new URL('/api/user/photo/' + (user.photo || 'default'), window.location.origin)).toString() : (new URL('/api/user/photo/default', window?.location?.origin)).toString(), [user])
+  const photoURL = useMemo(() => !!user ? (new URL('/api/user/photo/' + (user.photo || 'default'), window.location.origin)).toString() : '/api/user/photo/default', [user])
 
   const getUserData = useCallback(() => {
     if (sessionData?.user?._id) {
