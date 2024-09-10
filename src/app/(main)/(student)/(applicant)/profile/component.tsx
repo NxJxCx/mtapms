@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const { data: sessionData } = useSession({
     redirect: false
   });
+  const [loading, setLoading] = useState<boolean>(true)
   const [photo, setPhoto] = useState<File>();
   const [user, setUser] = useState<StudentModel & ApplicationFormProps>(sessionData?.user);
 
@@ -25,10 +26,11 @@ export default function ProfilePage() {
 
   const getUserData = useCallback(async () => {
     if (!!sessionData?.user?._id) {
+      setLoading(true)
       const url = new URL('/api/scholarship/applications/profile/' + (sessionData?.user?._id), window.location.origin);
       fetch(url)
         .then(res => res.json())
-        .then(({ data }) => setUser(data))
+        .then(({ data }) => { setUser(data); setLoading(false) })
         .catch((e) => console.log(e))
     }
   }, [sessionData?.user?._id])
@@ -77,7 +79,7 @@ export default function ProfilePage() {
       <div className="w-[600px]">
         <div className="bg-[#FECB00] rounded-t-lg h-[103px] w-full"></div>
         <div className="relative bg-white">
-          {!user?.firstName ? <LoadingSpinnerFull /> : (<>
+          {loading ? <LoadingSpinnerFull /> : (<>
             <div className="absolute left-6 -top-[17%] flex gap-x-6">
               <button type="button" onClick={onUpdatePhoto} className="p-1 rounded-full aspect-square w-32 flex justify-center items-center bg-white border shadow even:*:hidden even:*:hover:block" title="upload">
                 <Image src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
@@ -89,7 +91,7 @@ export default function ProfilePage() {
               </form>
               <div className="pt-16 text-[#1D1D1D]">
                 <h1 className="font-[700] uppercase pt-2">
-                  {displayFullName(user as any, true)}
+                  {displayFullName(user as any, true) || '(Please fill up the application form first)'}
                 </h1>
                 <h4 className="text-xs font-[600]">
                   {user?.nameOfSchoolAttended}
@@ -102,7 +104,7 @@ export default function ProfilePage() {
                   Full Name
                 </div>
                 <div className={clsx(roboto.className, "text-[#1D1D1D] uppercase w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
-                  {displayFullName(user as any, true)}
+                  {displayFullName(user as any, true) || ''}
                 </div>
               </div>
               <div className="flex items-center mb-2">
