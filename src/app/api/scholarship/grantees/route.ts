@@ -65,9 +65,9 @@ export async function GET(request: NextRequest) {
         const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission applicationSubmission.requirementId').lean<StudentModel>().exec()
         if (!!student?._id) {
           const data: (StudentModel & any) = type === 'applicant_firstYear'
-            ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => (req.requirementId as RequirementModel).forFirstYearOnly) })
-            : type === 'applicant'
             ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => !(req.requirementId as RequirementModel).forFirstYearOnly) })
+            : type === 'applicant'
+            ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => (req.requirementId as RequirementModel).forFirstYearOnly) })
             : null
           return NextResponse.json({ data })
         }
