@@ -179,7 +179,7 @@ export default function RequirementsPage() {
                   ))}
                 </div>
                 <div className="w-full flex-shrink">
-                  <div className="max-w-64 mx-auto"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new_firstYear')} /></div>
+                  <div className="max-w-64 mx-auto"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new')} /></div>
                 </div>
               </div>
             )}
