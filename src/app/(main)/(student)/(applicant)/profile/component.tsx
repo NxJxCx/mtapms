@@ -1,4 +1,5 @@
-'use client';;
+'use client';
+/* eslint-disable @next/next/no-img-element */
 import { displayFullName } from "@app/components/display";
 import { LoadingSpinnerFull } from "@app/components/loadings";
 import Toaster from "@app/components/toaster";
@@ -81,7 +82,7 @@ export default function ProfilePage() {
           {loading ? <LoadingSpinnerFull /> : (<>
             <div className="absolute left-6 -top-[17%] flex gap-x-6">
               <button type="button" onClick={onUpdatePhoto} className="p-1 rounded-full aspect-square w-32 flex justify-center items-center bg-white border shadow even:*:hidden even:*:hover:block" title="upload">
-                <img src={photoURL} loading="lazy" width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
+                <img src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
                 <ArrowTopRightOnSquareIcon className="absolute w-6 h-6 left-[32%] top-[82%] hover:text-[#606060] text-[#818181]" />
               </button>
               <form method="post" onSubmit={onUpload}>
