@@ -177,7 +177,7 @@ export default function DocumentRequirementsPage() {
                 Last update: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
               </div>
               <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
-                <Image src={!!selectedRequirement?.submission?.photo ? "/api/user/photo/" +  selectedRequirement.submission.photo : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
+                <img src={!!selectedRequirement?.submission?.photo ? (new URL("/api/user/photo/" +  selectedRequirement.submission.photo), window.location.origin).toString() : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
               </div>
             </div>
           )}
