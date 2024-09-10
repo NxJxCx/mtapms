@@ -81,7 +81,7 @@ export default function ProfilePage() {
             <div className="absolute left-6 -top-[17%] flex gap-x-6">
               <button type="button" onClick={onUpdatePhoto} className="p-1 rounded-full aspect-square w-32 flex justify-center items-center bg-white border shadow even:*:hidden even:*:hover:block" title="upload">
               <img src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
-                <ArrowTopRightOnSquareIcon className="absolute w-6 h-6 left-[32%] top-[82%] hover:text-[#606060] text-[#818181]" />
+                <ArrowTopRightOnSquareIcon className="absolute w-6 h-6 left-0 top-[82%] hover:text-[#606060] text-[#818181]" />
               </button>
               <form method="post" onSubmit={onUpload}>
                 <input ref={upRef} type="file" id="photo" name="photo" accept="image/*" onChange={onChangePhoto} hidden />
