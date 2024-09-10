@@ -86,12 +86,12 @@ const sidebarLinks = {
       href: "/admin/dashboard",
     },
     {
-      label: "Requirement Management",
-      href: "/admin/requirements",
-    },
-    {
       label: "Schedules",
       href: "/admin/schedule",
+    },
+    {
+      label: "Requirement Management",
+      href: "/admin/requirements",
     },
     {
       label: "Applications",
