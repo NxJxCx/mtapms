@@ -63,7 +63,6 @@ export async function GET(request: NextRequest) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
         const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission applicationSubmission.requirementId').lean<StudentModel>().exec()
-        console.log(type)
         if (!!student?._id) {
           const data: (StudentModel & any) = type === 'applicant_firstYear'
             ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => (req.requirementId as RequirementModel).forFirstYearOnly) })
