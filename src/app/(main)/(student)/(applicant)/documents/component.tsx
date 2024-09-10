@@ -19,22 +19,9 @@ export default function DocumentRequirementsPage() {
   const [data, setData] = useState<StudentModel>();
 
   const [syData, setSYData] = useState<ScheduleModel[]>([])
-  const schoolYearList = useMemo<number[]>(() => {
-    let sylist: number[] = []
-    if (syData.length > 0) {
-      sylist = syData.map((item: ScheduleModel) => item.academicYear);
-    }
-    const thisYear: number = (new Date()).getFullYear();
-    if (!sylist.includes(thisYear)) {
-      sylist.unshift(thisYear);
-    }
-    sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
-    return sylist
-  }, [syData])
 
-  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const schoolYear = useMemo<number|string>(() => syData?.[0]?.academicYear || (new Date()).getFullYear(), [syData])
   const [requirements, setRequirements] = useState<RequirementModel[]>([]);
-  const scheduleId = useMemo<string>(() => syData.find((item: ScheduleModel) => item.academicYear == parseInt(schoolYear as string))?._id || '', [syData, schoolYear])
 
   const getSYData = async () => {
     setLoading(true)
@@ -148,14 +135,6 @@ export default function DocumentRequirementsPage() {
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
         DOCUMENTS REQUIREMENTS
-      </div>
-      <div className="mb-2">
-        <label htmlFor="schoolYear" className="font-[500] text-[15px] mb-2 mr-2">Select Academic Year:</label>
-        <select id="schoolYear" title="Academic Year" value={schoolYear} onChange={(e) => setSchoolYear(e.target.value)} className="py-1 px-2 bg-white rounded text-center border border-black">
-          {schoolYearList.map((sy: number) => (
-            <option key={sy} value={sy}>A.Y. {sy} - {sy + 1}</option>
-          ))}
-        </select>
       </div>
       <div className="flex flex-wrap justify-start items-start gap-4 p-4">
         { loading && <LoadingSpinner /> }
