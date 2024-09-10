@@ -82,7 +82,7 @@ export default function ProfilePage() {
           {loading ? <LoadingSpinnerFull /> : (<>
             <div className="absolute left-6 -top-[17%] flex gap-x-6">
               <button type="button" onClick={onUpdatePhoto} className="p-1 rounded-full aspect-square w-32 flex justify-center items-center bg-white border shadow even:*:hidden even:*:hover:block" title="upload">
-                <Image src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
+                <Image src={photoURL} loading="lazy" width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
                 <ArrowTopRightOnSquareIcon className="absolute w-6 h-6 left-[32%] top-[82%] hover:text-[#606060] text-[#818181]" />
               </button>
               <form method="post" onSubmit={onUpload}>
@@ -91,7 +91,7 @@ export default function ProfilePage() {
               </form>
               <div className="pt-16 text-[#1D1D1D]">
                 <h1 className="font-[700] uppercase pt-2">
-                  {displayFullName(user as any, true) || '(Please fill up the application form first)'}
+                  {!!user?.firstName ? displayFullName(user as any, true) : '(Please fill up the application form first)'}
                 </h1>
                 <h4 className="text-xs font-[600]">
                   {user?.nameOfSchoolAttended}
@@ -104,7 +104,7 @@ export default function ProfilePage() {
                   Full Name
                 </div>
                 <div className={clsx(roboto.className, "text-[#1D1D1D] uppercase w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
-                  {displayFullName(user as any, true) || ''}
+                  {!!user?.firstName ? displayFullName(user as any) : <>&nbsp;</>}
                 </div>
               </div>
               <div className="flex items-center mb-2">
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                   Address
                 </div>
                 <div className={clsx(roboto.className, "text-[#1D1D1D] uppercase w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
-                  {user?.presentAddress}
+                  {user?.presentAddress || <>&nbsp;</>}
                 </div>
               </div>
               <div className="flex items-center mb-2">
@@ -120,7 +120,7 @@ export default function ProfilePage() {
                   Contact No.
                 </div>
                 <div className={clsx(roboto.className, "text-[#1D1D1D] uppercase w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
-                  {user?.mobileNo}
+                  {user?.mobileNo || <>&nbsp;</>}
                 </div>
               </div>
               <div className="flex items-center mb-2">
@@ -128,7 +128,7 @@ export default function ProfilePage() {
                   Email Address
                 </div>
                 <div className={clsx(roboto.className, "text-[#1D1D1D] w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
-                  {user?.email}
+                  {user?.email || <>&nbsp;</>}
                 </div>
               </div>
               <div className="flex items-center mb-2">
@@ -136,7 +136,7 @@ export default function ProfilePage() {
                   Course
                 </div>
                 <div className={clsx(roboto.className, "text-[#1D1D1D] uppercase w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
-                  {user?.course}
+                  {user?.course || <>&nbsp;</>}
                 </div>
               </div>
             </div>
