@@ -91,7 +91,10 @@ export default function DocumentRequirementsPage() {
     }
   }, [refreshData, status])
 
-  const getRequirementSubmissionFromId = useCallback((reqId?: string): RequirementSubmissionModel|undefined => !reqId ? undefined : (data?.applicationSubmission as RequirementSubmissionModel[])?.find((rs: RequirementSubmissionModel) => rs.requirementId.toString() === reqId), [data])
+  const getRequirementSubmissionFromId = useCallback((reqId?: string): RequirementSubmissionModel|undefined =>
+    !reqId ? undefined : (data?.applicationSubmission as RequirementSubmissionModel[])
+      ?.find((rs: RequirementSubmissionModel) => (rs.requirementId as RequirementModel)?._id?.toString() === reqId)
+  , [data])
 
   const formRef = useRef<HTMLFormElement>(null);
   const [selectedRequirement, setSelectedRequirement] = useState<(RequirementModel & { submission?: RequirementSubmissionModel })|undefined>();

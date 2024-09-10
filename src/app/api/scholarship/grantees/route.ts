@@ -3,6 +3,7 @@
 import mongodbConnect from "@app/lib/db";
 import { getSession } from "@app/lib/session";
 import Grantee from "@app/models/Grantee";
+import Requirement from "@app/models/Requirement";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
 import {
@@ -62,12 +63,18 @@ export async function GET(request: NextRequest) {
     } else if (session?.user?.role === Roles.Applicant) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission applicationSubmission.requirementId').lean<StudentModel>().exec()
+        const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission').lean<StudentModel>().exec()
         if (!!student?._id) {
           const data: (StudentModel & any) = type === 'applicant_firstYear'
-            ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => (req.requirementId as RequirementModel).forFirstYearOnly) })
+            ? ({...student, applicationSubmission: (await Promise.all((student.applicationSubmission as RequirementSubmissionModel[]).map(async (item, i) => {
+              const requirementId = await Requirement.findById(item.requirementId).lean<RequirementModel>().exec()
+              return {...item, requirementId }
+            }))).filter((req) => (req.requirementId as RequirementModel).forFirstYearOnly) })
             : type === 'applicant'
-            ? ({...student, applicationSubmission: (student.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => !(req.requirementId as RequirementModel).forFirstYearOnly) })
+            ? ({...student, applicationSubmission: (await Promise.all((student.applicationSubmission as RequirementSubmissionModel[]).map(async (item, i) => {
+              const requirementId = await Requirement.findById(item.requirementId).lean<RequirementModel>().exec()
+              return {...item, requirementId }
+            }))).filter((req) => !(req.requirementId as RequirementModel).forFirstYearOnly) })
             : null
           return NextResponse.json({ data })
         }
