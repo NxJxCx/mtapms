@@ -166,7 +166,7 @@ export default function DocumentRequirementsPage() {
     </div>
     <Modal title={(!selectedRequirement?.submission || selectedRequirement?.submission?.status === SubmissionStatus.Disapproved) ? 'Submit Requirement' : 'Submitted Requirement'} open={!!selectedRequirement} onClose={onCloseModal}>
       <div className="pt-2 px-6">
-        {(!selectedRequirement?.submission || selectedRequirement?.submission?.status === SubmissionStatus.Disapproved) && (
+        {(!selectedRequirement?.submission || selectedRequirement?.submission?.status === SubmissionStatus.Disapproved) && (<>
           <form ref={formRef} onSubmit={onSubmitRequirement}>
             <label className="block mb-2 font-medium text-gray-900" htmlFor="file_input">Upload submission for <span className="font-bold">{selectedRequirement?.name}</span>:</label>
             <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" aria-describedby="file_input_help" id="file_input" type="file" accept=".png, .jpg, .jpeg" onChange={(e) => setFileSubmission(e.target.files?.[0])} />
@@ -175,14 +175,27 @@ export default function DocumentRequirementsPage() {
               Submit
             </button>
           </form>
-        )}
+          {!!selectedRequirement?.submission && (
+            <div className="font-[500] mt-4 p-2 border border-black rounded">
+              <div className="text-gray-500">
+                Submission status: <span className="text-red-500">{SubmissionStatus[selectedRequirement?.submission?.status]}</span>
+              </div>
+              <div className="text-gray-500">
+                Last update: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+              </div>
+              <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
+                <Image src={!!selectedRequirement?.submission?.photo ? "/api/user/photo/" +  selectedRequirement.submission.photo : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
+              </div>
+            </div>
+          )}
+        </>)}
         {(selectedRequirement?.submission?.status === SubmissionStatus.Pending || selectedRequirement?.submission?.status === SubmissionStatus.Approved) && (
           <div className="font-[500]">
             <div className="text-gray-500">
               Submission status: {SubmissionStatus[selectedRequirement?.submission?.status]}
             </div>
             <div className="mt-4 text-gray-500">
-              Submission date: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+              Last update: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
             </div>
             {selectedRequirement?.submission?.status === SubmissionStatus.Pending && (
               <div className="mt-4 text-center text-white bg-gray-600 rounded p-1">
