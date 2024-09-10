@@ -34,7 +34,7 @@ export default function DocumentRequirementsPage() {
 
   const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
   const [requirements, setRequirements] = useState<RequirementModel[]>([]);
-  const scheduleId = useMemo<string>(() => syData.find((item: ScheduleModel) => item.academicYear === parseInt(schoolYear as string))?._id || '', [syData, schoolYear])
+  const scheduleId = useMemo<string>(() => syData.find((item: ScheduleModel) => item.academicYear == parseInt(schoolYear as string))?._id || '', [syData, schoolYear])
 
   const getSYData = async () => {
     setLoading(true)
@@ -65,7 +65,7 @@ export default function DocumentRequirementsPage() {
     try {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
       url.searchParams.append('academicYear', schoolYear.toString())
-      url.searchParams.append('firstYearOnly', studentData?.applicationForm?.yearLevel === YearLevel.FirstYear ? "true" : "false")
+      url.searchParams.append('firstYearOnly', studentData?.applicationForm?.yearLevel == YearLevel.FirstYear ? "true" : "false")
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
@@ -78,7 +78,7 @@ export default function DocumentRequirementsPage() {
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
       url.searchParams.append('academicYear', schoolYear.toString())
-      url.searchParams.append('type', studentData?.applicationForm?.yearLevel !== YearLevel.FirstYear ? "applicant" : "applicant_firstYear")
+      url.searchParams.append('type', studentData?.applicationForm?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
