@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params: { adminId }}: ParamPro
   try {
     const session = await getSession();
     if (session?.user?.role === Roles.Admin && isObjectIdOrHexString(adminId)) {
-      const data = await  Admin.findById(adminId).select('email applicationForm photo').lean<AdminModel>().exec()
+      const data = await  Admin.findById(adminId).select('employeeId firstName lastName photo').lean<AdminModel>().exec()
       return NextResponse.json({ data })
     }
   } catch (e) {

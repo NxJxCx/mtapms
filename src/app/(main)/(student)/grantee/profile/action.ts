@@ -25,7 +25,7 @@ async function savePhotoToDatabase(photo: File, userId: string): Promise<boolean
   } catch (e) {}
   try {
     if (!!photoFile?._id) {
-      const updatedUser = await Student.updateOne({_id: userId, photo: photoFile._id }).exec()
+      const updatedUser = await Student.updateOne({_id: userId }, { photo: photoFile._id }, { upsert: false, runValidators: true }).exec()
       if (updatedUser.acknowledged && updatedUser.modifiedCount > 0) {
         // success
         return true
@@ -41,7 +41,7 @@ async function savePhotoToDatabase(photo: File, userId: string): Promise<boolean
   return false
 }
 
-export async function uploadPhoto(formData: FormData): Promise<ActionResponseInterface>
+export async function uploadPhoto(prevPhoto: string, formData: FormData): Promise<ActionResponseInterface>
 {
   await mongodbConnect()
   try {
@@ -56,6 +56,9 @@ export async function uploadPhoto(formData: FormData): Promise<ActionResponseInt
     if (!!photo) {
       const uploaded = await savePhotoToDatabase(photo as File, session.user._id)
       if (uploaded) {
+        if (!!prevPhoto) {
+          await FileDocument.findByIdAndDelete(prevPhoto)
+        }
         return {
           success: 'Profile Photo changed successfully',
         }

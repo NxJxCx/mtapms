@@ -1,14 +1,19 @@
 'use client';;
 import { LoadingSpinner } from "@app/components/loadings";
+import { Modal } from "@app/components/modals";
+import { useSidebar } from "@app/components/sidebar";
+import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
-import { RequirementModel, RequirementSubmissionModel, ScheduleModel, StudentModel, SubmissionStatus, YearLevel } from "@app/types";
+import { RequirementModel, RequirementSubmissionModel, Roles, ScheduleModel, StudentModel, SubmissionStatus, YearLevel } from "@app/types";
 import { CheckBadgeIcon, ClockIcon, ExclamationCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { uploadSubmission } from "./action";
 
 export default function DocumentRequirementsPage() {
   const { data: sessionData, status } = useSession({ redirect: false })
+  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Applicant });
   const [loading, setLoading] = useState<boolean>(false)
   const [studentData, setStudentData] = useState<StudentModel>();
   const [data, setData] = useState<StudentModel>();
@@ -83,18 +88,59 @@ export default function DocumentRequirementsPage() {
     setLoading(false)
   }, [schoolYear, studentData?.applicationForm?.yearLevel])
 
-  useEffect(() => {
+  const refreshData = useCallback(() => {
     getSYData()
       .then(fetchStudentData)
       .then(fetchRequirements)
       .then(fetchData)
       .catch((e) => { setLoading(false); console.log(e) })
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchStudentData, fetchRequirements, fetchData])
+
+  useEffect(() => {
+    refreshData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schoolYear, status])
 
   const getRequirementSubmissionFromId = useCallback((reqId?: string): RequirementSubmissionModel|undefined => !reqId ? undefined : (data?.applicationSubmission as RequirementSubmissionModel[])?.find((rs: RequirementSubmissionModel) => rs.requirementId.toString() === reqId), [data])
 
-  return (
+  const formRef = useRef<HTMLFormElement>(null);
+  const [selectedRequirement, setSelectedRequirement] = useState<(RequirementModel & { submission?: RequirementSubmissionModel })|undefined>();
+
+  const onSelectedRequirement = useCallback((req: RequirementModel & { submission?: RequirementSubmissionModel }) => {
+    if (openDrawer) {
+      toggleDrawer()
+    }
+    setSelectedRequirement(req)
+  }, [openDrawer, toggleDrawer])
+
+  const onCloseModal = useCallback(() => {
+    formRef.current?.reset();
+    setTimeout(() => setSelectedRequirement(undefined), 100)
+  }, [])
+
+  const [fileSubmission, setFileSubmission] = useState<File|undefined>()
+
+  const onSubmitRequirement = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!fileSubmission) {
+      Toaster.error('Please select a file to submit.')
+      return
+    }
+    const formData = new FormData();
+    formData.append('file', fileSubmission, fileSubmission.name)
+    const upload = uploadSubmission.bind(null, selectedRequirement!._id!)
+    const { success, error } = await upload(formData)
+    if (error) {
+      Toaster.error(error)
+    } else if (success) {
+      Toaster.success(success)
+      refreshData()
+      formRef.current?.reset();
+      setTimeout(() => onCloseModal(), 100);
+    }
+  }, [fileSubmission, selectedRequirement, onCloseModal, refreshData])
+
+  return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
         DOCUMENTS REQUIREMENTS
@@ -103,7 +149,7 @@ export default function DocumentRequirementsPage() {
         { loading && <LoadingSpinner /> }
         {/* Document cards */}
         { !loading && requirements.map((req: RequirementModel) => (
-          <button key={req._id} type="button" className="relative w-[200px] bg-[#F9F9F9] border rounded-lg shadow-md p-6" title={!getRequirementSubmissionFromId(req._id) ? 'Submission needed' : getRequirementSubmissionFromId(req._id)!.status}>
+          <button key={req._id} type="button" onClick={() => onSelectedRequirement({...req, submission: getRequirementSubmissionFromId(req._id) })} className={clsx("relative w-[200px] bg-[#F9F9F9] border rounded-lg shadow-md p-6", selectedRequirement?._id === req._id ? 'bg-yellow-100' : '')} title={!getRequirementSubmissionFromId(req._id) ? 'Submission needed' : getRequirementSubmissionFromId(req._id)!.status}>
             <ExclamationCircleIcon className={clsx("absolute top-2 right-2 w-10 h-10 text-yellow-500", !getRequirementSubmissionFromId(req._id) ? '' : 'hidden')} />
             <ClockIcon className={clsx("absolute top-2 right-2 w-10 h-10 text-gray-500", getRequirementSubmissionFromId(req._id)?.status === SubmissionStatus.Pending ? '' : 'hidden')} />
             <CheckBadgeIcon className={clsx("absolute top-2 right-2 w-10 h-10 text-green-500", getRequirementSubmissionFromId(req._id)?.status === SubmissionStatus.Approved ? '' : 'hidden')} />
@@ -118,5 +164,45 @@ export default function DocumentRequirementsPage() {
         { !loading && requirements.length === 0 && <div className="text-center text-gray-500">Nothing to submit here.</div> }
       </div>
     </div>
-  )
+    <Modal title={(!selectedRequirement?.submission || selectedRequirement?.submission?.status === SubmissionStatus.Disapproved) ? 'Submit Requirement' : 'Submitted Requirement'} open={!!selectedRequirement} onClose={onCloseModal}>
+      <div className="pt-2 px-6">
+        {(!selectedRequirement?.submission || selectedRequirement?.submission?.status === SubmissionStatus.Disapproved) && (
+          <form ref={formRef} onSubmit={onSubmitRequirement}>
+            <label className="block mb-2 font-medium text-gray-900" htmlFor="file_input">Upload submission for <span className="font-bold">{selectedRequirement?.name}</span>:</label>
+            <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" aria-describedby="file_input_help" id="file_input" type="file" accept=".png, .jpg, .jpeg" onChange={(e) => setFileSubmission(e.target.files?.[0])} />
+            <p className="mt-1 text-sm text-gray-500 mb-4" id="file_input_help">PNG or JPG</p>
+            <button  type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+              Submit
+            </button>
+          </form>
+        )}
+        {(selectedRequirement?.submission?.status === SubmissionStatus.Pending || selectedRequirement?.submission?.status === SubmissionStatus.Approved) && (
+          <div className="font-[500]">
+            <div className="text-gray-500">
+              Submission status: {SubmissionStatus[selectedRequirement?.submission?.status]}
+            </div>
+            <div className="mt-4 text-gray-500">
+              Submission date: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+            </div>
+            {selectedRequirement?.submission?.status === SubmissionStatus.Pending && (
+              <div className="mt-4 text-center text-white bg-gray-600 rounded p-1">
+                <ClockIcon className="inline w-4 h-4 mr-2" />Please wait for approval.
+              </div>
+            )}
+            {selectedRequirement?.submission?.status === SubmissionStatus.Approved && (
+              <div className="mt-4 text-center text-green-600 rounded p-1">
+                <CheckBadgeIcon className="inline w-4 h-4 mr-2"/> Submission approved.
+              </div>
+            )}
+            <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
+              <Image src={!!selectedRequirement?.submission?.photo ? "/api/user/photo/" +  selectedRequirement.submission.photo : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
+            </div>
+          </div>
+        )}
+        <div className="p-2 flex justify-end items-center mt-2">
+          <button type="button" title="Close" className="border border-gray-500 px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 font-[500]" onClick={onCloseModal}>Close</button>
+        </div>
+      </div>
+    </Modal>
+  </>)
 }

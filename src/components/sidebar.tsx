@@ -241,7 +241,7 @@ export function SidebarComponent({
 
   const [user, setUser] = useState<StudentModel & ApplicationFormProps | AdminModel>(sessionData?.user);
 
-  const photoURL = useMemo(() => !!user ? (new URL('/api/user/photo/' + (user.photo || 'default'), window.location.origin)).toString() : '/api/user/photo/default', [user])
+  const photoURL = useMemo(() => !!user ? '/api/user/photo/' + (user.photo || 'default') : '/api/user/photo/default', [user])
 
   const getUserData = useCallback(() => {
     if (sessionData?.user?._id) {
@@ -297,7 +297,7 @@ export function SidebarComponent({
           </div>
           <div className="absolute top-[8%] right-0 w-0 h-[84%] rounded border-[3px] border-[#00823E]/15 z-0" />
           <Image src="/municipal-logo.svg" alt="Municipal Logo" width={85} height={85} priority={true} className="mx-auto py-10 rounded-full" />
-          <img src={photoURL} alt="Profile Image" width={200} height={200} loading={"lazy"} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square bg-white" />
+          <Image src={photoURL} alt="Profile Image" width={200} height={200} className="w-[70px] h-[70px] mx-auto rounded-full aspect-square bg-white" />
           <h2 className="font-[700] text-[15px] leading-[36px] text-center text-[#1D1D1D] pb-2">{fullName}</h2>
           <div className="w-[100px] bg-[gold] capitalize font-[500] leading-[36px] text-[14px] rounded-2xl text-center mx-auto">{role}</div>
           <div className="h-[16px]" />

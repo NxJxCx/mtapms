@@ -7,6 +7,7 @@ import { AdminModel } from "@app/types";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { Roboto } from "next/font/google";
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { uploadPhoto } from "./action";
 
@@ -20,11 +21,11 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState<File>();
   const [user, setUser] = useState<AdminModel>(sessionData?.user);
 
-  const photoURL = useMemo(() => !!user ? (new URL('/api/user/photo/' + (user.photo || 'default'), window.location.origin)).toString() : (new URL('/api/user/photo/default', window.location.origin)).toString(), [user])
+  const photoURL = useMemo(() => !!user ? '/api/user/photo/' + (user.photo || 'default') : '/api/user/photo/default', [user])
 
-  const getUserData = useCallback(() => {
+  const getUserData = useCallback(async () => {
     if (!!sessionData?.user?._id) {
-      const url = new URL('/api/scholarship/applications/profile/' + (sessionData?.user?._id), window.location.origin);
+      const url = new URL('/api/admin/profile/' + (sessionData?.user?._id), window.location.origin);
       fetch(url)
         .then(res => res.json())
         .then(({ data }) => setUser(data))
@@ -57,19 +58,20 @@ export default function ProfilePage() {
     }
     const formData = new FormData();
     formData.append('photo', photo, photo.name);
-    const { success, error } = await uploadPhoto(formData)
+    const upload = uploadPhoto.bind(null, user!.photo as string);
+    const { success, error } = await upload(formData)
     if (error) {
       Toaster.error(error);
     } else if (success) {
       Toaster.success(success);
       setTimeout(() => getUserData(), 100);
     }
-  }, [photo])
+  }, [photo, getUserData, user])
 
   return (
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
-        SCHOLAR PROFILE INFORMATION
+        PROFILE INFORMATION
       </div>
       {/* Profile information */}
       <div className="w-[600px]">
@@ -78,7 +80,7 @@ export default function ProfilePage() {
           {!user?.firstName ? <LoadingSpinnerFull /> : (<>
             <div className="absolute left-6 -top-[17%] flex gap-x-6">
               <button type="button" onClick={onUpdatePhoto} className="p-1 rounded-full aspect-square w-32 flex justify-center items-center bg-white border shadow even:*:hidden even:*:hover:block" title="upload">
-                <img src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
+                <Image src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
                 <ArrowTopRightOnSquareIcon className="absolute w-6 h-6 left-[32%] top-[82%] hover:text-[#606060] text-[#818181]" />
               </button>
               <form method="post" onSubmit={onUpload}>
