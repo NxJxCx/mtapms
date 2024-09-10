@@ -92,15 +92,15 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   fatherName: {
     type: String,
-    required: [true, 'Father Name is required']
+    default: ''
   },
   fatherAddress: {
     type: String,
-    required: [true, 'Father Address is required']
+    default: ''
   },
   fatherOccupation: {
     type: String,
-    required: [true, 'Father Occupation is required']
+    default: ''
   },
   motherLiving: {
     type: Boolean,
@@ -108,15 +108,15 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   motherName: {
     type: String,
-    required: [true, 'Mother Name is required']
+    default: ''
   },
   motherAddress: {
     type: String,
-    required: [true, 'Mother Address is required']
+    default: ''
   },
   motherOccupation: {
     type: String,
-    required: [true, 'Mother Occupation is required']
+    default: ''
   },
   totalParentGrossIncome: {
     type: Number,
