@@ -4,7 +4,7 @@ import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
-import { RequirementModel, RequirementSubmissionModel, Roles, ScheduleModel, StudentModel, SubmissionStatus, YearLevel } from "@app/types";
+import { ApplicationFormProps, RequirementModel, RequirementSubmissionModel, Roles, ScheduleModel, StudentModel, SubmissionStatus, YearLevel } from "@app/types";
 import { CheckBadgeIcon, ClockIcon, ExclamationCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import Image from "next/image";
@@ -15,7 +15,7 @@ export default function DocumentRequirementsPage() {
   const { data: sessionData, status } = useSession({ redirect: false })
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Applicant });
   const [loading, setLoading] = useState<boolean>(false)
-  const [studentData, setStudentData] = useState<StudentModel>();
+  const [studentData, setStudentData] = useState<StudentModel & ApplicationFormProps>();
   const [data, setData] = useState<StudentModel>();
 
   const [syData, setSYData] = useState<ScheduleModel[]>([])
@@ -43,33 +43,33 @@ export default function DocumentRequirementsPage() {
     if (response.ok) {
       const { data: d } = await response.json()
       setSYData(d)
+      setLoading(false)
+      return d
     }
-    setLoading(false)
+    return ''
   }
 
   const fetchStudentData = useCallback(async () => {
     setLoading(true)
-    if (status === 'authenticated') {
-      const url = new URL('/api/scholarship/applications', window.location.origin)
-      url.searchParams.append('studentId', sessionData.studentId)
-      url.searchParams.append('academicYear', schoolYear.toString())
-      const response = await fetch(url)
-      if (response.ok) {
-        const { data: d } = await response.json()
-        setStudentData(d)
-      }
+    const url = new URL('/api/scholarship/applications', window.location.origin)
+    url.searchParams.append('studentId', sessionData.user._id)
+    url.searchParams.append('academicYear', schoolYear.toString())
+    const response = await fetch(url)
+    if (response.ok) {
+      const { data: st } = await response.json()
+      setStudentData(st)
     }
-  }, [status, sessionData.studentId, schoolYear])
+  }, [sessionData.user._id, schoolYear])
 
   const fetchRequirements = useCallback(async () => {
     try {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
-      url.searchParams.append('academicYear', schoolYear.toString())
-      url.searchParams.append('firstYearOnly', studentData?.applicationForm?.yearLevel == YearLevel.FirstYear ? "true" : "false")
+      url.searchParams.append('academicYear', schoolYear.toString() || '')
+      url.searchParams.append('firstYearOnly', studentData?.yearLevel == YearLevel.FirstYear ? "true" : "false")
       const response = await fetch(url)
       if (response.ok) {
-        const { data: d } = await response.json()
-        setRequirements(d)
+        const { data: req } = await response.json()
+        setRequirements(req)
       }
     } catch (e) {}
   }, [schoolYear, studentData])
@@ -77,8 +77,8 @@ export default function DocumentRequirementsPage() {
   const fetchData = useCallback(async () => {
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
-      url.searchParams.append('academicYear', schoolYear.toString())
-      url.searchParams.append('type', studentData?.applicationForm?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
+      url.searchParams.append('academicYear', schoolYear?.toString() || '')
+      url.searchParams.append('type', studentData?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
@@ -86,20 +86,24 @@ export default function DocumentRequirementsPage() {
       }
     } catch (e) {}
     setLoading(false)
-  }, [schoolYear, studentData?.applicationForm?.yearLevel])
+  }, [schoolYear, studentData])
 
-  const refreshData = useCallback(() => {
-    getSYData()
-      .then(fetchStudentData)
-      .then(fetchRequirements)
-      .then(fetchData)
-      .catch((e) => { setLoading(false); console.log(e) })
-  }, [fetchStudentData, fetchRequirements, fetchData])
+  const refreshData = useCallback(async () => {
+    await getSYData()
+    await fetchStudentData()
+  }, [fetchStudentData])
 
   useEffect(() => {
-    refreshData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [schoolYear, status])
+    fetchRequirements()
+      .then(fetchData)
+      .catch(() => setLoading(false))
+  }, [fetchRequirements, fetchData])
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      refreshData()
+    }
+  }, [refreshData, status])
 
   const getRequirementSubmissionFromId = useCallback((reqId?: string): RequirementSubmissionModel|undefined => !reqId ? undefined : (data?.applicationSubmission as RequirementSubmissionModel[])?.find((rs: RequirementSubmissionModel) => rs.requirementId.toString() === reqId), [data])
 
@@ -144,6 +148,14 @@ export default function DocumentRequirementsPage() {
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
         DOCUMENTS REQUIREMENTS
+      </div>
+      <div className="mb-2">
+        <label htmlFor="schoolYear" className="font-[500] text-[15px] mb-2 mr-2">Select Academic Year:</label>
+        <select id="schoolYear" title="Academic Year" value={schoolYear} onChange={(e) => setSchoolYear(e.target.value)} className="py-1 px-2 bg-white rounded text-center border border-black">
+          {schoolYearList.map((sy: number) => (
+            <option key={sy} value={sy}>A.Y. {sy} - {sy + 1}</option>
+          ))}
+        </select>
       </div>
       <div className="flex flex-wrap justify-start items-start gap-4 p-4">
         { loading && <LoadingSpinner /> }
