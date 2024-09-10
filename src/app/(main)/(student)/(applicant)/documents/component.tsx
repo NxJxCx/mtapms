@@ -81,7 +81,7 @@ export default function DocumentRequirementsPage() {
       }
     } catch (e) {}
     setLoading(false)
-  }, [schoolYear])
+  }, [schoolYear, studentData?.applicationForm?.yearLevel])
 
   useEffect(() => {
     getSYData()
@@ -89,7 +89,8 @@ export default function DocumentRequirementsPage() {
       .then(fetchRequirements)
       .then(fetchData)
       .catch((e) => { setLoading(false); console.log(e) })
-  }, [fetchData])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [schoolYear, status])
 
   const getRequirementSubmissionFromId = useCallback((reqId?: string): RequirementSubmissionModel|undefined => !reqId ? undefined : (data?.applicationSubmission as RequirementSubmissionModel[])?.find((rs: RequirementSubmissionModel) => rs.requirementId.toString() === reqId), [data])
 
@@ -114,6 +115,7 @@ export default function DocumentRequirementsPage() {
             <p className="text-xs w-full text-start pt-1">{req.description}</p>
           </button>
         ))}
+        { !loading && requirements.length === 0 && <div className="text-center text-gray-500">Nothing to submit here.</div> }
       </div>
     </div>
   )
