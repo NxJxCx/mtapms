@@ -274,11 +274,14 @@ export default function ApplicationComponent() {
             </>)}
             <div>
               <label htmlFor="totalParentGrossIncome" className="font-[500]">Total Parent Gross Income:</label>
-              <input type="number" min={0} id="totalParentGrossIncome" name="totalParentGrossIncome" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.totalParentGrossIncome} onChange={(e) => setFormData({ ...formData, totalParentGrossIncome: e.target.value !== '' ? parseFloat(e.target.value) : 0 })} required />
+              <div className="flex justify-start items-center">
+                <span className="font-bold max-w-4 mr-2">&#8369;</span>
+                <input type="number" min={0} id="totalParentGrossIncome" name="totalParentGrossIncome" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.totalParentGrossIncome === 0 ? '' : formData.totalParentGrossIncome} onChange={(e) => setFormData({ ...formData, totalParentGrossIncome: e.target.value !== '' ? parseFloat(e.target.value) : 0 })} required />
+              </div>
             </div>
             <div>
               <label htmlFor="siblings" className="font-[500]">Number of Siblings:</label>
-              <input type="tel" min={0} max={15} id="siblings" name="siblings" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.siblings} onChange={(e) => setFormData({ ...formData, siblings: e.target.value !== '' ? parseInt(e.target.value) : 0 })} required />
+              <input type="number" min={0} max={15} id="siblings" name="siblings" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.siblings} onChange={(e) => setFormData({ ...formData, siblings: e.target.value !== '' ? parseInt(e.target.value) : 0 })} required />
             </div>
             <div className="col-span-3">
               <label htmlFor="otherEducationalFinancialAssistance" className="font-[500] max-w-32 text-wrap cursor-pointer mr-2">Are you enjoying other educational financial assistance?</label>
