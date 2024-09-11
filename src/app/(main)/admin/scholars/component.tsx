@@ -53,6 +53,12 @@ const getApplicantRequirements = async (academicYear: number, firstYearOnly: boo
 
 const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academicYear: number, onViewSubmission?: (req: RequirementModel, student: StudentModel, data?: RequirementSubmissionModel) => void, onViewGranteeSubmission?: (key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel, student: StudentModel) => void): Promise<TableColumnProps[]> => ([
   {
+    label: 'Student ID',
+    field: 'studentId',
+    sortable: true,
+    searchable: true
+  },
+  {
     label: 'Last Name',
     field: 'lastName',
     sortable: true,

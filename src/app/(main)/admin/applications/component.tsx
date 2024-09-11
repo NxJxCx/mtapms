@@ -14,6 +14,12 @@ import { useCallback, useEffect, useState } from "react";
 
 const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) => void): TableColumnProps[] => [
   {
+    label: 'Student ID',
+    field: 'studentId',
+    sortable: true,
+    searchable: true
+  },
+  {
     label: 'Email',
     field: 'email',
     sortable: true,
