@@ -188,8 +188,9 @@ export default function ScholarListPage() {
     }
     const url3 = new URL('/api/scholarship/grantees', window.location.origin)
     url3.searchParams.append('academicYear', schoolYear.toString())
-    url2.searchParams.append('semester', semester.toString())
+    url3.searchParams.append('semester', semester.toString())
     url3.searchParams.append('type', 'grantee')
+    console.log(url3.toString())
     const response3 = await fetch(url3)
     if (response3.ok) {
       const { data } = await response3.json()
