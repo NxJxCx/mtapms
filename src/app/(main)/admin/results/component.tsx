@@ -1,11 +1,13 @@
-'use client'
-
-import { LoadingSpinnerFull } from "@app/components/loadings";
+'use client';
+import { LoadingSpinner } from "@app/components/loadings";
+import { Modal } from "@app/components/modals";
+import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
 import Toaster from "@app/components/toaster";
-import { ScheduleModel } from "@app/types";
+import { Roles, ScheduleModel } from "@app/types";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { grantScholarship } from "./action";
 
 function getRankString(num: number): string {
   if (typeof num !== 'number' || num < 1 || !Number.isInteger(num)) {
@@ -169,6 +171,7 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
 ] as TableColumnProps[])
 
 export default function ResultsPage() {
+  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin})
   const [loading, setLoading] = useState(false)
   const [syData, setSYData] = useState<ScheduleModel[]>([])
   const schoolYearList = useMemo<number[]>(() => {
@@ -229,14 +232,38 @@ export default function ResultsPage() {
     fetchResultData()
   }, [fetchResultData])
 
+  const [selectedDecideGrant, setSelectedDecideGrant] = useState<any>()
+
   const onDecideGrant = useCallback((rowData: any) => {
     if (!isOpenSlots) {
       Toaster.info('You cannot grant grants when slots are closed.')
       return
     }
-  }, [isOpenSlots])
+    if (openDrawer) toggleDrawer();
+    setSelectedDecideGrant(rowData)
+  }, [isOpenSlots, openDrawer, toggleDrawer])
 
-  return (
+  const onCloseModal = useCallback(() => {
+    setSelectedDecideGrant(undefined)
+  }, [])
+
+  const handleGrant = useCallback(async () => {
+    if (!!selectedDecideGrant) {
+      const grantStudent = grantScholarship.bind(null, scheduleId, selectedDecideGrant._id)
+      const { success, error } = await grantStudent()
+      if (error) {
+        Toaster.error(error)
+      } else if (success) {
+        Toaster.success(success)
+        setTimeout(() => {
+          fetchResultData()
+        }, 500);
+      }
+    }
+    onCloseModal()
+  }, [selectedDecideGrant, scheduleId])
+
+  return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
         Scholarship Results (A.Y. {schoolYear} - {parseInt(schoolYear as string) + 1})
@@ -249,7 +276,7 @@ export default function ResultsPage() {
           ))}
         </select>
       </div>
-      { loading && <LoadingSpinnerFull />}
+      { loading && <div className="mb-4"><LoadingSpinner /></div>}
       { !loading && (
         <h2 className="font-[500] my-4 text-lg">Available Slots: {filledSlots} / {totalSlots} <span className={clsx(
           "ml-4 px-2 py-1 rounded border",
@@ -274,5 +301,16 @@ export default function ResultsPage() {
         ]}
       />
     </div>
-  )
+    <Modal title="Grant Scholar to student?" open={!!selectedDecideGrant} onClose={onCloseModal}>
+      <div className="p-4">
+          <div>Do you want <span className="text-green-900 bg-green-100 px-2 py-1 rounded font-[600]">{selectedDecideGrant?.fullName}&nbsp;
+          (Student ID: {selectedDecideGrant?.studentId})</span> for scholarship grant?</div>
+          <p>This is irreversible</p>
+          <div className="flex justify-end gap-x-4 mt-4">
+            <button type="button" className="px-4 py-2 rounded bg-green-700 text-white font-medium" onClick={handleGrant}>Yes, Grant Scholarship</button>
+            <button type="button" className="px-4 py-2 rounded bg-red-500 text-white font-medium" onClick={onCloseModal}>No, Cancel</button>
+          </div>
+      </div>
+    </Modal>
+  </>)
 }
