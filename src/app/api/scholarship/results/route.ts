@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
       const scheduleId = request.nextUrl.searchParams.get('id')
       if (isObjectIdOrHexString(scheduleId)) {
         const schedule = await Schedule.findById(scheduleId).lean<ScheduleModel>().exec()
-        console.log(schedule?.examScores)
         if (!!schedule?._id) {
           const students = await Student.find({ $and: [{ 'applicationForm.scheduleId': { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toString() }] }).select('-password').populate('applicationSubmission').populate('applicationSubmission.requirementId').lean<StudentModel[]>().exec()
           const results: any = await Promise.all(students.map(async (student) => ({

@@ -212,7 +212,6 @@ export default function ResultsPage() {
       setLoading(true)
       const url = new URL('/api/scholarship/results', window.location.origin)
       url.searchParams.append('id', scheduleId)
-      console.log(url.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data, filledSlots: f, totalSlots: t, isOpenSlots: o } = await response.json()
