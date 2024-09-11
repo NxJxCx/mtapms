@@ -48,7 +48,7 @@ export default function StudentIdModal() {
       Toaster.error('Please enter your student ID');
       return;
     }
-    const updateStudentId = addStudentId.bind(null, studentId as string)
+    const updateStudentId = addStudentId.bind(null, studentId.toString().toUpperCase())
     const { success, error } = await updateStudentId()
     if (error) {
       Toaster.error(error);
@@ -65,7 +65,7 @@ export default function StudentIdModal() {
       <div className="max-w-[500px] mx-auto">
         <p>To continue, please provide your student ID. This will be used to verify your enrollment and grant you access to the scholarship program.</p>
         <form className="px-4 py-2" ref={formRef} onSubmit={handleSubmit}>
-          <Inputs.SignupInput type="text" name="studentId" label="Student ID" placeholder="Student ID" iconSrc="/id-card.svg" required />
+          <Inputs.SignupInput type="text" name="studentId" label="Student ID" placeholder="Student ID" iconSrc="/id-card.svg" className="uppercase" required />
           <br />
           <Buttons.SignupButton type="submit" label="Submit" />
         </form>
