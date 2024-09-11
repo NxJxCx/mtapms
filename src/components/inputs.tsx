@@ -1,5 +1,6 @@
 'use client'
 
+import clsx from "clsx";
 import Image from "next/image";
 import { HTMLInputTypeAttribute, useState } from "react";
 
@@ -29,6 +30,7 @@ export function SignupInput({
   iconSrc = "/email.svg",
   placeholder,
   className,
+  inputClassName,
   required,
   disabled,
 }: Readonly<{
@@ -38,6 +40,7 @@ export function SignupInput({
   type?: HTMLInputTypeAttribute,
   placeholder?: string;
   className?: string;
+  inputClassName?: string,
   required?: boolean;
   disabled?: boolean;
 }>) {
@@ -53,7 +56,7 @@ export function SignupInput({
           <div className="absolute left-[6px] top-[8px] w-[17px] h-[17px] z-0">
             <Image src={iconSrc} alt={label + ' Icon'} width={20} height={20} />
           </div>
-          <input type={type === "password" && viewable ? "text" : type} required={required} disabled={disabled} name={name} id={name} placeholder={placeholder} className="w-full bg-transparent text-[16px] font-[400] leading-[24px] text-[#004521] placeholder:text-[#00452188] focus:bg-white/30 focus:rounded-sm py-[5px] pl-[32px] pr-2 outline-none focus:border-b-[#FBBC05] border-b-[2px] border-b-[#004521]" />
+          <input type={type === "password" && viewable ? "text" : type} required={required} disabled={disabled} name={name} id={name} placeholder={placeholder} className={clsx("w-full bg-transparent text-[16px] font-[400] leading-[24px] text-[#004521] placeholder:text-[#00452188] focus:bg-white/30 focus:rounded-sm py-[5px] pl-[32px] pr-2 outline-none focus:border-b-[#FBBC05] border-b-[2px] border-b-[#004521]", inputClassName)} />
           { type === "password" && (
             <button type="button" title={viewable ? "Hide Password" : "Show Password"} onClick={toggleViewable} className="text-[#004521] absolute right-[6px] top-[8px] w-[17px] h-[17px]">
               <Image src={viewable ? '/visible.svg' : '/invisible.svg'} alt={'View Icon'} width={20} height={20} className="text-[#004521]" />
