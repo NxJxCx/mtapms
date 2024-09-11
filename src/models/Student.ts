@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { hashPassword } from '@app/lib/hash';
-import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel } from '@app/types';
+import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 const ApplicationFormSchema = new Schema<ApplicationFormProps>({
@@ -187,6 +187,18 @@ const StudentSchema = new Schema<StudentModel>({
     type: Schema.Types.ObjectId,
     ref: 'FileDocument',
     default: null
+  },
+  studentId: {
+    type: String,
+    validate: {
+      async validator(value: string) {
+        if (!(this as any).isGrantee && (!(this as any).applicationForm || (this as any).applicationForm.yearLevel === YearLevel.FirstYear)) {
+          return false
+        }
+        return true
+      },
+      message: 'Student ID is required for grantees and 2nd Year above students only'
+    }
   }
 }, {
   timestamps: true

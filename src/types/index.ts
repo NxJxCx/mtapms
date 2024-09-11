@@ -144,6 +144,7 @@ export interface StudentModel extends BaseDocument {
   applicationSubmission: string[]|RequirementSubmissionModel[]
   isGrantee: boolean
   photo?: string|FileDocumentModel|null
+  studentId?: string
 }
 
 export interface AttendanceProps {

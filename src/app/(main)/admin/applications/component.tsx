@@ -1,5 +1,6 @@
 'use client'
 
+/* eslint-disable @next/next/no-img-element */
 import { displayFullName, displayYearLevel } from "@app/components/display";
 import { LoadingSpinnerFull } from "@app/components/loadings";
 import { Modal } from "@app/components/modals";

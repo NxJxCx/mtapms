@@ -29,13 +29,13 @@ export async function GET(request: NextRequest) {
       const semester = request.nextUrl.searchParams.get('semester') as Semester|null
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const filter: any = { isGrantee: true }
+        const filter: any = { isGrantee: false }
         if (type === 'new_firstYear') {
           filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': YearLevel.FirstYear }]
         } else if (type === 'new') {
           filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': { $ne: YearLevel.FirstYear }}]
         } else {
-          // filter.isGrantee = true
+          filter.isGrantee = true
           filter.applicationForm = { $exists: true }
           filter.$and = [{ applicationSubmission: { $exists: true } },
             // the number of elements of applicationSubmission is not empty
