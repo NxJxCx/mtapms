@@ -52,22 +52,22 @@ export default function DocumentRequirementsPage() {
     [
       {
         name: 'COG',
-        description: '(COG)',
+        description: 'Upload photo of your Certificate of Grade (COG)',
         key: 'COG',
       },
       {
         name: 'Study Load',
-        description: '(Study Load)',
+        description: 'Upload photo of your Study Load',
         key: 'studyLoad',
       },
       {
         name: 'Statement of Account',
-        description: '(Statement of Account)',
+        description: 'Upload photo of your Statement of Account',
         key: 'statementOfAccount',
       },
       {
         name: 'CONS',
-        description: '(CONS)',
+        description: 'Certificate of Non-Scholar',
         key: 'CONS',
       },
     ]
