@@ -63,7 +63,6 @@ export default function ScheduleAndResultPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data: d } = await response.json()
-      console.log(d)
       setData(d)
     }
     setLoading(false)
