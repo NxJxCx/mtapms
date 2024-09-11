@@ -78,7 +78,7 @@ export default function ProfilePage() {
         <div className="bg-[#FECB00] rounded-t-lg h-[103px] w-full"></div>
         <div className="relative bg-white">
           {!user?.firstName ? <LoadingSpinnerFull /> : (<>
-            <div className="absolute left-6 -top-[17%] flex gap-x-6">
+            <div className="absolute left-6 -top-[15%] flex gap-x-6">
               <button type="button" onClick={onUpdatePhoto} className="p-1 rounded-full aspect-square w-32 flex justify-center items-center bg-white border shadow even:*:hidden even:*:hover:block" title="upload">
               <img src={photoURL} width={200} height={200} alt="Photo" className="rounded-full aspect-square object-contain" />
                 <ArrowTopRightOnSquareIcon className="absolute w-6 h-6 left-0 top-[82%] hover:text-[#606060] text-[#818181]" />
