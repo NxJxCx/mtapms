@@ -61,6 +61,36 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({ data, filledSlots, totalSlots, isOpenSlots })
         }
       }
+    } else if (session?.user?.role === Roles.Applicant) {
+      const scheduleId = request.nextUrl.searchParams.get('id')
+      if (isObjectIdOrHexString(scheduleId)) {
+        const schedule = await Schedule.findById(scheduleId).lean<ScheduleModel>().exec()
+        if (!!schedule?._id) {
+          const student = await Student.findById(session.user._id.toString()).select('-password').populate('applicationSubmission').populate('applicationSubmission.requirementId').lean<StudentModel>().exec()
+          if (!!student?._id) {
+            const result = {
+              orientation: schedule.orientationAttendance.some((attendance) => attendance.studentId.toString() === student._id?.toString()),
+              exam: schedule.examScores.find((score) => score.studentId.toString() === student._id?.toString())?.percentageScore || 'N/A',
+              submittedDocuments: `${(await Promise.all(student.applicationSubmission.map(async (submission: any) => ({
+                ...submission,
+                requirementId: (await Requirement.findById(submission.requirementId).lean<RequirementModel>().exec())
+              })))).filter((submission: any) => (submission.requirementId as RequirementModel).scheduleId?.toString() === schedule._id?.toString() && submission.status === SubmissionStatus.Approved).length} / ${await Requirement.find({ scheduleId, forFirstYearOnly: student.applicationForm?.yearLevel == YearLevel.FirstYear }).countDocuments().exec()}`
+            }
+            const result2 = {
+              ...result,
+              orientationPercentage: !!result.orientation ? 10 : 0,
+              examPercentage: result.exam == 'N/A' ? 0 : parseFloat((parseFloat(result.exam.toString()) * 40 * 0.01).toFixed(3)),
+              submittedDocumentsPercentage: parseInt(result.submittedDocuments.split(' / ')[1]) === 0 ? 0 : parseFloat((parseInt(result.submittedDocuments.split(' / ')[0]) / parseInt(result.submittedDocuments.split(' / ')[1]) * 0.5 * 100).toFixed(3)) ,
+            }
+            const data = {
+              ...result2,
+              overallPercentage: parseFloat((result2.orientationPercentage + result2.examPercentage + result2.submittedDocumentsPercentage).toFixed(3))
+            }
+            return NextResponse.json({ data })
+          }
+        }
+      }
+      return NextResponse.json({ data: undefined })
     }
   } catch (e) {
     console.log(e)
