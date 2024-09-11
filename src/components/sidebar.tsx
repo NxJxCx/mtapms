@@ -132,10 +132,6 @@ const sidebarLinks = {
       href: "/documents",
     },
     {
-      label: "Scholarship Status",
-      href: "/status",
-    },
-    {
       label: "My Profile",
       href: "/profile",
     },
@@ -152,10 +148,6 @@ const sidebarLinks = {
     {
       label: "Documents",
       href: "/grantee/documents",
-    },
-    {
-      label: "Scholarship Status",
-      href: "/grantee/status",
     },
     {
       label: "My Profile",
