@@ -84,25 +84,25 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
       label: 'COG',
       field: 'COG',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.COG.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>,
     },
     {
       label: 'StudyLoad',
       field: 'studyLoad',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.studyLoad.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.studyLoad.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>,
     },
     {
       label: 'Statement of Account',
       field: 'statementOfAccount',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.statementOfAccount.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.statementOfAccount.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>,
     },
     {
       label: 'CONS',
       field: 'CONS',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.CONS.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.CONS.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>,
     },
   ])
 
