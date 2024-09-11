@@ -44,7 +44,6 @@ const ScheduleSchema = new Schema<ScheduleModel>({
         type: Schema.Types.ObjectId,
         ref: 'Student',
         required: [true, 'Student Id is required.'],
-        unique: true,
         validate: {
           async validator(value: string|StudentModel) {
             if (!isObjectIdOrHexString(value)) return false;

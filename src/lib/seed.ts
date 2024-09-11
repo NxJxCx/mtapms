@@ -83,27 +83,31 @@ export default async function seed() {
       scheduleId = newSchedule._id.toHexString();
       await timeout(1000)
       // this year
-      const now = new Date()
-      const endNow = new Date(now)
-      endNow.setMonth(endNow.getMonth() + 1)
-      const orientationDate = new Date(now)
-      orientationDate.setDate(orientationDate.getDate() + 3)
-      const examDate2 = new Date(orientationDate)
-      examDate2.setDate(examDate2.getDate() + 3)
-      const interviewDate2 = new Date(examDate2)
-      interviewDate2.setDate(interviewDate2.getDate() + 2)
-      const thisYear = await Schedule.create({
-        academicYear: now.getFullYear(),
-        range: {
-          startDate: now,
-          endDate: endNow,
-        },
-        orientationDate,
-        examDate: examDate2,
-        interviewDate: interviewDate2,
-        scholarshipSlots: 30,
-      })
-      thisYearScheduleId = thisYear._id.toHexString();
+      try {
+        const now = new Date()
+        const endNow = new Date(now)
+        endNow.setMonth(endNow.getMonth() + 1)
+        const orientationDate = new Date(now)
+        orientationDate.setDate(orientationDate.getDate() + 3)
+        const examDate2 = new Date(orientationDate)
+        examDate2.setDate(examDate2.getDate() + 3)
+        const interviewDate2 = new Date(examDate2)
+        interviewDate2.setDate(interviewDate2.getDate() + 2)
+        const thisYear = await Schedule.create({
+          academicYear: now.getFullYear(),
+          range: {
+            startDate: now,
+            endDate: endNow,
+          },
+          orientationDate,
+          examDate: examDate2,
+          interviewDate: interviewDate2,
+          scholarshipSlots: 30,
+        })
+        thisYearScheduleId = thisYear._id.toHexString();
+      } catch (err) {
+        console.log("thisyear", err)
+      }
     } catch (e) {
       console.log("schedule error:", e)
     }
