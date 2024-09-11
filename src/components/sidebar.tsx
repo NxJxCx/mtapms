@@ -272,9 +272,9 @@ export function SidebarComponent({
         clsx(
           "h-screen",
           "transition-[transform] ease-in-out duration-300",
-          "fixed top-0 z-50",
+          "fixed top-0",
           "w-full md:w-[265px] md:max-w-[265px]",
-          openDrawer ? "translate-x-[0]" : "-translate-x-[265px]",
+          openDrawer ? "translate-x-[0] z-50" : "-translate-x-[265px]",
           hiddenClass,
         )
       }
