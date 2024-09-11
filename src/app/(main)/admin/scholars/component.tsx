@@ -1,14 +1,27 @@
 'use client'
-
+/* eslint-disable @next/next/no-img-element */
+import { displayFullName } from '@app/components/display'
 import { LoadingSpinnerFull } from "@app/components/loadings"
 import { Modal } from "@app/components/modals"
 import { useSidebar } from "@app/components/sidebar"
 import Table, { TableColumnProps } from "@app/components/tables"
 import Tabs from "@app/components/tabs"
-import { ApplicationFormProps, GranteeModel, RequirementModel, RequirementSubmissionModel, Roles, ScheduleModel, Semester, StudentModel, SubmissionProps, SubmissionStatus } from "@app/types"
+import {
+  GranteeModel,
+  RequirementModel,
+  RequirementSubmissionModel,
+  Roles,
+  ScheduleModel,
+  Semester,
+  StudentModel,
+  SubmissionProps,
+  SubmissionStatus,
+} from "@app/types"
+import { CheckBadgeIcon, CheckIcon, XMarkIcon } from "@heroicons/react/16/solid"
+import clsx from "clsx"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-const getApplicantRequirements = async (academicYear: number, firstYearOnly: boolean): Promise<TableColumnProps[]> => {
+const getApplicantRequirements = async (academicYear: number, firstYearOnly: boolean, onViewSubmission?: (req: RequirementModel, student: StudentModel, data?: RequirementSubmissionModel) => void): Promise<TableColumnProps[]> => {
   const url = new URL('/api/scholarship/requirements', window.location.origin)
   url.searchParams.append('academicYear', academicYear.toString())
   url.searchParams.append('firstYearOnly', firstYearOnly? 'true' : 'false')
@@ -17,16 +30,22 @@ const getApplicantRequirements = async (academicYear: number, firstYearOnly: boo
     const { data } = await response.json()
     return data.map((r: RequirementModel) => ({
       label: r.name,
-      field: r.description,
+      field: r.name,
       align: 'center',
       sortable: true,
-      render: (rowData: StudentModel) => (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status || 'N/A'}</span>,
+      render: (rowData: StudentModel) => (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved
+      ? <span className="text-green-800 font-bold">Yes</span>
+      : (
+        <button type="button" onClick={() => onViewSubmission && onViewSubmission(r, rowData, (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id))} title="View Study Load">
+          <span className={clsx("font-bold capitalize", (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status || 'N/A'}</span>
+        </button>
+      ),
     }))
   }
   return []
 }
 
-const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academicYear: number, onViewGranteeSubmission?: (key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel) => void): Promise<TableColumnProps[]> => ([
+const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academicYear: number, onViewSubmission?: (req: RequirementModel, student: StudentModel, data?: RequirementSubmissionModel) => void, onViewGranteeSubmission?: (key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel, student: StudentModel) => void): Promise<TableColumnProps[]> => ([
   {
     label: 'Last Name',
     field: 'lastName',
@@ -78,20 +97,21 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
 ] as TableColumnProps[])
 .concat(
   type === 'applicant'
-  ? (await getApplicantRequirements(academicYear, false))
+  ? (await getApplicantRequirements(academicYear, false, onViewSubmission))
   : type === 'applicant_firstYear'
-  ? (await getApplicantRequirements(academicYear, true))
+  ? (await getApplicantRequirements(academicYear, true, onViewSubmission))
   : [
     {
       label: 'COG',
       field: 'COG',
       sortable: true,
+      align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
         rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Approved
         ? <span className="text-green-800 font-bold">Yes</span>
         : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('COG', rowData.granteeSubmissions)} title="View COG">
-            <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('COG', rowData.granteeSubmissions, rowData as StudentModel)} title="View COG">
+            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>
           </button>
         ),
     },
@@ -99,25 +119,27 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
       label: 'StudyLoad',
       field: 'studyLoad',
       sortable: true,
+      align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
         rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Approved
-      ? <span className="text-green-800 font-bold">Yes</span>
-      : (
-        <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('studyLoad', rowData.granteeSubmissions)} title="View Study Load">
-          <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>
-        </button>
-      ),
+        ? <span className="text-green-800 font-bold">Yes</span>
+        : (
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('studyLoad', rowData.granteeSubmissions, rowData as StudentModel)} title="View Study Load">
+            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>
+          </button>
+        ),
     },
     {
       label: 'Statement of Account',
       field: 'statementOfAccount',
       sortable: true,
+      align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
         rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Approved
         ? <span className="text-green-800 font-bold">Yes</span>
         : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('statementOfAccount', rowData.granteeSubmissions)} title="View Statement of Account">
-            <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('statementOfAccount', rowData.granteeSubmissions, rowData as StudentModel)} title="View Statement of Account">
+            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>
           </button>
         ),
     },
@@ -125,12 +147,13 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
       label: 'CONS',
       field: 'CONS',
       sortable: true,
+      align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
         rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Approved
         ? <span className="text-green-800 font-bold">Yes</span>
         : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('CONS', rowData.granteeSubmissions)} title="View CONS">
-            <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('CONS', rowData.granteeSubmissions, rowData as StudentModel)} title="View CONS">
+            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>
           </button>
         ),
     },
@@ -177,6 +200,7 @@ export default function ScholarListPage() {
   const [dataApplicant1stYear, setDataApplicant1stYear] = useState<StudentModel[]>([])
   const [dataGrantee, setDataGrantee] = useState<StudentModel[]>([])
   const [selected, setSelected] = useState<{
+    student: StudentModel;
     id: string;
     type: 'new'|'new_firstYear'|'grantee';
     key: string;
@@ -187,21 +211,28 @@ export default function ScholarListPage() {
     setSelected(undefined)
   }, [])
 
-  const onViewGranteeSubmission = useCallback((key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel) => {
+  const onViewGranteeSubmission = useCallback((key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel, student: StudentModel) => {
     if (!data?.[key]) return;
+    if (openDrawer) toggleDrawer();
     setSelected({
+      student,
       id: data._id!,
       type: 'grantee',
       key,
       data: data[key],
     })
-  }, [])
+  }, [openDrawer, toggleDrawer])
+
+  const onViewSubmission = useCallback((key: string, data: RequirementSubmissionModel, student: StudentModel) => {
+    if (!data) return;
+    if (openDrawer) toggleDrawer();
+  }, [openDrawer, toggleDrawer])
 
   useEffect(() => {
     if (onViewGranteeSubmission && schoolYear) {
       columns('applicant', schoolYear as number).then(setApplicant)
       columns('applicant_firstYear', schoolYear as number).then(setApplicant1stYear)
-      columns('grantee', schoolYear as number, onViewGranteeSubmission).then(setGrantee)
+      columns('grantee', schoolYear as number, undefined, onViewGranteeSubmission).then(setGrantee)
     }
   }, [schoolYear, onViewGranteeSubmission])
 
@@ -261,9 +292,7 @@ export default function ScholarListPage() {
     fetchData()
   }, [fetchData])
 
-  const onView = useCallback((rowData: ApplicationFormProps) => {
-    console.log('Viewing application form for:', rowData)
-  }, [])
+  const getURLFromSubmission = useCallback((photoId?: string) => (new URL("/api/user/photo/" + photoId, window.location.origin)).toString(), [])
 
   return (<>
     <div className="p-6">
@@ -320,11 +349,41 @@ export default function ScholarListPage() {
     </div>
     <Modal title={selected?.key} open={!!selected} onClose={onModalClose}>
       <div className="flex flex-col">
-        {selected?.id}
-        {selected?.type}
-        {selected?.key}
-        {selected?.data?.photo as string|undefined}
-        {selected?.data?.status}
+      {(selected?.data?.status === SubmissionStatus.Pending || selected?.data?.status === SubmissionStatus.Approved) && (
+          <div className="font-[500] p-4">
+            <div className="text-gray-500">
+              Submission status: <span className="font-bold">{SubmissionStatus[selected?.data?.status]}</span>
+            </div>
+            <div className="text-gray-500">
+              Submitted by: <span className="font-bold">{displayFullName(selected?.student as any)}</span>
+            </div>
+            <div className=" text-gray-500">
+              Last update: {(new Date(selected?.data?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+            </div>
+            {selected?.data?.status === SubmissionStatus.Pending && (
+              <div className="mt-4 flex justify-evenly">
+                <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500"><CheckIcon className='w-4 h-4 inline text-green-700 mr-1' />Approve</button>
+                <button type="button" className="px-2 py-1 bg-red-50 rounded border border-red-500"><XMarkIcon className='w-4 h-4 inline text-red-500 mr-1' />Disapprove</button>
+              </div>
+            )}
+            {selected?.data?.status === SubmissionStatus.Approved && (
+              <div className="mt-4 text-center text-green-600 rounded p-1">
+                <CheckBadgeIcon className="inline w-4 h-4 mr-2"/> Submission approved.
+              </div>
+            )}
+            {selected?.data?.status === SubmissionStatus.Approved && (
+              <div className="mt-4 text-center text-red-600 rounded p-1">
+                <CheckBadgeIcon className="inline w-4 h-4 mr-2"/> Submission disapproved.
+              </div>
+            )}
+            <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
+              <img src={!!selected?.data?.photo ? getURLFromSubmission(selected.data.photo as string) : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
+            </div>
+          </div>
+        )}
+        <div className="p-2 flex justify-end items-center mt-2">
+          <button type="button" title="Close" className="border border-gray-500 px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 font-[500]" onClick={onModalClose}>Close</button>
+        </div>
       </div>
     </Modal>
   </>)
