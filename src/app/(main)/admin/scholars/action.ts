@@ -4,7 +4,8 @@ import mongodbConnect from "@app/lib/db";
 import { getSession } from "@app/lib/session";
 import Grantee from "@app/models/Grantee";
 import RequirementSubmission from "@app/models/RequirementSubmission";
-import { ActionResponseInterface, Roles, SubmissionStatus } from "@app/types";
+import { ActionResponseInterface, GranteeModel, Roles, SubmissionStatus } from "@app/types";
+import { Semester } from '../../../../types/index';
 
 export async function approvePendingSubmission(type: 'new'|'new_firstYear'|'grantee', id: string, name: string): Promise<ActionResponseInterface>
 {
@@ -22,6 +23,26 @@ export async function approvePendingSubmission(type: 'new'|'new_firstYear'|'gran
         }
         const updated = await submission.save()
         if (!!updated?._id && (updated[name]?.status === SubmissionStatus.Approved || updated.status === SubmissionStatus.Approved)) {
+          if (type === 'grantee') {
+            try {
+              const allApproved = [
+                (updated as GranteeModel).COG?.status === SubmissionStatus.Approved,
+                (updated as GranteeModel).studyLoad?.status === SubmissionStatus.Approved,
+                (updated as GranteeModel).statementOfAccount?.status === SubmissionStatus.Approved,
+                (updated as GranteeModel).CONS?.status === SubmissionStatus.Approved,
+              ].every(Boolean)
+              if (allApproved) {
+                // create Grantee submission for the next semester
+                await Grantee.create({
+                  academicYear: updated.semester === Semester.SecondSemester ? updated.academicYear + 1 : updated.academicYear,
+                  semester: updated.semester === Semester.SecondSemester ? Semester.FirstSemester : Semester.SecondSemester,
+                  studentId: updated.studentId,
+                })
+              }
+            } catch (er) {
+              console.log(er)
+            }
+          }
           return {
             success: `Successfully approved submission of ${name}`,
           }

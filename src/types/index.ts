@@ -170,12 +170,6 @@ export interface ScheduleModel extends BaseDocument {
   scholarshipSlots: number,
 }
 
-export interface ResultModel extends BaseDocument {
-  studentId: string|StudentModel
-  scheduleId: string|ScheduleModel
-  grade: number
-}
-
 export type AuthenticationStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'error'
 
 export interface ActionResponseInterface {

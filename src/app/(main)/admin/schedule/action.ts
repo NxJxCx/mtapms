@@ -5,7 +5,7 @@ import { getSession } from "@app/lib/session";
 import Grantee from "@app/models/Grantee";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
-import { ActionResponse, Roles, Semester, StudentModel } from "@app/types";
+import { ActionResponse, Roles, ScheduleModel, Semester, StudentModel } from "@app/types";
 
 export async function scheduleAction(academicYear: number, prevState: ActionResponse, formData: FormData): Promise<ActionResponse>
 {
@@ -63,13 +63,16 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
       const result = await Schedule.create(data);
       if (!!result?._id) {
         // initiate all grantees for their requirement submission
-        const grantees = await Student.find({ isGrantee: true }).select('_id').lean<StudentModel[]>()
+        const grantees = await Student.find({ isGrantee: true, 'applicationForm.scheduleId': { $exists: true } }).select('_id').lean<StudentModel[]>()
         await Promise.all(grantees.map(async (grantee: StudentModel) => {
-          await Grantee.create({
-            studentId: grantee._id,
-            academicYear,
-            semester: Semester.FirstSemester,
-          })
+          const sched = await Schedule.findById(grantee.applicationForm!.scheduleId.toString()).lean<ScheduleModel>().exec()
+          if (!!sched?._id && (academicYear - sched.academicYear) < (4 - grantee.applicationForm!.yearLevel)) {
+            await Grantee.create({
+              studentId: grantee._id,
+              academicYear,
+              semester: Semester.FirstSemester,
+            })
+          }
         }))
         return {
           success: 'Successfully Schedule Scholarship Application Date'
