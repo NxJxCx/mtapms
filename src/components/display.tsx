@@ -1,5 +1,3 @@
-'use client'
-
 import { ApplicationFormProps, StudentModel, YearLevel } from "@app/types"
 
 
