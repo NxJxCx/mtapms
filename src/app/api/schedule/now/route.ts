@@ -12,13 +12,13 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
     if (session?.user?.role === Roles.Applicant) {
-      const result = await Schedule.find({}).select('academicYear range orientationDate examDate interviewDate').exec()
+      const action = request.nextUrl.searchParams.get('action')
+      const result = await Schedule.find({}).select('academicYear range orientationDate examDate interviewDate' + (action === 'scheduleandresult' ? ' examScores' : '')).exec()
       const dataRecent: ScheduleModel = result.length === 0 ? null : JSON.parse(JSON.stringify(result)).reduce((init: ScheduleModel, item: ScheduleModel) => !init ? item : item.academicYear > init.academicYear ? item : init, null)
       const data = !!dataRecent && (new Date(dataRecent.range.startDate)).getTime() <= (new Date()).getTime() && (new Date(dataRecent.range.endDate)).getTime() >= (new Date()).getTime() ? dataRecent : null
       if (!!data) {
         const student = await Student.findById(session.user._id).exec()
-        const action = request.nextUrl.searchParams.get('action')
-        if (action === 'documents' && !!student && student.applicationForm.scheduleId.toString() === data._id!.toString()) {
+        if ((action === 'documents' || action === 'scheduleandresult') && !!student && student.applicationForm.scheduleId.toString() === data._id!.toString()) {
           return NextResponse.json({ data })
         }
         if (!student.applicationForm || student.applicationForm.scheduleId.toString() !== data._id as string) {
