@@ -101,6 +101,8 @@ export default function ExamPage() {
   const [data, setData] = useState<any[]>([])
   const [selectedStudent, setSelectedStudent] = useState<any>()
   const [examScoreInput, setExamScoreInput] = useState<string>('0.00')
+  const [totalItems, setTotalItems] = useState<number|string>('')
+  const [score, setScore] = useState<number|string>('')
 
   const fetchAttendance = useCallback(async () => {
     const url = new URL('/api/grade', window.location.origin)
@@ -167,6 +169,18 @@ export default function ExamPage() {
     setSelectedStudent(rowData)
   }, [openDrawer, toggleDrawer])
 
+  useEffect(() => {
+    if (!!selectedStudent) {
+      if (!!totalItems && parseInt(totalItems.toString()) > 0 && !!score && parseInt(score.toString()) > 0 && parseInt(score.toString()) <= parseInt(totalItems.toString()))  {
+        const percent = (parseInt(score.toString()) / parseInt(totalItems.toString())) * 100
+        setExamScoreInput(parseFloat(percent.toFixed(3)).toString())
+      }
+      if (!totalItems && !!score) {
+        setScore('')
+      }
+    }
+  }, [selectedStudent, score, totalItems])
+
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
@@ -185,8 +199,18 @@ export default function ExamPage() {
       <div className="p-6">
         <div className="text-xl font-bold">Input the score in percentage for <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong> ({selectedStudent?.email}):</div>
         <div className="mt-4 flex flex-nowrap justify-start gap-x-1 items-center">
-          <input type="number" className="p-2 rounded-md border border-gray-300 focus:border-blue-600" placeholder="Enter score (%)" min="0" max="100" step="0.01" value={examScoreInput} onChange={(ev) => setExamScoreInput(ev.target.value)}/>
+          <div>By Percentage</div>
+          <input type="number" className="p-2 rounded-md border border-gray-500 focus:border-blue-600 text-right read-only:bg-gray-200" placeholder="Enter score (%)" min="0" max="100" step="0.01" value={examScoreInput} onChange={(ev) => setExamScoreInput(ev.target.value)} readOnly={!!score || !!totalItems}/>
           <span className="font-bold text-xl">%</span>
+          <div className="flex-grow text-center border-x px-2 mx-2 font-[500]">
+            OR
+          </div>
+          <div className="flex gap-x-2 items-center">
+            <div>By Item Score</div>
+            <input type="number" className="p-2 rounded-md border border-gray-500 focus:border-blue-600 disabled:bg-gray-200 max-w-32 text-right" placeholder="Enter Score" min="0" step="1" value={score} onChange={(e: any) => setScore(e.target.value)} disabled={!totalItems || totalItems == 0} />
+            <div className="font-bold">over</div>
+            <input type="number" className="p-2 rounded-md border border-gray-500 focus:border-blue-600 max-w-32 text-right" placeholder="Total Items" min="0" step="1" value={totalItems} onChange={(e: any) => setTotalItems(e.target.value)} />
+          </div>
         </div>
         <div className="mt-4">
           <button type="submit" disabled={isNaN(parseFloat(examScoreInput)) || parseFloat(examScoreInput) <= 0 || parseFloat(examScoreInput) > 100} className="disabled:bg-gray-300 bg-green-800 hover:bg-green-700 text-white rounded-full px-4 py-2" onClick={() => onSubmitScore(selectedStudent)}>Submit Score</button>
