@@ -31,13 +31,14 @@ export async function GET(request: NextRequest) {
       if (!!schedule?._id) {
         const filter: any = { isGrantee: false }
         if (type === 'new_firstYear') {
-          filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': YearLevel.FirstYear }]
+          filter.$and = [{ 'applicationForm.scheduleId': { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': YearLevel.FirstYear }]
         } else if (type === 'new') {
-          filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': { $ne: YearLevel.FirstYear }}]
+          filter.$and = [{ 'applicationForm.scheduleId': { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': { $ne: YearLevel.FirstYear }}]
         } else {
           filter.isGrantee = true
           filter.applicationForm = { $exists: true }
-          filter.$and = [{ applicationSubmission: { $exists: true } },
+          filter.$and = [
+            { applicationSubmission: { $exists: true } },
             // the number of elements of applicationSubmission is not empty
             {
               $expr: {
@@ -59,14 +60,14 @@ export async function GET(request: NextRequest) {
           type === 'grantee'
           ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions).map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
           : type === 'new_firstYear'
-          ? mappedStudents.filter((st: StudentModel) => {
+          ? students.filter((st: StudentModel) => {
               const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
-              return sched.academicYear === academicYear && (st.applicationForm as ApplicationFormProps).yearLevel === YearLevel.FirstYear
+              return sched.academicYear == academicYear && (st.applicationForm as ApplicationFormProps).yearLevel == YearLevel.FirstYear
             }).map((st: StudentModel) => ({...st, applicationSubmission: (st.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => (req.requirementId as RequirementModel).forFirstYearOnly) }))
           : type === 'new'
           ? students.filter((st: StudentModel) => {
             const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
-            return sched.academicYear === academicYear && (st.applicationForm as ApplicationFormProps).yearLevel === YearLevel.FirstYear
+            return sched.academicYear == academicYear && (st.applicationForm as ApplicationFormProps).yearLevel !== YearLevel.FirstYear
           }).map((st: StudentModel) => ({...st, applicationSubmission: (st.applicationSubmission as RequirementSubmissionModel[]).filter((req: RequirementSubmissionModel) => !(req.requirementId as RequirementModel).forFirstYearOnly) }))
           : []
         return NextResponse.json({ data })
