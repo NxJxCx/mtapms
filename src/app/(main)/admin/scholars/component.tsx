@@ -418,7 +418,7 @@ export default function ScholarListPage() {
     <Modal title={selected?.name} open={!!selected} onClose={onModalClose}>
       <div className="flex flex-col">
       {!!selected?.data?.status && (
-          <div className="font-[500] p-4">
+          <div className="font-[500] p-4 relative">
             <div className="text-gray-500">
               Submission status: <span className="font-bold">{SubmissionStatus[selected?.data?.status]}</span>
             </div>
@@ -427,6 +427,9 @@ export default function ScholarListPage() {
             </div>
             <div className=" text-gray-500">
               Last update: {(new Date(selected?.data?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+            </div>
+            <div className="lg:absolute lg:right-6 lg:top-0 aspect-square object-contain h-[80px] w-[80px] overflow-hidden border border-black/50 rounded p-[5px]">
+              <img src={"/api/user/photo/" + selected?.student?.photo} width={70} height={70} className="aspect-square" alt="photo" />
             </div>
             {selected?.data?.status === SubmissionStatus.Pending && (
               <div className="mt-4 flex justify-evenly">
