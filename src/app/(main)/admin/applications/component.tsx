@@ -198,6 +198,14 @@ export default function ApplicationListPage() {
         <table className="w-full border-collapse">
           <tbody>
             <tr>
+              <td colSpan={3}>
+                <div className="aspect-square object-contain h-[80px] w-[80px] overflow-hidden border border-black/50 rounded p-[5px]">
+                  <img src={"/api/user/photo/" + openViewModal?.photo} width={70} height={70} className="aspect-square" alt="photo" />
+                </div>
+              </td>
+              <td colSpan={4}></td>
+            </tr>
+            <tr>
               <td colSpan={7} className="text-center">
                 <h1 className="font-[700] mx-auto py-1">Personal Information</h1>
               </td>
