@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
           filter.$and = [{ 'applicationForm.scheduleId': { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': { $ne: YearLevel.FirstYear }}]
         } else {
           filter.isGrantee = true
-          filter.applicationForm = { $exists: true }
+          filter['applicationForm.scheduleId'] = { $exists: true }
           filter.$and = [
             { applicationSubmission: { $exists: true } },
             // the number of elements of applicationSubmission is not empty
@@ -51,11 +51,13 @@ export async function GET(request: NextRequest) {
           ]
         }
         const students = await Student.find(filter).select('email applicationForm isGrantee applicationSubmission studentId').populate('applicationForm.scheduleId applicationSubmission applicationSubmission.requirementId').lean<StudentModel[]>().exec()
+        console.log("student", students)
         const mappedStudents = await Promise.all(students.filter((st: StudentModel) => {
           const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
           return sched.academicYear + 4 > academicYear
         })
-          .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studId: st._id?.toString() }).exec())})))
+          .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec())})))
+        console.log("mapped", mappedStudents)
         const data: (StudentModel & { granteeSubmissions?: GranteeModel })[] =
           type === 'grantee'
           ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions).map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
