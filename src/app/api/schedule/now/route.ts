@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
         const data = !!dataRecent && recentStartDate.getTime() <= now.getTime() && recentEndDate.getTime() >= now.getTime() ? dataRecent : null
         if (!!data) {
           const student = await Student.findById(session.user._id).exec()
-          console.log(student, "st", data)
           if ((action === 'documents' || action === 'scheduleandresult') && !!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString()) {
             return NextResponse.json({ data })
           } else  if (!student?.applicationForm && student?.applicationForm?.scheduleId.toString() !== data._id as string) {
