@@ -12,7 +12,7 @@ export default async function AuthPageLayout({
 }>) {
   const auth = await isAuthenticated();
   if (auth) {
-    redirect(auth === Roles.Applicant ? '/announcements' : '/' + auth);
+    redirect(auth === Roles.Applicant ? '/application' : '/' + auth);
   }
   return (
     <SessionProvider>

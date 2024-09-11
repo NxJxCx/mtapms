@@ -18,7 +18,7 @@ export default function LoginTabComponent() {
   useEffect(() => {
     if (status === 'authenticated') {
       switch (role) {
-        case Roles.Applicant: redirect('/announcements');
+        case Roles.Applicant: redirect('/application');
         case Roles.Grantee:
         case Roles.Admin: redirect('/' + role)
         default: // do nothing

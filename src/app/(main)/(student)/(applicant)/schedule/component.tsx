@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function ScheduleAndResultPage() {
-  const { data: sessionData, status } = useSession({ redirect: false })
+  const { data: sessionData } = useSession({ redirect: false })
 
   const [syData, setSyData] = useState<ScheduleModel>()
   const [loading, setLoading] = useState(false)
@@ -39,7 +39,6 @@ export default function ScheduleAndResultPage() {
 
   useEffect(() => {
     if (!!sessionData?.user?._id && !!syData && isOpen) {
-      console.log(syData)
       const exam = syData.examScores.find((exam) => exam.studentId === sessionData.user._id)
       if (!!exam) {
         setExamScore(exam.percentageScore)

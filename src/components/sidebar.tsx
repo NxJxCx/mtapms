@@ -116,10 +116,6 @@ const sidebarLinks = {
   ],
   [Roles.Applicant]: [
     {
-      label: "Announcements",
-      href: "/announcements",
-    },
-    {
       label: "Application Form",
       href: "/application",
     },
@@ -141,10 +137,6 @@ const sidebarLinks = {
     }
   ],
   [Roles.Grantee]: [
-    {
-      label: "Announcements",
-      href: "/grantee/announcements",
-    },
     {
       label: "Documents",
       href: "/grantee/documents",

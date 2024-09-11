@@ -25,7 +25,7 @@ export function MainContainer({
   } else if (status === 'authenticated' && !pathname.startsWith('/' + Roles.Grantee) && role === Roles.Grantee) {
     redirect('/' + role);
   } else if (status === 'authenticated' && (pathname.startsWith('/' + Roles.Applicant) || pathname.startsWith('/' + Roles.Grantee)) && role === Roles.Applicant) {
-    redirect('/announcements');
+    redirect('/application');
   }
   return (
     <main className={
