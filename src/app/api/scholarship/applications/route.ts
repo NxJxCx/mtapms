@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
         const filter: any = { 'applicationForm.scheduleId': schedule._id.toString(), isGrantee: false }
-        const data = await Student.find(filter).select('email applicationForm').exec()
+        const data = await Student.find(filter).select('email applicationForm studentId').exec()
         console.log(schedule, data)
         return NextResponse.json({ data })
       }
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       const studentId = session?.user?._id?.toString()
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const student = await Student.findById(studentId).select('email applicationForm').exec()
+        const student = await Student.findById(studentId).select('email applicationForm studentId').exec()
         if (!!student && student.applicationForm.scheduleId.toString() === schedule._id.toString()) {
           return NextResponse.json({ data: student.applicationForm })
         }

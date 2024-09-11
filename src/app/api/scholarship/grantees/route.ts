@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
             }
           ]
         }
-        const students = await Student.find(filter).select('email applicationForm isGrantee applicationSubmission').populate('applicationForm.scheduleId applicationSubmission applicationSubmission.requirementId').lean<StudentModel[]>().exec()
+        const students = await Student.find(filter).select('email applicationForm isGrantee applicationSubmission studentId').populate('applicationForm.scheduleId applicationSubmission applicationSubmission.requirementId').lean<StudentModel[]>().exec()
         const mappedStudents = await Promise.all(students.filter((st: StudentModel) => {
           const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
           return sched.academicYear + 4 > academicYear

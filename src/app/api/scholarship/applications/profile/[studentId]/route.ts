@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params: { studentId }}: ParamP
   try {
     const session = await getSession();
     if (session?.user?.role !== Roles.Admin && isObjectIdOrHexString(studentId)) {
-      let q = Student.findById(studentId).select('email applicationForm photo').lean<StudentModel>()
+      let q = Student.findById(studentId).select('email applicationForm studentId photo').lean<StudentModel>()
       const populate = request.nextUrl.searchParams.get('populate')
       if (!!populate) {
         if (populate === 'schedule') {
