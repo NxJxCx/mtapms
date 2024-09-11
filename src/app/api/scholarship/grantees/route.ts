@@ -74,11 +74,9 @@ export async function GET(request: NextRequest) {
       }
     } else if (session?.user?.role === Roles.Applicant) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
-      console.log("schedule", schedule)
       if (!!schedule?._id) {
         const student = await Student.findOne({ _id: session.user._id, $and: [{ 'applicationForm.scheduleId': { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission').lean<StudentModel>().exec()
         if (!!student?._id) {
-          console.log("student", student)
           const data: (StudentModel & any) = type === 'applicant_firstYear'
             ? ({...student, applicationSubmission: (await Promise.all((student.applicationSubmission as RequirementSubmissionModel[]).map(async (item, i) => {
               const requirementId = await Requirement.findById(item.requirementId).lean<RequirementModel>().exec()

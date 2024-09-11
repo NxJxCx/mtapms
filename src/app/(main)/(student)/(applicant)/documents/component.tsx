@@ -26,20 +26,21 @@ export default function DocumentRequirementsPage() {
   const [loading, setLoading] = useState<boolean>(false)
   const [data, setData] = useState<StudentModel>();
 
-  const [syData, setSYData] = useState<ScheduleModel[]>([])
+  const [syData, setSYData] = useState<ScheduleModel>()
 
-  const schoolYear = useMemo<number|string>(() => syData?.[0]?.academicYear || 0, [syData])
+  const schoolYear = useMemo<number|string|undefined>(() => syData?.academicYear, [syData])
   const [requirements, setRequirements] = useState<RequirementModel[]>([]);
 
   const getSYData = async () => {
     setLoading(true)
-    const url = new URL('/api/schedule/data', window.location.origin)
+    const url = new URL('/api/schedule/now', window.location.origin)
+    url.searchParams.append('action', 'documents')
     const response = await fetch(url)
     if (response.ok) {
       const { data: d } = await response.json()
       setSYData(d)
       setLoading(false)
-      return d
+      return d.academicYear
     }
     return ''
   }
@@ -50,7 +51,7 @@ export default function DocumentRequirementsPage() {
     try {
       const url = new URL('/api/scholarship/applications', window.location.origin)
       url.searchParams.append('studentId', sessionData.user._id)
-      url.searchParams.append('academicYear', sy.toString())
+      url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: st } = await response.json()
@@ -59,7 +60,7 @@ export default function DocumentRequirementsPage() {
     } catch (e) {}
     try {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
-      url.searchParams.append('academicYear', sy.toString() || '')
+      url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
       url.searchParams.append('firstYearOnly', student?.yearLevel == YearLevel.FirstYear ? "true" : "false")
       const response = await fetch(url)
       if (response.ok) {
@@ -69,9 +70,8 @@ export default function DocumentRequirementsPage() {
     } catch (e) {}
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
-      url.searchParams.append('academicYear', sy?.toString() || '')
+      url.searchParams.append('academicYear', schoolYear?.toString() || sy?.toString())
       url.searchParams.append('type', student?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
-      console.log(url.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
@@ -79,7 +79,7 @@ export default function DocumentRequirementsPage() {
       }
     } catch (e) {}
     setLoading(false)
-  }, [sessionData.user._id])
+  }, [sessionData.user._id, schoolYear])
 
   const refreshData = useCallback(() => {
     getSYData()

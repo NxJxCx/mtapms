@@ -17,6 +17,10 @@ export async function GET(request: NextRequest) {
       const data = !!dataRecent && (new Date(dataRecent.range.startDate)).getTime() <= (new Date()).getTime() && (new Date(dataRecent.range.endDate)).getTime() >= (new Date()).getTime() ? dataRecent : null
       if (!!data) {
         const student = await Student.findById(session.user._id).exec()
+        const action = request.nextUrl.searchParams.get('action')
+        if (action === 'documents' && !!student && student.applicationForm.scheduleId.toString() === data._id!.toString()) {
+          return NextResponse.json({ data })
+        }
         if (!student.applicationForm || student.applicationForm.scheduleId.toString() !== data._id as string) {
           return NextResponse.json({ data })
         } else if (!!student && student.applicationForm.scheduleId.toString() === data._id!.toString()) {

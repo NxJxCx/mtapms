@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
       if (!!schedule?._id) {
         const filter: any = { 'applicationForm.scheduleId': schedule._id.toString(), isGrantee: false }
         const data = await Student.find(filter).select('email applicationForm studentId').exec()
-        console.log(schedule, data)
         return NextResponse.json({ data })
       }
     } else if (session?.user?.role === Roles.Applicant || session?.user?.role === Roles.Grantee) {
