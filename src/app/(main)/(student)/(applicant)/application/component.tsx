@@ -74,7 +74,7 @@ export default function ApplicationComponent() {
     }
   }, [state, pending])
 
-  const [applicationData, setApplicationData] = useState<StudentModel & ApplicationFormProps & { studentId: string }|undefined>()
+  const [applicationData, setApplicationData] = useState<StudentModel & ApplicationFormProps & { studId: string }|undefined>()
   const fetchApplicationData = useCallback(() => {
     if (status === 'authenticated' && !!sessionData?.user) {
       const url = new URL('/api/scholarship/applications/profile/' + (sessionData?.user?._id), window.location.origin);
@@ -91,9 +91,10 @@ export default function ApplicationComponent() {
 
 
   const onPrint = useCallback(() => {
+    console.log(applicationData)
     const url = new URL('/print', window.location.origin)
     url.searchParams.append('template', 'application')
-    url.searchParams.append('studentId', applicationData?.studentId || '')
+    url.searchParams.append('studentId', applicationData?.studId || '')
     url.searchParams.append('academicYear', (applicationData?.scheduleId as ScheduleModel)?.academicYear.toString())
     // open new window no toolbars for printing only
     const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
