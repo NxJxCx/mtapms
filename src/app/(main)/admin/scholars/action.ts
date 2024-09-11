@@ -5,7 +5,7 @@ import { getSession } from "@app/lib/session";
 import Grantee from "@app/models/Grantee";
 import RequirementSubmission from "@app/models/RequirementSubmission";
 import { ActionResponseInterface, GranteeModel, Roles, SubmissionStatus } from "@app/types";
-import { Semester } from '../../../../types/index';
+import { Semester } from '@app/types/index';
 
 export async function approvePendingSubmission(type: 'new'|'new_firstYear'|'grantee', id: string, name: string): Promise<ActionResponseInterface>
 {
