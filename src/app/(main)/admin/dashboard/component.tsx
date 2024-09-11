@@ -49,9 +49,11 @@ export default function AdminDashboardComponent() {
         },
       ]))
   }
+
   useEffect(() => {
     fetchDataDashboard()
   }, [])
+
   return (
     <div className={clsx("p-4", outfit.className)}>
       <StatisticNumbers items={statisticNumbers} className={clsx("mb-3", outfit.className)} />
@@ -113,47 +115,6 @@ export default function AdminDashboardComponent() {
                 <span className="text-green-500 text-[14px] font-[400] leading-[18px]">Passing</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className={clsx("flex flex-wrap gap-x-8 gap-y-4", montserrat.className)}>
-        <div className="rounded-lg min-h-[300px] max-h-[300px] min-w-[400px] border border-black shadow bg-white">
-          <div className="rounded-t-lg py-2 bg-[#2D2D2D] text-white text-center font-[700] text-[17px] leading-[29.5px] flex justify-center items-center">
-            Announcement
-          </div>
-          <div className="rounded-b-lg p-4 flex flex-col items-start font-[500] text-[11px] leading-[20.5px] max-h-[250px] overflow-auto">
-            <p>Lurem</p>
-            <p>Espon</p>
-            <p>Lurem</p>
-            <p>Espon</p>
-            <p>Lurem</p>
-            <p>Espon</p>
-            <p>Lurem</p>
-            <p>Espon</p>
-            <p>Lurem</p>
-            <p>Espon</p>
-            <p>Lurem</p>
-            <p>Espon</p>
-            <p>Lurem</p>
-            <p>Espon</p>
-          </div>
-        </div>
-        <div className="rounded-lg min-h-[300px] max-h-[300px] min-w-[400px] border border-black shadow bg-white">
-          <div className="rounded-t-lg py-2 bg-[#2D2D2D] text-white text-center font-[700] text-[17px] leading-[29.5px] flex justify-center items-center">
-            Announcement
-          </div>
-          <div className="rounded-b-lg p-4 flex flex-col items-start font-[500] text-[11px] leading-[20.5px] max-h-[250px] overflow-auto">
-            <p>Lurem</p>
-            <p>Espon</p>
-          </div>
-        </div>
-        <div className="rounded-lg min-h-[300px] max-h-[300px] min-w-[400px] border border-black shadow bg-white">
-          <div className="rounded-t-lg py-2 bg-[#2D2D2D] text-white text-center font-[700] text-[17px] leading-[29.5px] flex justify-center items-center">
-            Announcement
-          </div>
-          <div className="rounded-b-lg p-4 flex flex-col items-start font-[500] text-[11px] leading-[20.5px] max-h-[250px] overflow-auto">
-            <p>Lurem</p>
-            <p>Espon</p>
           </div>
         </div>
       </div>
