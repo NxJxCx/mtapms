@@ -29,19 +29,30 @@ export async function GET(request: NextRequest) {
       const semester = request.nextUrl.searchParams.get('semester') as Semester|null
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const filter: any = { }
+        const filter: any = { isGrantee: true }
         if (type === 'new_firstYear') {
           filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': YearLevel.FirstYear }]
         } else if (type === 'new') {
           filter.$and = [{ applicationForm: { $exists: true } }, { 'applicationForm.scheduleId': schedule._id.toHexString() }, { 'applicationForm.yearLevel': { $ne: YearLevel.FirstYear }}]
         } else {
-          filter.isGrantee = true
+          // filter.isGrantee = true
           filter.applicationForm = { $exists: true }
+          filter.$and = [{ applicationSubmission: { $exists: true } },
+            // the number of elements of applicationSubmission is not empty
+            {
+              $expr: {
+                $gt: [
+                  { $size: '$applicationSubmission' },
+                  0
+                ]
+              }
+            }
+          ]
         }
         const students = await Student.find(filter).select('email applicationForm isGrantee applicationSubmission').populate('applicationForm.scheduleId applicationSubmission applicationSubmission.requirementId').lean<StudentModel[]>().exec()
         const mappedStudents = await Promise.all(students.filter((st: StudentModel) => {
           const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
-          return sched.academicYear >= academicYear
+          return sched.academicYear + 4 > academicYear
         })
           .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec())})))
         const data: (StudentModel & { granteeSubmissions?: GranteeModel })[] =

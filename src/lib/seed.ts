@@ -40,7 +40,7 @@ export default async function seed() {
       const newStudent = await Student.create({
         email: 'applicant_test@gmail.com',
         password: 'password',
-        emailVerified: new Date(),
+        emailVerified: (new Date()).toISOString(),
       });
     } catch (e) {
       console.log("student error:", e)
@@ -54,47 +54,56 @@ export default async function seed() {
   if (schedule.length === 0) {
     try {
       const lastYear = new Date()
+      lastYear.setHours(0,0,0,0)
       lastYear.setFullYear(lastYear.getFullYear() - 1)
       const end = new Date(lastYear)
+      end.setHours(0,0,0,0)
       end.setMonth(end.getMonth() + 1)
       const examDate = new Date(lastYear)
+      examDate.setHours(0,0,0,0)
       examDate.setDate(examDate.getDate() + 3)
       const interviewDate = new Date(examDate)
+      interviewDate.setHours(0,0,0,0)
       interviewDate.setDate(interviewDate.getDate() + 2)
       const newSchedule = await Schedule.create({
         academicYear: lastYear.getFullYear(),
         range: {
-          startDate: lastYear,
-          endDate: end,
+          startDate: lastYear.toISOString(),
+          endDate: end.toISOString(),
         },
-        orientationDate: lastYear,
-        examDate,
-        interviewDate,
+        orientationDate: lastYear.toISOString(),
+        examDate: examDate.toISOString(),
+        interviewDate: interviewDate.toISOString(),
         scholarshipSlots: 2,
-        createdAt: lastYear,
-        updatedAt: lastYear,
+        createdAt: lastYear.toISOString(),
+        updatedAt: lastYear.toISOString(),
       })
       scheduleId = newSchedule._id.toHexString();
       // this year
       try {
         const now = new Date()
+        now.setHours(0,0,0,0)
         const endNow = new Date(now)
+        endNow.setHours(0,0,0,0)
         endNow.setMonth(endNow.getMonth() + 1)
         const orientationDate = new Date(now)
+        orientationDate.setHours(0,0,0,0)
         orientationDate.setDate(orientationDate.getDate() + 3)
         const examDate2 = new Date(orientationDate)
+        examDate2.setHours(0,0,0,0)
         examDate2.setDate(examDate2.getDate() + 3)
         const interviewDate2 = new Date(examDate2)
         interviewDate2.setDate(interviewDate2.getDate() + 2)
+        interviewDate2.setHours(0,0,0,0)
         const thisYear = await Schedule.create({
           academicYear: now.getFullYear(),
           range: {
-            startDate: now,
-            endDate: endNow,
+            startDate: now.toISOString(),
+            endDate: endNow.toISOString(),
           },
-          orientationDate,
-          examDate: examDate2,
-          interviewDate: interviewDate2,
+          orientationDate: orientationDate.toISOString(),
+          examDate: examDate2.toISOString(),
+          interviewDate: interviewDate2.toISOString(),
           scholarshipSlots: 30,
         })
         thisYearScheduleId = thisYear._id.toHexString();
@@ -136,7 +145,7 @@ export default async function seed() {
       const newGrantee = await Student.create({
         email: 'grantee_test@gmail.com',
         password: 'password',
-        emailVerified: new Date(),
+        emailVerified: (new Date()).toISOString(),
         isGrantee: false,
         applicationForm: {
           scheduleId,
@@ -171,13 +180,16 @@ export default async function seed() {
         try {
           const attendance = await Schedule.findById(scheduleId).exec()
           const lastYear = new Date()
+          lastYear.setHours(0,0,0,0)
           lastYear.setFullYear(lastYear.getFullYear() - 1)
           const examDate = new Date(lastYear)
+          examDate.setHours(0,0,0,0)
           examDate.setDate(examDate.getDate() + 5)
           const submitDate = new Date(examDate)
+          submitDate.setHours(0,0,0,0)
           submitDate.setDate(submitDate.getDate() +  15)
-          attendance.orientationAttendance.push({ studentId: newGrantee._id.toHexString(), createdAt: lastYear, updatedAt: lastYear })
-          attendance.examScores.push({ studentId: newGrantee._id.toHexString(), percentageScore: 94.24, createdAt: examDate, updatedAt: examDate })
+          attendance.orientationAttendance.push({ studentId: newGrantee._id.toHexString(), createdAt: lastYear.toISOString(), updatedAt: lastYear.toISOString() })
+          attendance.examScores.push({ studentId: newGrantee._id.toHexString(), percentageScore: 94.24, createdAt: examDate.toISOString(), updatedAt: examDate.toISOString() })
           await attendance.save({ runValidators: true })
           const submissionPhoto = await FileDocument.create(await getImageBufferSample())
           const submission = await RequirementSubmission.create({
@@ -185,8 +197,8 @@ export default async function seed() {
             submittedBy: newGrantee._id.toHexString(),
             photo: submissionPhoto._id.toHexString(),
             status: SubmissionStatus.Approved,
-            createdAt: submitDate,
-            updatedAt: submitDate
+            createdAt: submitDate.toISOString(),
+            updatedAt: submitDate.toISOString()
           })
           newGrantee.applicationSubmission.push(submission._id.toHexString())
           const saved = await newGrantee.save({ runValidators: true })
@@ -194,8 +206,8 @@ export default async function seed() {
             studentId: saved._id.toHexString(),
             scheduleId,
             grade: 93.4,
-            createdAt: submitDate,
-            updatedAt: submitDate
+            createdAt: submitDate.toISOString(),
+            updatedAt: submitDate.toISOString()
           })
           saved.isGrantee = true
           const grant = await saved.save({ runValidators: true })
