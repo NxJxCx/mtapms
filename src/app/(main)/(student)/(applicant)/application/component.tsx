@@ -91,7 +91,6 @@ export default function ApplicationComponent() {
 
 
   const onPrint = useCallback(() => {
-    console.log(applicationData)
     const url = new URL('/print', window.location.origin)
     url.searchParams.append('template', 'application')
     url.searchParams.append('studentId', applicationData?.studId || '')
