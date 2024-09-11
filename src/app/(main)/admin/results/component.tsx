@@ -2,6 +2,7 @@
 
 import { LoadingSpinnerFull } from "@app/components/loadings";
 import Table, { TableColumnProps } from "@app/components/tables";
+import Toaster from "@app/components/toaster";
 import { ScheduleModel } from "@app/types";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -34,7 +35,7 @@ function getRankString(num: number): string {
   return `${num}${suffix}`;
 }
 
-const columns = (): TableColumnProps[] => ([
+const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => ([
   {
     label: 'Rank',
     field: 'rank',
@@ -82,8 +83,8 @@ const columns = (): TableColumnProps[] => ([
     searchable: true,
     align: 'center',
     render(rowData: any) {
-      return rowData.overallPercentage < 75
-      ? <button type="button" className="font-bold text-green-700 px-2 py-1 rounded-lg bg-green-50 border shadow shadow-green-100 hover:bg-green-100">{rowData.overallPercentage} %</button>
+      return rowData.overallPercentage > 75
+      ? <button type="button" onClick={() => !rowData.grantee && onDecideGrant(rowData)} className="font-bold text-green-700 px-2 py-1 rounded-lg bg-green-50 border shadow shadow-green-100 hover:bg-green-100">{rowData.overallPercentage} %</button>
       : <span className="font-bold text-red-600">{rowData.overallPercentage} %</span>
     }
   },
@@ -228,6 +229,13 @@ export default function ResultsPage() {
     fetchResultData()
   }, [fetchResultData])
 
+  const onDecideGrant = useCallback((rowData: any) => {
+    if (!isOpenSlots) {
+      Toaster.info('You cannot grant grants when slots are closed.')
+      return
+    }
+  }, [isOpenSlots])
+
   return (
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
@@ -249,7 +257,7 @@ export default function ResultsPage() {
         )}>{isOpenSlots ? 'Open Slots' : 'Closed'}</span></h2>
       )}
       <Table
-        columns={columns()}
+        columns={columns(onDecideGrant)}
         data={filteredData}
         loading={loading}
         searchable
