@@ -49,7 +49,7 @@ const ScheduleSchema = new Schema<ScheduleModel>({
           async validator(value: string|StudentModel) {
             if (!isObjectIdOrHexString(value)) return false;
             const student = await models?.Student?.findById(value).exec()
-            return !!student && !student.isGrantee && student.applicationForm?.scheduleId?.toString() === (this as any)._id.toString()
+            return !!student && !student.isGrantee
           },
           message: 'Invalid Student Id.'
         }
@@ -62,6 +62,11 @@ const ScheduleSchema = new Schema<ScheduleModel>({
       }
     }],
     default: []
+  },
+  scholarshipSlots: {
+    type: Number,
+    min: 1,
+    required: [true, 'Scholarship Slots is required.'],
   }
 }, {
   timestamps: true

@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { GradeRemarks, ResultModel } from '@app/types';
+import { ResultModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 
@@ -21,11 +21,6 @@ const ResultSchema = new Schema<ResultModel>({
     max: 100,
     required: [true, 'Grade is required'],
   },
-  remarks: {
-    type: String,
-    enum: GradeRemarks,
-    required: [true, 'Remarks are required'],
-  }
 }, {
   timestamps: true
 })

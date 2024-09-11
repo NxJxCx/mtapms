@@ -28,7 +28,7 @@ interface RequirementTitles {
 
 export default function DocumentRequirementsPage() {
   const { data: sessionData, status } = useSession({ redirect: false })
-  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Applicant });
+  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Grantee });
   const [loading, setLoading] = useState<boolean>(false)
   const [data, setData] = useState<StudentModel & { granteeSubmissions?: GranteeModel }>();
 
@@ -104,9 +104,11 @@ export default function DocumentRequirementsPage() {
       url.searchParams.append('academicYear', schoolYear?.toString() || '')
       url.searchParams.append('semester', semester?.toString() || '')
       url.searchParams.append('type', 'grantee')
+      console.log(url.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
+        console.log("data", d)
         setData(d);
       }
     } catch (e) {}

@@ -165,14 +165,14 @@ export interface ScheduleModel extends BaseDocument {
   examDate?: string|Date
   interviewDate?: string|Date
   orientationAttendance: AttendanceProps[]
-  examScores: ExamProps[]
+  examScores: ExamProps[],
+  scholarshipSlots: number,
 }
 
 export interface ResultModel extends BaseDocument {
   studentId: string|StudentModel
   scheduleId: string|ScheduleModel
   grade: number
-  remarks: GradeRemarks
 }
 
 export type AuthenticationStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'error'

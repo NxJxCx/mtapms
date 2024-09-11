@@ -8,6 +8,7 @@ const GranteeRequirement = new Schema<SubmissionProps>({
   photo: {
     type: Schema.Types.ObjectId,
     ref: 'File',
+    default: null
   },
   status: {
     type: String,

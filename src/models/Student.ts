@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { hashPassword } from '@app/lib/hash';
-import { ApplicationFormProps, CivilStatus, Gender, SchoolSector, StudentModel } from '@app/types';
+import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 const ApplicationFormSchema = new Schema<ApplicationFormProps>({
@@ -157,7 +157,31 @@ const StudentSchema = new Schema<StudentModel>({
   },
   isGrantee: {
     type: Boolean,
-    default: false
+    default: false,
+    validate: {
+      async validator(v: boolean) {
+        if (v === true) {
+          try {
+            const schedule = await models.Schedule.findById((this as any).applicationForm?.scheduleId)
+            const countSlots = await models.Student.find({ isGrantee: true, 'applicationForm.scheduleId': schedule?._id?.toHexString() })
+            if (countSlots.length >= (schedule as ScheduleModel)?.scholarshipSlots) {
+              return false
+            }
+            const existing = await models.Result.exists({
+              studentId: (this as any)._id,
+              scheduleId: schedule?._id?.toHexString(),
+              grade: { $gte: 75 }
+            })
+            return !!existing?._id
+          } catch (e) {
+            console.log(e)
+          }
+          return false
+        }
+        return true
+      },
+      message: 'isGrantee should only be true if the student has at least one result with a grade of 75'
+    }
   },
   photo: {
     type: Schema.Types.ObjectId,

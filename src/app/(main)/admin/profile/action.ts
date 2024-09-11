@@ -20,7 +20,6 @@ async function savePhotoToDatabase(photo: File, userId: string): Promise<boolean
     photoFile = await FileDocument.create({
       file: await fileToBuffer(photo),
       mimeType: photo.type,
-      size: photo.size,
     })
   } catch (e) {}
   try {

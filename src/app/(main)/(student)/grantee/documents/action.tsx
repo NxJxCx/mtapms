@@ -13,7 +13,6 @@ async function uploadRequirement(fileDoc: File): Promise<string|undefined>
     const fileSubmission = await FileDocument.create({
       file,
       mimeType: fileDoc.type,
-      size: fileDoc.size,
     })
     if (!!fileSubmission?._id) {
       return fileSubmission._id
