@@ -1,9 +1,11 @@
 'use client'
 
 import { LoadingSpinnerFull } from "@app/components/loadings"
+import { Modal } from "@app/components/modals"
+import { useSidebar } from "@app/components/sidebar"
 import Table, { TableColumnProps } from "@app/components/tables"
 import Tabs from "@app/components/tabs"
-import { ApplicationFormProps, GranteeModel, RequirementModel, RequirementSubmissionModel, ScheduleModel, Semester, StudentModel, SubmissionStatus } from "@app/types"
+import { ApplicationFormProps, GranteeModel, RequirementModel, RequirementSubmissionModel, Roles, ScheduleModel, Semester, StudentModel, SubmissionProps, SubmissionStatus } from "@app/types"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 const getApplicantRequirements = async (academicYear: number, firstYearOnly: boolean): Promise<TableColumnProps[]> => {
@@ -24,7 +26,7 @@ const getApplicantRequirements = async (academicYear: number, firstYearOnly: boo
   return []
 }
 
-const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academicYear: number): Promise<TableColumnProps[]> => ([
+const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academicYear: number, onViewGranteeSubmission?: (key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel) => void): Promise<TableColumnProps[]> => ([
   {
     label: 'Last Name',
     field: 'lastName',
@@ -84,29 +86,58 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
       label: 'COG',
       field: 'COG',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
+        rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Approved
+        ? <span className="text-green-800 font-bold">Yes</span>
+        : (
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('COG', rowData.granteeSubmissions)} title="View COG">
+            <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>
+          </button>
+        ),
     },
     {
       label: 'StudyLoad',
       field: 'studyLoad',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
+        rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Approved
+      ? <span className="text-green-800 font-bold">Yes</span>
+      : (
+        <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('studyLoad', rowData.granteeSubmissions)} title="View Study Load">
+          <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>
+        </button>
+      ),
     },
     {
       label: 'Statement of Account',
       field: 'statementOfAccount',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
+        rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Approved
+        ? <span className="text-green-800 font-bold">Yes</span>
+        : (
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('statementOfAccount', rowData.granteeSubmissions)} title="View Statement of Account">
+            <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>
+          </button>
+        ),
     },
     {
       label: 'CONS',
       field: 'CONS',
       sortable: true,
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Approved ? <span className="text-green-800 font-bold">Yes</span> : <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>,
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
+        rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Approved
+        ? <span className="text-green-800 font-bold">Yes</span>
+        : (
+          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('CONS', rowData.granteeSubmissions)} title="View CONS">
+            <span className="text-red-500 font-bold capitalize">{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>
+          </button>
+        ),
     },
   ])
 
 export default function ScholarListPage() {
+  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState<boolean>(true)
   const [syData, setSYData] = useState<ScheduleModel[]>([])
   const schoolYearList = useMemo<number[]>(() => {
@@ -145,12 +176,34 @@ export default function ScholarListPage() {
   const [dataApplicant, setDataApplicant] = useState<StudentModel[]>([])
   const [dataApplicant1stYear, setDataApplicant1stYear] = useState<StudentModel[]>([])
   const [dataGrantee, setDataGrantee] = useState<StudentModel[]>([])
+  const [selected, setSelected] = useState<{
+    id: string;
+    type: 'new'|'new_firstYear'|'grantee';
+    key: string;
+    data: RequirementSubmissionModel|SubmissionProps
+  }|undefined>()
+
+  const onModalClose = useCallback(() => {
+    setSelected(undefined)
+  }, [])
+
+  const onViewGranteeSubmission = useCallback((key: 'COG'|'studyLoad'|'statementOfAccount'|'CONS', data: GranteeModel) => {
+    if (!data?.[key]) return;
+    setSelected({
+      id: data._id!,
+      type: 'grantee',
+      key,
+      data: data[key],
+    })
+  }, [])
 
   useEffect(() => {
-    columns('applicant', schoolYear as number).then(setApplicant)
-    columns('applicant_firstYear', schoolYear as number).then(setApplicant1stYear)
-    columns('grantee', schoolYear as number).then(setGrantee)
-  }, [schoolYear])
+    if (onViewGranteeSubmission && schoolYear) {
+      columns('applicant', schoolYear as number).then(setApplicant)
+      columns('applicant_firstYear', schoolYear as number).then(setApplicant1stYear)
+      columns('grantee', schoolYear as number, onViewGranteeSubmission).then(setGrantee)
+    }
+  }, [schoolYear, onViewGranteeSubmission])
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -190,7 +243,6 @@ export default function ScholarListPage() {
     url3.searchParams.append('academicYear', schoolYear.toString())
     url3.searchParams.append('semester', semester.toString())
     url3.searchParams.append('type', 'grantee')
-    console.log(url3.toString())
     const response3 = await fetch(url3)
     if (response3.ok) {
       const { data } = await response3.json()
@@ -213,7 +265,7 @@ export default function ScholarListPage() {
     console.log('Viewing application form for:', rowData)
   }, [])
 
-  return (
+  return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-3 border-black text-black font-[700]">
         SCHOLARSHIP STATUS A.Y. {schoolYear} - {parseInt(schoolYear.toString()) + 1}
@@ -266,5 +318,14 @@ export default function ScholarListPage() {
         </Tabs.TabContent>
       </Tabs.TabNav>
     </div>
-  )
+    <Modal title={selected?.key} open={!!selected} onClose={onModalClose}>
+      <div className="flex flex-col">
+        {selected?.id}
+        {selected?.type}
+        {selected?.key}
+        {selected?.data?.photo as string|undefined}
+        {selected?.data?.status}
+      </div>
+    </Modal>
+  </>)
 }

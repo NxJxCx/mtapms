@@ -32,13 +32,22 @@ export async function uploadSubmission(requirementKey: string, academicYear: str
       const studentId = session.user._id
       const file = formData.get('file') as File
       if (!!file) {
+        console.log(file)
         const photo = await uploadRequirement(file)
+        console.log(photo)
         if (!!photo) {
           // find if grantee submission is available for this student and semester
           const submission = await Grantee.findOne({ studentId, academicYear, semester }).exec()
-          if (!submission?._id) {
-            submission[requirementKey].photo = photo
-            submission.status = SubmissionStatus.Pending
+          if (!!submission?._id) {
+            if (!submission[requirementKey]) {
+              submission.set(requirementKey, {
+                photo,
+                status: SubmissionStatus.Pending
+              })
+            } else {
+              submission[requirementKey].photo = photo
+              submission.status = SubmissionStatus.Pending
+            }
             const updated = await submission.save({ new: true, runValidators: true })
             if (!!updated?._id) {
               return {
