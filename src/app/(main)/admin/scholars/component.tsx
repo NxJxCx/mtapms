@@ -6,6 +6,7 @@ import { Modal } from "@app/components/modals"
 import { useSidebar } from "@app/components/sidebar"
 import Table, { TableColumnProps } from "@app/components/tables"
 import Tabs from "@app/components/tabs"
+import Toaster from '@app/components/toaster'
 import {
   GranteeModel,
   RequirementModel,
@@ -20,6 +21,7 @@ import {
 import { CheckBadgeIcon, CheckIcon, XMarkIcon } from "@heroicons/react/16/solid"
 import clsx from "clsx"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { approvePendingSubmission, disapprovePendingSubmission } from './action'
 
 const getApplicantRequirements = async (academicYear: number, firstYearOnly: boolean, onViewSubmission?: (req: RequirementModel, student: StudentModel, data?: RequirementSubmissionModel) => void): Promise<TableColumnProps[]> => {
   const url = new URL('/api/scholarship/requirements', window.location.origin)
@@ -33,11 +35,15 @@ const getApplicantRequirements = async (academicYear: number, firstYearOnly: boo
       field: r.name,
       align: 'center',
       sortable: true,
-      render: (rowData: StudentModel) => (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved
-      ? <span className="text-green-800 font-bold">Yes</span>
-      : (
+      render: (rowData: StudentModel) => (
         <button type="button" onClick={() => onViewSubmission && onViewSubmission(r, rowData, (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id))} title="View Study Load">
-          <span className={clsx("font-bold capitalize", (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status || 'N/A'}</span>
+          <span className={clsx(
+            "font-bold capitalize",
+            (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Pending
+            ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200'
+            :  (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved
+            ? 'text-green-600'
+            : 'text-red-500')}>{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status || 'N/A'}</span>
         </button>
       ),
     }))
@@ -106,56 +112,68 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
       field: 'COG',
       sortable: true,
       align: 'center',
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
-        rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Approved
-        ? <span className="text-green-800 font-bold">Yes</span>
-        : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('COG', rowData.granteeSubmissions, rowData as StudentModel)} title="View COG">
-            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>
-          </button>
-        ),
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => (
+        <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('COG', rowData.granteeSubmissions, rowData as StudentModel)} title="View COG">
+          <span className={clsx(
+            "font-bold capitalize",
+            rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Pending
+            ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200'
+            :  rowData.granteeSubmissions?.COG?.status === SubmissionStatus.Approved
+            ? 'text-green-600'
+            : 'text-red-500')}>{rowData.granteeSubmissions?.COG?.status || 'N/A'}</span>
+        </button>
+      )
     },
     {
       label: 'StudyLoad',
       field: 'studyLoad',
       sortable: true,
       align: 'center',
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
-        rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Approved
-        ? <span className="text-green-800 font-bold">Yes</span>
-        : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('studyLoad', rowData.granteeSubmissions, rowData as StudentModel)} title="View Study Load">
-            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>
-          </button>
-        ),
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>(
+        <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('studyLoad', rowData.granteeSubmissions, rowData as StudentModel)} title="View Study Load">
+          <span className={clsx(
+            "font-bold capitalize",
+            rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Pending
+            ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200'
+            :  rowData.granteeSubmissions?.studyLoad?.status === SubmissionStatus.Approved
+            ? 'text-green-600'
+            : 'text-red-500')}>{rowData.granteeSubmissions?.studyLoad?.status || 'N/A'}</span>
+        </button>
+      ),
     },
     {
       label: 'Statement of Account',
       field: 'statementOfAccount',
       sortable: true,
       align: 'center',
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
-        rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Approved
-        ? <span className="text-green-800 font-bold">Yes</span>
-        : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('statementOfAccount', rowData.granteeSubmissions, rowData as StudentModel)} title="View Statement of Account">
-            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>
-          </button>
-        ),
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>(
+        <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('statementOfAccount', rowData.granteeSubmissions, rowData as StudentModel)} title="View Statement of Account">
+          <span className={clsx(
+            "font-bold capitalize",
+            rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Pending
+            ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200'
+            :  rowData.granteeSubmissions?.statementOfAccount?.status === SubmissionStatus.Approved
+            ? 'text-green-600'
+            : 'text-red-500')}>{rowData.granteeSubmissions?.statementOfAccount?.status || 'N/A'}</span>
+        </button>
+      ),
     },
     {
       label: 'CONS',
       field: 'CONS',
       sortable: true,
       align: 'center',
-      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>
-        rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Approved
-        ? <span className="text-green-800 font-bold">Yes</span>
-        : (
-          <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('CONS', rowData.granteeSubmissions, rowData as StudentModel)} title="View CONS">
-            <span className={clsx("font-bold capitalize", rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Pending ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200' : 'text-red-500')}>{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>
-          </button>
-        ),
+      render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => (
+        <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('CONS', rowData.granteeSubmissions, rowData as StudentModel)} title="View CONS">
+          <span className={clsx(
+            "font-bold capitalize",
+            rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Pending
+            ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200'
+            :  rowData.granteeSubmissions?.CONS?.status === SubmissionStatus.Approved
+            ? 'text-green-600'
+            : 'text-red-500')}>{rowData.granteeSubmissions?.CONS?.status || 'N/A'}</span>
+        </button>
+      ),
     },
   ])
 
@@ -204,6 +222,7 @@ export default function ScholarListPage() {
     id: string;
     type: 'new'|'new_firstYear'|'grantee';
     key: string;
+    name: string;
     data: RequirementSubmissionModel|SubmissionProps
   }|undefined>()
 
@@ -219,22 +238,37 @@ export default function ScholarListPage() {
       id: data._id!,
       type: 'grantee',
       key,
-      data: data[key],
+      name: key === 'COG'
+        ? 'Certificate of Grades'
+        : key ==='studyLoad'
+        ? 'Study Load'
+        : key === 'statementOfAccount'
+        ? 'Statement of Account'
+        : 'CONS',
+      data: data[key] as SubmissionProps,
     })
   }, [openDrawer, toggleDrawer])
 
-  const onViewSubmission = useCallback((key: string, data: RequirementSubmissionModel, student: StudentModel) => {
+  const onViewSubmission = useCallback((req: RequirementModel, student: StudentModel, data?: RequirementSubmissionModel) => {
     if (!data) return;
     if (openDrawer) toggleDrawer();
+    setSelected({
+      student,
+      id: data._id!,
+      type: 'new',
+      key: req.name,
+      name: req.name,
+      data: data as RequirementSubmissionModel,
+    })
   }, [openDrawer, toggleDrawer])
 
   useEffect(() => {
     if (onViewGranteeSubmission && schoolYear) {
-      columns('applicant', schoolYear as number).then(setApplicant)
-      columns('applicant_firstYear', schoolYear as number).then(setApplicant1stYear)
+      columns('applicant', schoolYear as number, onViewSubmission).then(setApplicant)
+      columns('applicant_firstYear', schoolYear as number, onViewSubmission).then(setApplicant1stYear)
       columns('grantee', schoolYear as number, undefined, onViewGranteeSubmission).then(setGrantee)
     }
-  }, [schoolYear, onViewGranteeSubmission])
+  }, [schoolYear, onViewGranteeSubmission, onViewSubmission])
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -294,6 +328,40 @@ export default function ScholarListPage() {
 
   const getURLFromSubmission = useCallback((photoId?: string) => (new URL("/api/user/photo/" + photoId, window.location.origin)).toString(), [])
 
+  const onApprovePending = useCallback(async (type: 'new'|'new_firstYear'|'grantee', key: string, requirementId: string) => {
+    try {
+      const approve = approvePendingSubmission.bind(null, type, requirementId, key)
+      const { success, error } = await approve()
+      if (error) {
+        Toaster.error(error)
+      } else if (success) {
+        Toaster.success(success)
+        fetchData()
+        setSelected(undefined)
+      }
+    } catch (e) {
+      console.log(e)
+      Toaster.error('Failed to approve submission.')
+    }
+  }, [fetchData])
+
+  const onDisapprovePending = useCallback(async (type: 'new'|'new_firstYear'|'grantee', key: string, requirementId: string) => {
+    try {
+      const approve = disapprovePendingSubmission.bind(null, type, requirementId, key)
+      const { success, error } = await approve()
+      if (error) {
+        Toaster.error(error)
+      } else if (success) {
+        Toaster.success(success)
+        fetchData()
+        setSelected(undefined)
+      }
+    } catch (e) {
+      console.log(e)
+      Toaster.error('Failed to disapprove submission.')
+    }
+  }, [fetchData])
+
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-3 border-black text-black font-[700]">
@@ -347,9 +415,9 @@ export default function ScholarListPage() {
         </Tabs.TabContent>
       </Tabs.TabNav>
     </div>
-    <Modal title={selected?.key} open={!!selected} onClose={onModalClose}>
+    <Modal title={selected?.name} open={!!selected} onClose={onModalClose}>
       <div className="flex flex-col">
-      {(selected?.data?.status === SubmissionStatus.Pending || selected?.data?.status === SubmissionStatus.Approved) && (
+      {!!selected?.data?.status && (
           <div className="font-[500] p-4">
             <div className="text-gray-500">
               Submission status: <span className="font-bold">{SubmissionStatus[selected?.data?.status]}</span>
@@ -362,8 +430,8 @@ export default function ScholarListPage() {
             </div>
             {selected?.data?.status === SubmissionStatus.Pending && (
               <div className="mt-4 flex justify-evenly">
-                <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500"><CheckIcon className='w-4 h-4 inline text-green-700 mr-1' />Approve</button>
-                <button type="button" className="px-2 py-1 bg-red-50 rounded border border-red-500"><XMarkIcon className='w-4 h-4 inline text-red-500 mr-1' />Disapprove</button>
+                <button type="button" onClick={() => onApprovePending(selected.type, selected.key, selected.id)} className="px-2 py-1 bg-green-50 rounded border border-green-500"><CheckIcon className='w-4 h-4 inline text-green-700 mr-1' />Approve</button>
+                <button type="button" onClick={() => onDisapprovePending(selected.type, selected.key, selected.id)} className="px-2 py-1 bg-red-50 rounded border border-red-500"><XMarkIcon className='w-4 h-4 inline text-red-500 mr-1' />Disapprove</button>
               </div>
             )}
             {selected?.data?.status === SubmissionStatus.Approved && (
@@ -371,9 +439,9 @@ export default function ScholarListPage() {
                 <CheckBadgeIcon className="inline w-4 h-4 mr-2"/> Submission approved.
               </div>
             )}
-            {selected?.data?.status === SubmissionStatus.Approved && (
+            {selected?.data?.status === SubmissionStatus.Disapproved && (
               <div className="mt-4 text-center text-red-600 rounded p-1">
-                <CheckBadgeIcon className="inline w-4 h-4 mr-2"/> Submission disapproved.
+                <XMarkIcon className="inline w-4 h-4 mr-2"/> Submission disapproved.
               </div>
             )}
             <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">

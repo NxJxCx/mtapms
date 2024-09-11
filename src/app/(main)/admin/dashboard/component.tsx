@@ -1,34 +1,57 @@
+'use client'
+
 import { StatisticNumbers } from "@app/components/dashboard";
 import { EllipsisHorizontalIcon, UsersIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { Montserrat, Outfit } from "next/font/google";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 const outfit = Outfit({ subsets: ["latin"], weight: ["400", "600", "700"],  })
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "600", "700"] })
 
 export default function AdminDashboardComponent() {
-  const statisticNumbers = useMemo(() => [
+  const [statisticNumbers, setStatisticNumbers] = useState<{title: string, value: number, icon: JSX.Element }[]>([
     {
       title: "Total Scholar",
-      value: 89935,
+      value: 0,
       icon: <UsersIcon className="h-[20px] w-[20px]" />
     },
     {
       title: "Total Graduates",
-      value: 23283,
+      value: 0,
       icon: <UsersIcon className="h-[20px] w-[20px]" />
     },
     {
       title: "Total Users",
-      value: 46827,
+      value: 0,
       icon: <UsersIcon className="h-[20px] w-[20px]" />
     },
-    {
-      title: "Total Refunded",
-      value: 124854,
-      icon: <UsersIcon className="h-[20px] w-[20px]" />
-    }
-  ], [])
+  ])
+
+  const fetchDataDashboard = () => {
+    const url = new URL('/api/admin/dashboard', window.location.origin)
+    fetch(url)
+      .then(resp => resp.json())
+      .then(({ data }) => setStatisticNumbers([
+        {
+          title: "Total Scholar",
+          value: data.totalScholars || 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+        {
+          title: "Total Graduates",
+          value: data.totalGraduates || 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+        {
+          title: "Total Users",
+          value: data.totalUsers || 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+      ]))
+  }
+  useEffect(() => {
+    fetchDataDashboard()
+  }, [])
   return (
     <div className={clsx("p-4", outfit.className)}>
       <StatisticNumbers items={statisticNumbers} className={clsx("mb-3", outfit.className)} />
