@@ -18,8 +18,10 @@ export async function grantScholarship(scheduleId: string, studentId: string): P
         const studentGrantees = await Student.find({ isGrantee: true, $and: [{ 'applicationForm.scheduleId': { $exists: true } },{ 'applicationForm.scheduleId': schedule._id.toString() }]}).countDocuments().exec()
         if (studentGrantees < schedule.scholarshipSlots) {
           student.isGrantee = true
-          await student.save()
-          return { success: 'Scholarship granted successfully.' }
+          const updated = await student.save({ new: true, runValidators: true })
+          if (!!updated?._id && updated.isGrantee) {
+            return { success: 'Scholarship granted successfully.' }
+          }
         }
       }
     }

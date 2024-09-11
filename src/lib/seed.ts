@@ -3,7 +3,6 @@ import FileDocument from '@app/models/FileDocument';
 import Grantee from '@app/models/Grantee';
 import Requirement from '@app/models/Requirement';
 import RequirementSubmission from '@app/models/RequirementSubmission';
-import Result from '@app/models/Result';
 import Schedule from '@app/models/Schedule';
 import Student from '@app/models/Student';
 import { CivilStatus, Gender, SchoolSector, Semester, SubmissionStatus, YearLevel } from '@app/types/index';
@@ -202,13 +201,6 @@ export default async function seed() {
           })
           newGrantee.applicationSubmission.push(submission._id.toHexString())
           const saved = await newGrantee.save({ runValidators: true })
-          await Result.create({
-            studentId: saved._id.toHexString(),
-            scheduleId,
-            grade: 93.4,
-            createdAt: submitDate.toISOString(),
-            updatedAt: submitDate.toISOString()
-          })
           saved.isGrantee = true
           const grant = await saved.save({ runValidators: true })
           console.log('grantee created:', grant?._id?.toHexString())

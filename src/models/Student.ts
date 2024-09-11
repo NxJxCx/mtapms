@@ -162,17 +162,9 @@ const StudentSchema = new Schema<StudentModel>({
       async validator(v: boolean) {
         if (v === true) {
           try {
-            const schedule = await models.Schedule.findById((this as any).applicationForm?.scheduleId)
-            const countSlots = await models.Student.find({ isGrantee: true, 'applicationForm.scheduleId': schedule?._id?.toHexString() })
-            if (countSlots.length >= (schedule as ScheduleModel)?.scholarshipSlots) {
-              return false
-            }
-            const existing = await models.Result.exists({
-              studentId: (this as any)._id,
-              scheduleId: schedule?._id?.toHexString(),
-              grade: { $gte: 75 }
-            })
-            return !!existing?._id
+            const schedule = await models.Schedule.findById((this as any).applicationForm?.scheduleId).select('scholarshipSlots').lean<ScheduleModel>().exec()
+            const countSlots = await models.Student.find({ isGrantee: true, $and: [{ 'applicationForm.scheduleId': { $exists: true }}, { 'applicationForm.scheduleId': schedule?._id?.toString() }] }).countDocuments().exec()
+            return countSlots < (schedule as ScheduleModel)?.scholarshipSlots
           } catch (e) {
             console.log(e)
           }
