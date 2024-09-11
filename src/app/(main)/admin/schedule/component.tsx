@@ -139,8 +139,9 @@ export default function SchedulePage() {
             <div className="rounded-t-lg py-2 bg-[#2D2D2D] text-white text-center font-[700] text-[17px] leading-[29.5px] flex justify-center items-center">
               Scholarship Schedule for A.Y. {schoolYear} - {parseInt(schoolYear as string) + 1}
             </div>
-            <div className="rounded-b-lg p-4 flex justify-center items-center h-full font-[500] text-[20px] leading-[20.5px] max-h-[100px] text-center">
-              <div>{selectedScheduleData.range.startDate.toLocaleString('en-PH', { month: 'long', year: 'numeric', day: 'numeric' })} - {selectedScheduleData.range.endDate.toLocaleString('en-PH', { month: 'long', year: 'numeric', day: 'numeric' })}</div>
+            <div className="rounded-b-lg p-4 flex flex-col gap-y-2 justify-center items-center h-full font-[500] text-[20px] leading-[20.5px] max-h-[100px] text-center">
+              <div className="border-b pb-2">{selectedScheduleData.range.startDate.toLocaleString('en-PH', { month: 'long', year: 'numeric', day: 'numeric' })} - {selectedScheduleData.range.endDate.toLocaleString('en-PH', { month: 'long', year: 'numeric', day: 'numeric' })}</div>
+              <div className="font-bold">{selectedScheduleData.scholarshipSlots ? selectedScheduleData.scholarshipSlots + ' slots' : ''}</div>
             </div>
           </div>
           {/* Orientation Schedule */}
@@ -205,6 +206,10 @@ export default function SchedulePage() {
         <div>
           <label htmlFor="range.endDate">End Date:</label>
           <input type="date" id="range.endDate" name="range.endDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
+        </div>
+        <div>
+          <label htmlFor="scholarshipSlots">Scholarship Number of Slots:</label>
+          <input type="number" id="scholarshipSlots" name="scholarshipSlots" min={1} className="block px-2 py-1 border border-black rounded-lg" required />
         </div>
         <h2 className="text-xl font-[600] mt-4">Orientation Schedule</h2>
         <div>

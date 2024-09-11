@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
-    const data = await Schedule.find({}).select('academicYear range orientationDate examDate interviewDate').exec()
+    const data = await Schedule.find({}).select('academicYear range orientationDate examDate interviewDate scholarshipSlots').exec()
     return NextResponse.json({ data })
   } catch (e) {
     console.log(e)

@@ -26,15 +26,39 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
           error: 'Scholarship Range Date Required'
         }
       }
+      if (!dataForm.scholarshipSlots) {
+        return {
+          error: 'Scholarship Slots Required'
+        }
+      }
+      const startDate = new Date(dataForm['range.startDate'] as string)
+      const endDate = new Date(dataForm['range.endDate'] as string)
+      startDate.setHours(0, 0, 0, 0)
+      endDate.setHours(0, 0, 0, 0)
+      let orientationDate, examDate, interviewDate;
+      if (dataForm.orientationDate) {
+        orientationDate = new Date(dataForm.orientationDate as string)
+        orientationDate.setHours(0, 0, 0, 0)
+      }
+      if (dataForm.examDate) {
+        examDate = new Date(dataForm.examDate as string)
+        examDate.setHours(0, 0, 0, 0)
+      }
+      if (dataForm.interviewDate) {
+        interviewDate = new Date(dataForm.interviewDate as string)
+        interviewDate.setHours(0, 0, 0, 0)
+      }
+      const scholarshipSlots = dataForm.scholarshipSlots as string
       const data = {
         academicYear,
         range: {
-          startDate: dataForm['range.startDate'],
-          endDate: dataForm['range.endDate'],
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
         },
-        orientationDate: dataForm.orientationDate,
-        examDate: dataForm.examDate,
-        interviewDate: dataForm.interviewDate,
+        orientationDate: orientationDate?.toISOString(),
+        examDate: examDate?.toISOString(),
+        interviewDate: interviewDate?.toISOString(),
+        scholarshipSlots
       }
       const result = await Schedule.create(data);
       if (!!result?._id) {
