@@ -5,10 +5,8 @@ import StudentIdModal from "./_studentId/component";
 
 export default function GranteeLayout({
   children,
-  studentId
 }: Readonly<{
   children: React.ReactNode;
-  studentId: React.ReactNode;
 }>) {
   return (
     <>

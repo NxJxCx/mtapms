@@ -261,7 +261,7 @@ export default function ResultsPage() {
       }
     }
     onCloseModal()
-  }, [selectedDecideGrant, scheduleId])
+  }, [selectedDecideGrant, scheduleId, fetchResultData, onCloseModal])
 
   return (<>
     <div className="p-6">
