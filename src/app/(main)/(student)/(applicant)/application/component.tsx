@@ -278,7 +278,7 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="siblings" className="font-[500]">Number of Siblings:</label>
-              <input type="number" min={0} max={15} id="siblings" name="siblings" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.siblings} onChange={(e) => setFormData({ ...formData, siblings: e.target.value !== '' ? parseInt(e.target.value) : 0 })} required />
+              <input type="tel" min={0} max={15} id="siblings" name="siblings" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.siblings} onChange={(e) => setFormData({ ...formData, siblings: e.target.value !== '' ? parseInt(e.target.value) : 0 })} required />
             </div>
             <div className="col-span-3">
               <label htmlFor="otherEducationalFinancialAssistance" className="font-[500] max-w-32 text-wrap cursor-pointer mr-2">Are you enjoying other educational financial assistance?</label>
