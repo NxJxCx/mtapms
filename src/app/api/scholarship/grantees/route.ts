@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
         }).lean<StudentModel>().exec()
         if (!!student?._id) {
           const data: (StudentModel & any) = type === 'grantee'
-            ? ({...student, applicationSubmission: [], granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studId: student._id?.toString() }).exec())})
+            ? ({...student, applicationSubmission: [], granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: student._id?.toString() }).exec())})
             : null
           return NextResponse.json({ data })
         }
