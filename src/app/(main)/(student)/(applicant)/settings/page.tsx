@@ -1,5 +1,5 @@
 import AccountSettingsComponent from "@app/app/(main)/(student)/_settings/component";
 
-export default function GranteeSettingsPage() {
+export default function ApplicantSettingsPage() {
   return <AccountSettingsComponent />
 }
