@@ -11,9 +11,6 @@ import 'server-only';
 import mongodbConnect from './db';
 import { getImageBufferSample } from './testPhoto';
 
-function timeout(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 export default async function seed() {
   await mongodbConnect();
@@ -34,8 +31,6 @@ export default async function seed() {
       console.log("admin error:", e)
     }
   }
-
-  await timeout(1000)
   // Seed Student applicant account
   const applicant = await Student.findOne({
     email: 'applicant_test@gmail.com'
@@ -52,7 +47,6 @@ export default async function seed() {
     }
   }
 
-  await timeout(1000)
   // seed schedule
   const schedule = await Schedule.find({});
   let scheduleId = null;
@@ -81,7 +75,6 @@ export default async function seed() {
         updatedAt: lastYear,
       })
       scheduleId = newSchedule._id.toHexString();
-      await timeout(1000)
       // this year
       try {
         const now = new Date()
@@ -112,7 +105,6 @@ export default async function seed() {
       console.log("schedule error:", e)
     }
   }
-  await timeout(1000)
   // Seed Requirement
   let requirementId = null
   if (!!scheduleId) {
@@ -134,7 +126,6 @@ export default async function seed() {
     }
   }
 
-  await timeout(1000)
   // Seed Student grantee account
   const grantee = await Student.findOne({
     email: 'grantee_test@gmail.com'
@@ -178,7 +169,6 @@ export default async function seed() {
       });
       if (!!newGrantee?._id) {
         try {
-          await timeout(1000)
           const attendance = await Schedule.findById(scheduleId).exec()
           const lastYear = new Date()
           lastYear.setFullYear(lastYear.getFullYear() - 1)
@@ -189,9 +179,7 @@ export default async function seed() {
           attendance.orientationAttendance.push({ studentId: newGrantee._id.toHexString(), createdAt: lastYear, updatedAt: lastYear })
           attendance.examScores.push({ studentId: newGrantee._id.toHexString(), percentageScore: 94.24, createdAt: examDate, updatedAt: examDate })
           await attendance.save({ runValidators: true })
-          await timeout(1000)
           const submissionPhoto = await FileDocument.create(await getImageBufferSample())
-          await timeout(1000)
           const submission = await RequirementSubmission.create({
             requirementId,
             submittedBy: newGrantee._id.toHexString(),
@@ -201,9 +189,7 @@ export default async function seed() {
             updatedAt: submitDate
           })
           newGrantee.applicationSubmission.push(submission._id.toHexString())
-          await timeout(1000)
           const saved = await newGrantee.save({ runValidators: true })
-          await timeout(1000)
           await Result.create({
             studentId: saved._id.toHexString(),
             scheduleId,
@@ -212,10 +198,8 @@ export default async function seed() {
             updatedAt: submitDate
           })
           saved.isGrantee = true
-          await timeout(1000)
           const grant = await saved.save({ runValidators: true })
           console.log('grantee created:', grant?._id?.toHexString())
-          await timeout(1000)
           const granteeSubmission = await Grantee.create({
             studentId: grant?._id?.toHexString(),
             academicYear: (new Date()).getFullYear(),
