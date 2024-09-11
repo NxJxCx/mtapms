@@ -51,13 +51,11 @@ export async function GET(request: NextRequest) {
           ]
         }
         const students = await Student.find(filter).select('email applicationForm isGrantee applicationSubmission studentId').populate('applicationForm.scheduleId applicationSubmission applicationSubmission.requirementId').lean<StudentModel[]>().exec()
-        console.log("student", students)
         const mappedStudents = await Promise.all(students.filter((st: StudentModel) => {
           const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
           return sched.academicYear + 4 > academicYear
         })
           .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec())})))
-        console.log("mapped", mappedStudents)
         const data: (StudentModel & { granteeSubmissions?: GranteeModel })[] =
           type === 'grantee'
           ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions).map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
@@ -76,9 +74,11 @@ export async function GET(request: NextRequest) {
       }
     } else if (session?.user?.role === Roles.Applicant) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
+      console.log("schedule", schedule)
       if (!!schedule?._id) {
-        const student = await Student.findOne({ _id: session.user._id, isGrantee: false, $and: [{ applicationForm: { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission').lean<StudentModel>().exec()
+        const student = await Student.findOne({ _id: session.user._id, $and: [{ 'applicationForm.scheduleId': { $exists: true }}, { 'applicationForm.scheduleId': schedule._id.toHexString() }] }).populate('applicationSubmission').lean<StudentModel>().exec()
         if (!!student?._id) {
+          console.log("student", student)
           const data: (StudentModel & any) = type === 'applicant_firstYear'
             ? ({...student, applicationSubmission: (await Promise.all((student.applicationSubmission as RequirementSubmissionModel[]).map(async (item, i) => {
               const requirementId = await Requirement.findById(item.requirementId).lean<RequirementModel>().exec()

@@ -11,8 +11,10 @@ export async function addStudentId(studentId: string): Promise<ActionResponseInt
   try {
     const session = await getSession()
     if (session?.user?.role === Roles.Grantee) {
-      const updated = await Student.updateOne({ _id: session.user._id }, { studentId }, { new: true, upsert: false, runValidators: true }).exec()
-      if (updated.acknowledged && updated.modifiedCount > 0) {
+      const student = await Student.findOne({ _id: session.user._id, isGrantee: true }).exec()
+      student.studentId = studentId
+      const updated = await student.save({ new: true, runValidators: true })
+      if (updated?.studentId === studentId) {
         return {
           success: 'Student ID updated successfully.',
         }

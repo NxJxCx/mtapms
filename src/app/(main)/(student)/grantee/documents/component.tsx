@@ -45,7 +45,7 @@ export default function DocumentRequirementsPage() {
     sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     return sylist
   }, [syData])
-  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number|string|undefined>()
   const [semester, setSemester] = useState<Semester|string>(Semester.FirstSemester)
 
   const requirements = useMemo<RequirementTitles[]>(() =>
@@ -86,13 +86,13 @@ export default function DocumentRequirementsPage() {
     return ''
   }
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (sy: string|number) => {
     setLoading(true)
     let student = null
     try {
       const url = new URL('/api/scholarship/applications', window.location.origin)
       url.searchParams.append('studentId', sessionData.user._id)
-      url.searchParams.append('academicYear', schoolYear.toString())
+      url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: st } = await response.json()
@@ -101,7 +101,7 @@ export default function DocumentRequirementsPage() {
     } catch (e) {}
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
-      url.searchParams.append('academicYear', schoolYear?.toString() || '')
+      url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
       url.searchParams.append('semester', semester?.toString() || '')
       url.searchParams.append('type', 'grantee')
       const response = await fetch(url)
@@ -155,7 +155,7 @@ export default function DocumentRequirementsPage() {
     }
     const formData = new FormData();
     formData.append('file', fileSubmission, fileSubmission.name)
-    const upload = uploadSubmission.bind(null, selectedRequirement!.key!, schoolYear, semester as Semester)
+    const upload = uploadSubmission.bind(null, selectedRequirement!.key!, schoolYear as string|number, semester as Semester)
     const { success, error } = await upload(formData)
     if (error) {
       Toaster.error(error)

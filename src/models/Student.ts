@@ -191,7 +191,7 @@ const StudentSchema = new Schema<StudentModel>({
   studentId: {
     type: String,
     validate: {
-      async validator(value: string) {
+      validator(value: string) {
         if (!(this as any).isGrantee && (!(this as any).applicationForm || (this as any).applicationForm.yearLevel === YearLevel.FirstYear)) {
           return false
         }

@@ -1,4 +1,5 @@
-'use client';;
+'use client';
+/* eslint-disable @next/next/no-img-element */
 import { LoadingSpinner } from "@app/components/loadings";
 import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
@@ -27,7 +28,7 @@ export default function DocumentRequirementsPage() {
 
   const [syData, setSYData] = useState<ScheduleModel[]>([])
 
-  const schoolYear = useMemo<number|string>(() => syData?.[0]?.academicYear || (new Date()).getFullYear(), [syData])
+  const schoolYear = useMemo<number|string>(() => syData?.[0]?.academicYear || 0, [syData])
   const [requirements, setRequirements] = useState<RequirementModel[]>([]);
 
   const getSYData = async () => {
@@ -43,13 +44,13 @@ export default function DocumentRequirementsPage() {
     return ''
   }
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (sy: string|number) => {
     setLoading(true)
     let student = null
     try {
       const url = new URL('/api/scholarship/applications', window.location.origin)
       url.searchParams.append('studentId', sessionData.user._id)
-      url.searchParams.append('academicYear', schoolYear.toString())
+      url.searchParams.append('academicYear', sy.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: st } = await response.json()
@@ -58,7 +59,7 @@ export default function DocumentRequirementsPage() {
     } catch (e) {}
     try {
       const url = new URL('/api/scholarship/requirements', window.location.origin)
-      url.searchParams.append('academicYear', schoolYear.toString() || '')
+      url.searchParams.append('academicYear', sy.toString() || '')
       url.searchParams.append('firstYearOnly', student?.yearLevel == YearLevel.FirstYear ? "true" : "false")
       const response = await fetch(url)
       if (response.ok) {
@@ -68,8 +69,9 @@ export default function DocumentRequirementsPage() {
     } catch (e) {}
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
-      url.searchParams.append('academicYear', schoolYear?.toString() || '')
+      url.searchParams.append('academicYear', sy?.toString() || '')
       url.searchParams.append('type', student?.yearLevel == YearLevel.FirstYear ? "applicant_firstYear" : "applicant")
+      console.log(url.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: d } = await response.json()
@@ -77,7 +79,7 @@ export default function DocumentRequirementsPage() {
       }
     } catch (e) {}
     setLoading(false)
-  }, [sessionData.user._id, schoolYear])
+  }, [sessionData.user._id])
 
   const refreshData = useCallback(() => {
     getSYData()
