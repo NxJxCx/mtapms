@@ -15,6 +15,11 @@ export async function ScholarshipApplicationAction(scheduleId: string, prevState
       data.scheduleId = scheduleId
       const applicant = await Student.findById(session.user._id).exec()
       if (!!applicant?._id) {
+        const studentId = data.studentId
+        if (!!studentId) {
+          applicant.studentId = studentId
+          delete data.studentId
+        }
         applicant.applicationForm = { ...data }
         const updated = await applicant.save({ new: true, upsert: false, runValidators: true })
         if (!!updated) {

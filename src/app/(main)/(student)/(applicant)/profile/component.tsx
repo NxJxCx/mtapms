@@ -139,6 +139,16 @@ export default function ProfilePage() {
                   {user?.course || <>&nbsp;</>}
                 </div>
               </div>
+              {!!user?.studentId && (
+                <div className="flex items-center mb-2">
+                  <div className="text-[#606060] font-[700] leading-[47.5px] min-w-36 pr-2">
+                    Student ID
+                  </div>
+                  <div className={clsx(roboto.className, "text-[#1D1D1D] uppercase w-full px-4 py-1 border border-[#818181] bg-[#D1D1D1] rounded-lg text-[15px]")}>
+                    {user.studentId || <>&nbsp;</>}
+                  </div>
+                </div>
+              )}
             </div>
           </>)}
         </div>

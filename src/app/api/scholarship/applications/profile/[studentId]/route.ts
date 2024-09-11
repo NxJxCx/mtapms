@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, { params: { studentId }}: ParamP
         }
       }
       const student = await q.exec()
-      const data = !!student ? { ...student, ...student?.applicationForm, studentId: student._id!.toString() } : null
+      const data = !!student ? { ...student, ...student?.applicationForm, studId: student._id!.toString() } : null
       delete data?.applicationForm
       return NextResponse.json({ data })
     }

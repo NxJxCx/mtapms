@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
           const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
           return sched.academicYear + 4 > academicYear
         })
-          .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec())})))
+          .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studId: st._id?.toString() }).exec())})))
         const data: (StudentModel & { granteeSubmissions?: GranteeModel })[] =
           type === 'grantee'
           ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions).map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
         }).lean<StudentModel>().exec()
         if (!!student?._id) {
           const data: (StudentModel & any) = type === 'grantee'
-            ? ({...student, applicationSubmission: [], granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: student._id?.toString() }).exec())})
+            ? ({...student, applicationSubmission: [], granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studId: student._id?.toString() }).exec())})
             : null
           return NextResponse.json({ data })
         }

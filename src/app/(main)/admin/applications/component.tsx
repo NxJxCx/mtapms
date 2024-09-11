@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { Montserrat } from 'next/font/google';
 import { useCallback, useEffect, useState } from "react";
 
-const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) => void): TableColumnProps[] => [
+const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) => void): TableColumnProps[] => [
   {
     label: 'Email',
     field: 'email',
@@ -42,7 +42,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     field: 'dateOfBirth',
     sortable: true,
     searchable: true,
-    render(rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
       return new Date(rowData.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     }
   },
@@ -87,7 +87,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     field: 'yearLevel',
     sortable: true,
     searchable: true,
-    render(rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
       return rowData.yearLevel === YearLevel.FirstYear
         ? '1st Year'
         : rowData.yearLevel === YearLevel.SecondYear
@@ -108,7 +108,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
   {
     label: 'Action',
     field: 'action',
-    render(rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) {
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
       return (
         <button type="button" onClick={() => onView(rowData)} title="View and Print Application Form" className="text-[#00823E]"><EyeIcon className="w-5 h-5 inline" /> View</button>
       )
@@ -143,7 +143,7 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studentId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studentId: item._id, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
+      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studId: item._id, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
       setData(d);
     }
     setLoading(false);
@@ -154,25 +154,25 @@ export default function ApplicationListPage() {
       .then((sy) => fetchData(sy))
   }, [])
 
-  const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number, studentId: string })|undefined>()
+  const [openViewModal, setOpenViewModal] = useState<(StudentModel & ApplicationFormProps & { age: number, studId: string })|undefined>()
   const onCloseViewModal = () => {
     setOpenViewModal(undefined)
   }
-  const onOpenViewModal = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) => {
+  const onOpenViewModal = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) => {
     if (openDrawer) {
       toggleDrawer()
     }
     setOpenViewModal(rowData)
   }, [openDrawer, toggleDrawer])
 
-  const onView = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number, studentId: string }) => {
+  const onView = useCallback((rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) => {
     onOpenViewModal(rowData)
   }, [onOpenViewModal])
 
   const onPrint = useCallback(() => {
     const url = new URL('/print', window.location.origin)
     url.searchParams.append('template', 'application')
-    url.searchParams.append('studentId', openViewModal?.studentId || '')
+    url.searchParams.append('studId', openViewModal?.studId || '')
     url.searchParams.append('academicYear', schoolYear.toString())
     // open new window no toolbars for printing only
     const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')

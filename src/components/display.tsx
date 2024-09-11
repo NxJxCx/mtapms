@@ -3,7 +3,7 @@
 import { ApplicationFormProps, StudentModel, YearLevel } from "@app/types"
 
 
-export function displayFullName(student?: StudentModel & ApplicationFormProps & { age: number, studentId: string }, firstNameFirst: boolean = false) {
+export function displayFullName(student?: StudentModel & ApplicationFormProps & { age: number, studId: string }, firstNameFirst: boolean = false) {
   if (!student) return undefined
   if (!firstNameFirst) {
     return (`${student.lastName}, ${student.firstName} ` +  (student.middleName ? `${student.middleName}` : '')).trim()

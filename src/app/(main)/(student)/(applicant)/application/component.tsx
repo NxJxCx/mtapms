@@ -29,7 +29,7 @@ export default function ApplicationComponent() {
 
   const scheduleId = useMemo(() => data !== true ? data?._id || '' : '', [data])
 
-  const [formData, setFormData] = useState<ApplicationFormProps>({
+  const [formData, setFormData] = useState<ApplicationFormProps & { studentId?: string }>({
     scheduleId,
     lastName: '',
     firstName: '',
@@ -228,6 +228,12 @@ export default function ApplicationComponent() {
               <label htmlFor="course" className="font-[500]">Course:</label>
               <input type="text" id="course" name="course" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.course} onChange={(e) => setFormData({...formData, course: e.target.value })} required />
             </div>
+            {formData.yearLevel > 1 && (
+              <div>
+                <label htmlFor="studentId" className="font-[500]">Student ID: (required)</label>
+                <input type="text" id="studentId" name="studentId" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.studentId} onChange={(e) => setFormData({...formData, studentId: e.target.value })} required />
+              </div>
+            )}
             <div className="col-span-3">
               <label htmlFor="fatherLiving" className="font-[500] mr-1">Is your Father living?</label>
               <input type="checkbox" id="fatherLiving" name="fatherLiving" className="cursor-pointer" checked={formData.fatherLiving} onChange={(e) => setFormData({...formData, fatherLiving: e.target.checked })} />
