@@ -239,39 +239,35 @@ export default function ApplicationComponent() {
               <input type="checkbox" id="fatherLiving" name="fatherLiving" className="cursor-pointer" checked={formData.fatherLiving} onChange={(e) => setFormData({...formData, fatherLiving: e.target.checked })} />
               <span className="ml-1 font-bold">{formData.fatherLiving ? 'Yes, living' : 'No, deceased'}</span>
             </div>
-            { !!formData.fatherLiving && (<>
-              <div>
-                <label htmlFor="fatherName" className="font-[500]">{"Father's"} Name:</label>
-                <input type="text" id="fatherName" name="fatherName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.fatherName} onChange={(e) => setFormData({...formData, fatherName: e.target.value })} required />
-              </div>
-              <div>
-                <label htmlFor="fatherAddress" className="font-[500]">Father Address:</label>
-                <input type="text" id="fatherAddress" name="fatherAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.fatherAddress} onChange={(e) => setFormData({...formData, fatherAddress: e.target.value })} required />
-              </div>
-              <div>
-                <label htmlFor="fatherOccupation" className="font-[500]">Father Occupation:</label>
-                <input type="text" id="fatherOccupation" name="fatherOccupation" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.fatherOccupation} onChange={(e) => setFormData({...formData, fatherOccupation: e.target.value })} required />
-              </div>
-            </>)}
+            <div>
+              <label htmlFor="fatherName" className="font-[500]">{"Father's"} Name:</label>
+              <input type="text" id="fatherName" name="fatherName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.fatherName} onChange={(e) => setFormData({...formData, fatherName: e.target.value })} required />
+            </div>
+            <div>
+              <label htmlFor="fatherAddress" className="font-[500]">Father Address:</label>
+              <input type="text" id="fatherAddress" name="fatherAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.fatherAddress} onChange={(e) => setFormData({...formData, fatherAddress: e.target.value })} required />
+            </div>
+            <div>
+              <label htmlFor="fatherOccupation" className="font-[500]">Father Occupation:</label>
+              <input type="text" id="fatherOccupation" name="fatherOccupation" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.fatherOccupation} onChange={(e) => setFormData({...formData, fatherOccupation: e.target.value })} required />
+            </div>
             <div className="col-span-3">
               <label htmlFor="motherLiving" className="font-[500] mr-1">Is your Mother Living?</label>
               <input type="checkbox" id="motherLiving" name="motherLiving" className="cursor-pointer" checked={formData.motherLiving} onChange={(e) => setFormData({...formData, motherLiving: e.target.checked })} />
               <span className="ml-1 font-bold">{formData.fatherLiving ? 'Yes, living' : 'No, deceased'}</span>
             </div>
-            { !!formData.motherLiving && (<>
-              <div>
-                <label htmlFor="motherName" className="font-[500]">{"Mother's"} Name:</label>
-                <input type="text" id="motherName" name="motherName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.motherName} onChange={(e) => setFormData({...formData, motherName: e.target.value })} required />
-              </div>
-              <div>
-                <label htmlFor="motherAddress" className="font-[500]">Mother Address:</label>
-                <input type="text" id="motherAddress" name="motherAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.motherAddress} onChange={(e) => setFormData({...formData, motherAddress: e.target.value })} required />
-              </div>
-              <div>
-                <label htmlFor="motherOccupation" className="font-[500]">Mother Occupation:</label>
-                <input type="text" id="motherOccupation" name="motherOccupation" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.motherOccupation} onChange={(e) => setFormData({...formData, motherOccupation: e.target.value })} required />
-              </div>
-            </>)}
+            <div>
+              <label htmlFor="motherName" className="font-[500]">{"Mother's"} Name:</label>
+              <input type="text" id="motherName" name="motherName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.motherName} onChange={(e) => setFormData({...formData, motherName: e.target.value })} required />
+            </div>
+            <div>
+              <label htmlFor="motherAddress" className="font-[500]">Mother Address:</label>
+              <input type="text" id="motherAddress" name="motherAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.motherAddress} onChange={(e) => setFormData({...formData, motherAddress: e.target.value })} required />
+            </div>
+            <div>
+              <label htmlFor="motherOccupation" className="font-[500]">Mother Occupation:</label>
+              <input type="text" id="motherOccupation" name="motherOccupation" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.motherOccupation} onChange={(e) => setFormData({...formData, motherOccupation: e.target.value })} required />
+            </div>
             <div>
               <label htmlFor="totalParentGrossIncome" className="font-[500]">Total Parent Gross Income:</label>
               <div className="flex justify-start items-center">
