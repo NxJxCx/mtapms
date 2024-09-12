@@ -209,7 +209,7 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="nameOfSchoolAttended" className="font-[500]">Name of School Attended:</label>
-              <input type="tel" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} required />
+              <input type="text" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} required />
             </div>
             <div>
               <label htmlFor="schoolAddress" className="font-[500]">School Address:</label>
