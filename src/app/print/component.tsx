@@ -27,7 +27,7 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
     return (
     <div className="w-[8.5in] min-h-[13in] bg-white text-black text-[11pt] font-sans">
       {/* Header */}
-      <div className="grid grid-cols-3 items-center pb-2 w-full">
+      <div className="grid grid-cols-3 items-center pb-2 w-full bg-white">
         <Image ref={img1} width={1000} height={1000} loading="eager" src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
         <div className="text-center">
           <p>The Republic of the Philippines</p>
