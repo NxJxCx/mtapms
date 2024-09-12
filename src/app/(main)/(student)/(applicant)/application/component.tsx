@@ -13,7 +13,6 @@ import { ScholarshipApplicationAction } from "./action";
 
 export default function ApplicationComponent() {
   const { data: sessionData, status } = useSession({ redirect: false });
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<ScheduleModel|true>()
   const fetchData = () => {
@@ -67,15 +66,16 @@ export default function ApplicationComponent() {
 
   const actionBind = useMemo(() => ScholarshipApplicationAction.bind(null, scheduleId), [scheduleId])
   const [state, action, pending] = useFormState(actionBind, undefined)
+
   useEffect(() => {
     if (!pending && state?.success) {
       Toaster.success(state?.success)
       setTimeout(fetchData, 500)
-      setTimeout(() => router.refresh(), 1000)
+      setTimeout(() => window.location.reload(), 1000)
     } else if (!pending && state?.error) {
       Toaster.error(state?.error)
     }
-  }, [state, pending, router])
+  }, [state, pending])
 
   const [applicationData, setApplicationData] = useState<StudentModel & ApplicationFormProps & { studId: string }|undefined>()
   const fetchApplicationData = useCallback(() => {
