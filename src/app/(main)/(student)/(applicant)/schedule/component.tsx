@@ -101,7 +101,12 @@ export default function ScheduleAndResultPage() {
             <div>Submitted Documents:</div>
             <div className="font-bold text-gray-500">{data?.submittedDocuments || 'N/A'}</div>
             <div>Overall Assessment:</div>
-            <div className={clsx('font-bold', !data?.overallPercentage ? 'text-gray-500' : data.overallPercentage < 75 ? 'text-red-600' : 'text-green-700')}>{!!data?.overallPercentage ? (data.overallPercentage < 75 ? 'FAILED' : 'PASSED') : 'N/A'}</div>
+            {moment(syData?.range?.endDate).tz('Asia/Manila').toDate().getTime() <= moment.tz('Asia/Manila').toDate().getTime() && (
+              <div className={clsx('font-bold', !data?.overallPercentage ? 'text-gray-500' : data.overallPercentage < 75 ? 'text-red-600' : 'text-green-700')}>{!!data?.overallPercentage ? (data.overallPercentage < 75 ? 'FAILED' : 'PASSED') : 'N/A'}</div>
+            )}
+            {moment(syData?.range?.endDate).tz('Asia/Manila').toDate().getTime() > moment.tz('Asia/Manila').toDate().getTime() && (
+              <div className="text-gray-500">Results are not yet available.</div>
+            )}
           </div>
         </div>
       </>)}
