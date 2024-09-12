@@ -40,7 +40,7 @@ export default async function seed() {
       const newStudent = await Student.create({
         email: 'applicant_test@gmail.com',
         password: 'password',
-        emailVerified: (moment.tz('Asia/Manila').toDate()).toISOString(),
+        emailVerified: moment.tz('Asia/Manila').toDate(),
       });
     } catch (e) {
       console.log("student error:", e)
@@ -68,15 +68,15 @@ export default async function seed() {
       const newSchedule = await Schedule.create({
         academicYear: lastYear.getFullYear(),
         range: {
-          startDate: lastYear.toISOString(),
-          endDate: end.toISOString(),
+          startDate: lastYear,
+          endDate: end,
         },
-        orientationDate: lastYear.toISOString(),
-        examDate: examDate.toISOString(),
-        interviewDate: interviewDate.toISOString(),
+        orientationDate: lastYear,
+        examDate: examDate,
+        interviewDate: interviewDate,
         scholarshipSlots: 2,
-        createdAt: lastYear.toISOString(),
-        updatedAt: lastYear.toISOString(),
+        createdAt: lastYear,
+        updatedAt: lastYear,
       })
       scheduleId = newSchedule._id.toHexString();
       // this year
@@ -98,12 +98,12 @@ export default async function seed() {
         const thisYear = await Schedule.create({
           academicYear: now.getFullYear(),
           range: {
-            startDate: now.toISOString(),
-            endDate: endNow.toISOString(),
+            startDate: now,
+            endDate: endNow,
           },
-          orientationDate: orientationDate.toISOString(),
-          examDate: examDate2.toISOString(),
-          interviewDate: interviewDate2.toISOString(),
+          orientationDate: orientationDate,
+          examDate: examDate2,
+          interviewDate: interviewDate2,
           scholarshipSlots: 30,
         })
         thisYearScheduleId = thisYear._id.toHexString();
@@ -145,7 +145,7 @@ export default async function seed() {
       const newGrantee = await Student.create({
         email: 'grantee_test@gmail.com',
         password: 'password',
-        emailVerified: (moment.tz('Asia/Manila').toDate()).toISOString(),
+        emailVerified: (moment.tz('Asia/Manila').toDate()),
         isGrantee: false,
         applicationForm: {
           scheduleId,
@@ -188,8 +188,8 @@ export default async function seed() {
           const submitDate = moment(examDate).tz('Asia/Manila').toDate()
           submitDate.setHours(8,0,0,0)
           submitDate.setDate(submitDate.getDate() +  15)
-          attendance.orientationAttendance.push({ studentId: newGrantee._id.toHexString(), createdAt: lastYear.toISOString(), updatedAt: lastYear.toISOString() })
-          attendance.examScores.push({ studentId: newGrantee._id.toHexString(), percentageScore: 94.24, createdAt: examDate.toISOString(), updatedAt: examDate.toISOString() })
+          attendance.orientationAttendance.push({ studentId: newGrantee._id.toHexString(), createdAt: lastYear, updatedAt: lastYear })
+          attendance.examScores.push({ studentId: newGrantee._id.toHexString(), percentageScore: 94.24, createdAt: examDate, updatedAt: examDate })
           await attendance.save({ runValidators: true })
           const submissionPhoto = await FileDocument.create(await getImageBufferSample())
           const submission = await RequirementSubmission.create({
@@ -197,8 +197,8 @@ export default async function seed() {
             submittedBy: newGrantee._id.toHexString(),
             photo: submissionPhoto._id.toHexString(),
             status: SubmissionStatus.Approved,
-            createdAt: submitDate.toISOString(),
-            updatedAt: submitDate.toISOString()
+            createdAt: submitDate,
+            updatedAt: submitDate
           })
           newGrantee.applicationSubmission.push(submission._id.toHexString())
           const saved = await newGrantee.save({ runValidators: true })

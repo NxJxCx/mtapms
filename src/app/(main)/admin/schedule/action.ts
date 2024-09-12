@@ -32,20 +32,20 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
           error: 'Scholarship Slots Required'
         }
       }
-      const startDate = moment(dataForm['range.startDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate().toISOString()
-      const endDate = moment(dataForm['range.endDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate().toISOString()
+      const startDate = moment(dataForm['range.startDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate()
+      const endDate = moment(dataForm['range.endDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate()
       let orientationDate, examDate, interviewDate;
       if (dataForm.orientationDate) {
         const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
-        orientationDate = moment(combined).tz('Asia/Manila').toDate().toISOString()
+        orientationDate = moment(combined).tz('Asia/Manila').toDate()
       }
       if (dataForm.examDate) {
         const combined = `${dataForm.examDate}T${dataForm.examTime}:00`
-        examDate = moment(combined).tz('Asia/Manila').toDate().toISOString()
+        examDate = moment(combined).tz('Asia/Manila').toDate()
       }
       if (dataForm.interviewDate) {
         const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
-        interviewDate = moment(combined).tz('Asia/Manila').toDate().toISOString()
+        interviewDate = moment(combined).tz('Asia/Manila').toDate()
       }
       const scholarshipSlots = dataForm.scholarshipSlots as string
       const data = {
@@ -106,15 +106,15 @@ export async function scheduleUpdateAction(academicYear: number, prevState: Acti
       let orientationDate, examDate, interviewDate;
       if (dataForm.orientationDate) {
         const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
-        orientationDate = moment(combined).tz('Asia/Manila').toDate().toISOString()
+        orientationDate = moment(combined).tz('Asia/Manila').toDate()
       }
       if (dataForm.examDate) {
         const combined = `${dataForm.examDate}T${dataForm.examTime}:00`
-        examDate = moment(combined).tz('Asia/Manila').toDate().toISOString()
+        examDate = moment(combined).tz('Asia/Manila').toDate()
       }
       if (dataForm.interviewDate) {
         const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
-        interviewDate = moment(combined).tz('Asia/Manila').toDate().toISOString()
+        interviewDate = moment(combined).tz('Asia/Manila').toDate()
       }
       const dataSet = {
         orientationDate,
