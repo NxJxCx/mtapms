@@ -150,9 +150,7 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      console.log(data)
       const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studId: item._id, email: item.email, photo: item.photo, studentId: item.studentId, age: Math.floor(((moment.tz('Asia/Manila').toDate()).getTime() - moment(item.applicationForm!.dateOfBirth).tz('Asia/Manila').toDate().getTime()) / (1000 * 60 * 60 * 24 * 365)), applicationForm: undefined }], [])
-      console.log(d)
       setData(d);
     }
     setLoading(false);
@@ -181,7 +179,7 @@ export default function ApplicationListPage() {
   const onPrint = useCallback(() => {
     const url = new URL('/print', window.location.origin)
     url.searchParams.append('template', 'application')
-    url.searchParams.append('studId', openViewModal?.studId || '')
+    url.searchParams.append('studentId', openViewModal?.studId || '')
     url.searchParams.append('academicYear', schoolYear.toString())
     // open new window no toolbars for printing only
     const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
