@@ -6,12 +6,14 @@ import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
 import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
 import { PrinterIcon } from "@heroicons/react/16/solid";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { ScholarshipApplicationAction } from "./action";
 
 export default function ApplicationComponent() {
   const { data: sessionData, status } = useSession({ redirect: false });
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<ScheduleModel|true>()
   const fetchData = () => {
@@ -69,10 +71,11 @@ export default function ApplicationComponent() {
     if (!pending && state?.success) {
       Toaster.success(state?.success)
       setTimeout(fetchData, 500)
+      setTimeout(() => router.refresh(), 1000)
     } else if (!pending && state?.error) {
       Toaster.error(state?.error)
     }
-  }, [state, pending])
+  }, [state, pending, router])
 
   const [applicationData, setApplicationData] = useState<StudentModel & ApplicationFormProps & { studId: string }|undefined>()
   const fetchApplicationData = useCallback(() => {
@@ -106,6 +109,12 @@ export default function ApplicationComponent() {
       }
     }
   }, [applicationData])
+
+  useEffect(() => {
+    if (!(formData.citizenship === CivilStatus.Married && formData.sex === Gender.Female)) {
+      setFormData((prev) => ({...prev, maidenName: '' }));
+    }
+  }, [formData.citizenship, formData.sex])
 
   return loading ? <LoadingFull /> : (
     <div className="min-h-[600px] flex flex-col items-center justify-center">
@@ -144,14 +153,12 @@ export default function ApplicationComponent() {
               <label htmlFor="middleName" className="font-[500]">Middle Name:</label>
               <input type="text" id="middleName" name="middleName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.middleName} onChange={(e) => setFormData({...formData, middleName: e.target.value })} />
             </div>
-            { formData.civilStatus === CivilStatus.Married && formData.sex === Gender.Female && (<>
-              <div>
-                <label htmlFor="middleName" className="font-[500]">Maiden Name for Married Women:</label>
-                <input type="text" id="middleName" name="middleName" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.maidenName} onChange={(e) => setFormData({...formData, maidenName: e.target.value })} required />
-              </div>
-              <div />
-              <div />
-            </>)}
+            <div>
+              <label htmlFor="maidenName" className="font-[500]">Maiden Name for Married Women:</label>
+              <input type="text" disabled={!(formData.civilStatus === CivilStatus.Married && formData.sex === Gender.Female)} required={formData.civilStatus === CivilStatus.Married && formData.sex === Gender.Female}  id="maidenName" name="maidenName" className="block border border-black px-2 py-1 rounded flex-grow w-full disabled:bg-gray-300" value={formData.maidenName} onChange={(e) => setFormData({...formData, maidenName: e.target.value })} />
+            </div>
+            <div />
+            <div />
             <div>
               <label htmlFor="dateOfBirth" className="font-[500]">Date of Birth:</label>
               <input type="date" id="dateOfBirth" name="dateOfBirth" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.dateOfBirth as string} onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value })} required />
