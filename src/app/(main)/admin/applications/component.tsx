@@ -182,12 +182,7 @@ export default function ApplicationListPage() {
     url.searchParams.append('studentId', openViewModal?.studId || '')
     url.searchParams.append('academicYear', schoolYear.toString())
     // open new window no toolbars for printing only
-    const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
-    if (win) {
-      win.onload = () => {
-        win?.print()
-      }
-    }
+    window.open(url, '_blank', 'noopener,noreferrer,menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
   }, [openViewModal, schoolYear])
 
   return (<>

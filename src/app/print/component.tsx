@@ -5,22 +5,37 @@ import { Gender } from '@app/types/index';
 import { CheckIcon } from "@heroicons/react/16/solid";
 import moment from "moment-timezone";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
-export default function Print({ template, data, ...props }: { template: string, data: any } & any) {
+export default function Print({ template, data, viewOnly = false, ...props }: { template: string, data: any, viewOnly?: boolean } & any) {
+  const img1 = useRef<HTMLImageElement>(null)
+  const img2 = useRef<HTMLImageElement>(null)
+  useEffect(() => {
+    if (!viewOnly) {
+      if (img1.current && img2.current) {
+        const timeout = setTimeout(() => {
+          window.print()
+          window.history.back()
+          window.close()
+        }, 500)
+        return () => clearTimeout(timeout)
+      }
+    }
+  }, [viewOnly])
   if (template === 'application') {
     const studentData: StudentModel & ApplicationFormProps & { studentId: string } = data
     return (
     <div className="w-[8.5in] min-h-[13in] bg-white text-black text-[11pt] font-sans">
       {/* Header */}
       <div className="grid grid-cols-3 items-center pb-2 w-full">
-        <Image width={1000} height={1000} src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
+        <Image ref={img1} width={1000} height={1000} loading="eager" src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
         <div className="text-center">
           <p>The Republic of the Philippines</p>
           <p>Province of Agusan del Norte</p>
           <p>Municipality of Buenavista</p>
           <p className="font-bold">Office of the Municipal Mayor</p>
         </div>
-        <Image width={1000} height={1000} src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
+        <Image ref={img2} width={1000} height={1000} loading="eager" src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
       </div>
 
       {/* Title */}

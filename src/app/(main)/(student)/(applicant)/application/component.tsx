@@ -98,12 +98,7 @@ export default function ApplicationComponent() {
     url.searchParams.append('studentId', applicationData?.studId || '')
     url.searchParams.append('academicYear', (applicationData?.scheduleId as ScheduleModel)?.academicYear.toString())
     // open new window no toolbars for printing only
-    const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
-    if (win) {
-      win.onload = () => {
-        win?.print()
-      }
-    }
+    window.open(url, '_blank', 'noopener,noreferrer,menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
   }, [applicationData])
 
   useEffect(() => {
@@ -127,7 +122,7 @@ export default function ApplicationComponent() {
                 <Buttons.SignupButton type="button" onClick={onPrint} label={<div className="font-bold"><PrinterIcon className="w-6 h-6 inline" /> Print</div>} />
               </div>
               <div className="mx-auto w-fit shadow border p-8 bg-white text-left block">
-                <Print template="application" data={applicationData} />
+                <Print template="application" data={applicationData} viewOnly />
               </div>
             </div>
           )}
