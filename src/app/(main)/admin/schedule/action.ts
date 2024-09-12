@@ -46,7 +46,6 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
         const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
         interviewDate = (new Date(combined)).toISOString()
       }
-      console.log(orientationDate, examDate, interviewDate)
       const scholarshipSlots = dataForm.scholarshipSlots as string
       const data = {
         academicYear,
@@ -66,11 +65,15 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
         await Promise.all(grantees.map(async (grantee: StudentModel) => {
           const sched = await Schedule.findById(grantee.applicationForm!.scheduleId.toString()).lean<ScheduleModel>().exec()
           if (!!sched?._id && (academicYear - sched.academicYear) < (4 - grantee.applicationForm!.yearLevel)) {
-            await Grantee.create({
-              studentId: grantee._id,
-              academicYear,
-              semester: Semester.FirstSemester,
-            })
+            try {
+              await Grantee.create({
+                studentId: grantee._id,
+                academicYear,
+                semester: Semester.FirstSemester,
+              })
+            } catch (e) {
+              console.log("grantee error", e)
+            }
           }
         }))
         return {
