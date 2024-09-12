@@ -82,9 +82,6 @@ export default function DocumentRequirementsPage() {
       const { data: d } = await response.json()
       setSYData(d)
       const latestSY = Math.max(...d.map((item: ScheduleModel) => item.academicYear))
-      if (!schoolYear) {
-        setSchoolYear(latestSY)
-      }
       setLoading(false)
       return latestSY
     }
@@ -129,6 +126,14 @@ export default function DocumentRequirementsPage() {
       refreshData()
     }
   }, [refreshData, status])
+
+  useEffect(() => {
+    if (!schoolYear) {
+      const latestSY = Math.max(...d.map((item: ScheduleModel) => item.academicYear))
+      setSchoolYear(latestSY)
+    }
+    // eslint-disable-next-line
+  }, [syData])
 
   const getRequirementSubmissionFromKey = useCallback((key?: string): SubmissionProps|undefined => {
     if (!key) return undefined
