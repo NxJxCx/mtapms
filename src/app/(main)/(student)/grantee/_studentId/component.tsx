@@ -61,7 +61,7 @@ export default function StudentIdModal() {
   }, [getData])
 
   return (
-    <Modal title={<div className="pr-4">Congratulations! You are now a scholar grantee</div>} open={openModal} onClose={onCloseModal} disableOutsideClick>
+    <Modal title={<div className="pr-4">Congratulations! You are now a scholar grantee</div>} open={openModal} onClose={onCloseModal} showCloseButton={false} disableOutsideClick>
       <div className="max-w-[500px] mx-auto">
         <p>To continue, please provide your student ID. This will be used to verify your enrollment and grant you access to the scholarship program.</p>
         <form className="px-4 py-2" ref={formRef} onSubmit={handleSubmit}>

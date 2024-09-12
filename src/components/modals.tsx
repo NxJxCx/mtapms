@@ -10,8 +10,10 @@ export function Modal({
   onClose,
   children,
   disableOutsideClick,
+  showCloseButton = true
 }: Readonly<{
   disableOutsideClick?: boolean
+  showCloseButton?: boolean
   children: React.ReactNode
   title: string|React.ReactNode
   onClose: () => void
@@ -49,11 +51,13 @@ export function Modal({
               <div className="text-[22px] font-[600]">
                 {title}
               </div>
-              <div className="flex-shrink">
-                <button type="button" title="Close" className="p-1 shadow-md text-[14px] font-[600] text-red-800 rounded-full hover:text-white hover:bg-red-700 aspect-square" onClick={() => onClose()}>
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
-              </div>
+              {showCloseButton && (
+                <div className="flex-shrink">
+                  <button type="button" title="Close" className="p-1 shadow-md text-[14px] font-[600] text-red-800 rounded-full hover:text-white hover:bg-red-700 aspect-square" onClick={() => onClose()}>
+                    <XMarkIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
             <div className="min-h-[100px]">
               {children}
