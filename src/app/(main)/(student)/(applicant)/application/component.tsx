@@ -68,11 +68,7 @@ export default function ApplicationComponent() {
   const handleFormAction = useCallback(async (e: any) => {
     e.preventDefault()
     e.stopPropagation()
-    const fData = new FormData()
-    Object.entries(formData).forEach(([key, value]) => {
-      fData.append(key, value)
-    })
-    const { error, success } = await actionForm(fData)
+    const { error, success } = await actionForm(JSON.stringify(formData))
     if (success) {
       Toaster.success(success)
       setTimeout(() => window.location.reload(), 1000)

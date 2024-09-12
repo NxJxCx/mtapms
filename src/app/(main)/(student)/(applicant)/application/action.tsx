@@ -5,13 +5,13 @@ import { getSession } from "@app/lib/session";
 import Student from "@app/models/Student";
 import { ActionResponseInterface, Roles } from "@app/types";
 
-export async function ScholarshipApplicationAction(scheduleId: string, formData: FormData): Promise<ActionResponseInterface>
+export async function ScholarshipApplicationAction(scheduleId: string, formData: string): Promise<ActionResponseInterface>
 {
   await mongodbConnect()
   try {
     const session = await getSession()
     if (session?.user?.role === Roles.Applicant) {
-      const data = Object.fromEntries(Object.entries(Object.fromEntries(formData.entries())).map(([key, value]: [string, any]) => [key, (key === 'fatherLiving' || key === 'motherLiving' || key === 'otherEducationalFinancialAssistance') ? (value === 'on' ? true : false) : value]))
+      const data = JSON.parse(formData) as Record<string, any>
       data.scheduleId = scheduleId
       const applicant = await Student.findById(session.user._id).exec()
       if (!!applicant?._id) {
