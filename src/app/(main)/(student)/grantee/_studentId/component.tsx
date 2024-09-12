@@ -3,14 +3,16 @@
 import Buttons from "@app/components/buttons"
 import Inputs from "@app/components/inputs"
 import { Modal } from "@app/components/modals"
+import { useSidebar } from "@app/components/sidebar"
 import Toaster from "@app/components/toaster"
 import { useSession } from "@app/lib/useSession"
-import { StudentModel } from "@app/types"
+import { Roles, StudentModel } from "@app/types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { addStudentId } from "./action"
 
 export default function StudentIdModal() {
   const { data: sessionData, status } = useSession({ redirect: false })
+  const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Grantee })
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [data, setData] = useState<StudentModel>()
   const formRef = useRef<HTMLFormElement>(null)
@@ -31,8 +33,12 @@ export default function StudentIdModal() {
 
   useEffect(() => {
     if (!!data && data.isGrantee && !data.studentId) {
+      if (openDrawer) {
+        toggleDrawer()
+      }
       setOpenModal(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   const onCloseModal = useCallback(() => {
