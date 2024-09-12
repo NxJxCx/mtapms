@@ -2,7 +2,6 @@
 import Print from "@app/app/print/component";
 import Buttons from "@app/components/buttons";
 import { LoadingFull, LoadingSpinnerFull } from "@app/components/loadings";
-import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
 import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
 import { PrinterIcon } from "@heroicons/react/16/solid";
@@ -239,7 +238,7 @@ export default function ApplicationComponent() {
             )}
             <div className="col-span-3">
               <label htmlFor="motherLiving" className="font-[500] mr-1">Is your Father Living?</label>
-              <input type="radio" id="fatherLivingYes" name="fatherLiving" value="true" className="cursor-pointer"  checked={formData.fatherLiving} onChange={(e) => setFormData({...formData, fatherLiving: e.target.checked })} />
+              <input type="radio" id="fatherLivingYes" name="fatherLiving" value="true" className="cursor-pointer"  checked={formData.fatherLiving} onChange={(e) => setFormData({...formData, fatherLiving: !!e.target.checked })} />
               <label htmlFor="fatherLivingYes" className={clsx("mr-2 cursor-pointer", formData.fatherLiving ? 'font-bold' : '')}>Yes, Living</label>
               <input type="radio" id="fatherLivingNo" name="fatherLiving" value="false" className="cursor-pointer" checked={!formData.fatherLiving} onChange={(e) => setFormData({...formData, fatherLiving: !e.target.checked })} />
               <label htmlFor="fatherLivingNo" className={clsx("cursor-pointer", !formData.fatherLiving ? 'font-bold' : '')}>No, Deceased</label>
@@ -258,7 +257,7 @@ export default function ApplicationComponent() {
             </div>
             <div className="col-span-3">
               <label htmlFor="motherLiving" className="font-[500] mr-1">Is your Mother Living?</label>
-              <input type="radio" id="motherLivingYes" name="motherLiving" value="true" className="cursor-pointer"  checked={formData.motherLiving} onChange={(e) => setFormData({...formData, motherLiving: e.target.checked })} />
+              <input type="radio" id="motherLivingYes" name="motherLiving" value="true" className="cursor-pointer"  checked={formData.motherLiving} onChange={(e) => setFormData({...formData, motherLiving: !!e.target.checked })} />
               <label htmlFor="motherLivingYes" className={clsx("mr-2 cursor-pointer", formData.motherLiving ? 'font-bold' : '')}>Yes, Living</label>
               <input type="radio" id="motherLivingNo" name="motherLiving" value="false" className="cursor-pointer" checked={!formData.motherLiving} onChange={(e) => setFormData({...formData, motherLiving: !e.target.checked })} />
               <label htmlFor="motherLivingNo" className={clsx("cursor-pointer", !formData.motherLiving ? 'font-bold' : '')}>No, Deceased</label>
@@ -288,7 +287,7 @@ export default function ApplicationComponent() {
             </div>
             <div className="col-span-3">
               <label htmlFor="otherEducationalFinancialAssistance" className="font-[500] max-w-32 text-wrap cursor-pointer mr-2">Are you enjoying other educational financial assistance?</label>
-              <input type="radio" id="otherEducationalFinancialAssistanceYes" name="otherEducationalFinancialAssistance" value="true" className="cursor-pointer"  checked={formData.otherEducationalFinancialAssistance} onChange={(e) => setFormData({...formData, otherEducationalFinancialAssistance: e.target.checked })} />
+              <input type="radio" id="otherEducationalFinancialAssistanceYes" name="otherEducationalFinancialAssistance" value="true" className="cursor-pointer"  checked={formData.otherEducationalFinancialAssistance} onChange={(e) => setFormData({...formData, otherEducationalFinancialAssistance: !!e.target.checked })} />
               <label htmlFor="otherEducationalFinancialAssistanceYes" className={clsx("mr-2 cursor-pointer", formData.otherEducationalFinancialAssistance ? 'font-bold' : '')}>Yes</label>
               <input type="radio" id="otherEducationalFinancialAssistanceNo" name="otherEducationalFinancialAssistance" value="false" className="cursor-pointer" checked={!formData.otherEducationalFinancialAssistance} onChange={(e) => setFormData({...formData, otherEducationalFinancialAssistance: !e.target.checked })} />
               <label htmlFor="otherEducationalFinancialAssistanceNo" className={clsx("cursor-pointer", !formData.otherEducationalFinancialAssistance ? 'font-bold' : '')}>No</label>
