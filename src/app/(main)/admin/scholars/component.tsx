@@ -290,8 +290,8 @@ export default function ScholarListPage() {
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
-        ...(Object.keys(applicantColumns).filter(key => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
-          .reduce((acc: any, key: string) => ({...acc, [key]: true }), ({})))
+        ...(applicantColumns.filter(({ field: key }: any) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
+          .reduce((acc: any, { field: key }: any) => ({...acc, [key]: true }), ({})))
       })], [])
       setDataApplicant(d);
     }
@@ -306,9 +306,10 @@ export default function ScholarListPage() {
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
-        ...(Object.keys(applicantColumns).filter(key => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
-          .reduce((acc: any, key: string) => ({...acc, [key]: true }), ({})))
+        ...(applicant1stYearColumns.filter(({ field: key }) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
+          .reduce((acc: any, { field: key }) => ({...acc, [key]: true }), ({})))
       })], [])
+      console.log(d, applicant1stYearColumns)
       setDataApplicant1stYear(d);
     }
     const url3 = new URL('/api/scholarship/grantees', window.location.origin)
@@ -327,7 +328,7 @@ export default function ScholarListPage() {
       setDataGrantee(d);
     }
     setLoading(false);
-  }, [semester, schoolYear, applicantColumns])
+  }, [semester, schoolYear, applicantColumns, applicant1stYearColumns])
 
   useEffect(() => {
     fetchData()
