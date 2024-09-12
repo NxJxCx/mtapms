@@ -13,14 +13,14 @@ export default function Print({ template, data, ...props }: { template: string, 
     <div className="w-[8.5in] min-h-[13in] bg-white text-black text-[11pt] font-sans">
       {/* Header */}
       <div className="grid grid-cols-3 items-center pb-2 w-full">
-        <Image width={200} height={200} src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
+        <Image width={1000} height={1000} src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
         <div className="text-center">
           <p>The Republic of the Philippines</p>
           <p>Province of Agusan del Norte</p>
           <p>Municipality of Buenavista</p>
           <p className="font-bold">Office of the Municipal Mayor</p>
         </div>
-        <Image width={200} height={200} src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
+        <Image width={1000} height={1000} src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
       </div>
 
       {/* Title */}
