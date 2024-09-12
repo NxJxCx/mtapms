@@ -57,7 +57,6 @@ export async function GET(request: NextRequest) {
           return sched.academicYear + 4 > academicYear
         })
           .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec())})))
-        if (type === 'new_firstYear') console.log(students);
         const data: (StudentModel & { granteeSubmissions?: GranteeModel }|any)[] =
           type === 'grantee'
           ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions).map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
