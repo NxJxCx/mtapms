@@ -184,9 +184,6 @@ export default function ApplicationListPage() {
     // open new window no toolbars for printing only
     const win = window.open(url, '_blank', 'menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
     if (win) {
-      win.onafterprint = () => {
-        win?.close()
-      }
       win.onload = () => {
         win?.print()
       }
