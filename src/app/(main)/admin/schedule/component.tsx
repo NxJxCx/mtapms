@@ -7,6 +7,7 @@ import { useSidebar } from "@app/components/sidebar";
 import Toaster from "@app/components/toaster";
 import { Roles, ScheduleModel } from "@app/types";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import moment from "moment-timezone";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { scheduleAction, scheduleUpdateAction } from "./action";
@@ -20,28 +21,28 @@ export default function SchedulePage() {
     if (data.length > 0) {
       sylist = data.map((item: ScheduleModel) => item.academicYear);
     }
-    const thisYear: number = (new Date()).getFullYear();
+    const thisYear: number = moment.tz('Asia/Manila').toDate().getFullYear();
     if (!sylist.includes(thisYear)) {
       sylist.unshift(thisYear);
     }
     sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     return sylist
   }, [data])
-  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number|string>((moment.tz('Asia/Manila').toDate()).getFullYear())
   const selectedScheduleData = useMemo<ScheduleModel|undefined>(() => {
     const d = data?.find((item: ScheduleModel) => item.academicYear === parseInt(schoolYear as string))
     if (!!d) {
-      d.range.startDate = new Date(d.range.startDate)
-      d.range.endDate = new Date(d.range.endDate)
+      d.range.startDate = moment(d.range.startDate).tz('Asia/Manila').toDate()
+      d.range.endDate = moment(d.range.endDate).tz('Asia/Manila').toDate()
     }
     if (!!d?.orientationDate) {
-      d.orientationDate = new Date(d.orientationDate)
+      d.orientationDate = moment(d.orientationDate).tz('Asia/Manila').toDate()
     }
     if (!!d?.examDate) {
-      d.examDate = new Date(d.examDate)
+      d.examDate = moment(d.examDate).tz('Asia/Manila').toDate()
     }
     if (!!d?.interviewDate) {
-      d.interviewDate = new Date(d.interviewDate)
+      d.interviewDate = moment(d.interviewDate).tz('Asia/Manila').toDate()
     }
     return d;
   }, [data, schoolYear])
@@ -201,11 +202,11 @@ export default function SchedulePage() {
         <h2 className="text-xl font-[600]">Scholarship Application Schedule</h2>
         <div>
           <label htmlFor="range.startDate">Start Date:</label>
-          <input type="date" id="range.startDate" name="range.startDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
+          <input type="date" id="range.startDate" name="range.startDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
         </div>
         <div>
           <label htmlFor="range.endDate">End Date:</label>
-          <input type="date" id="range.endDate" name="range.endDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
+          <input type="date" id="range.endDate" name="range.endDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
         </div>
         <div>
           <label htmlFor="scholarshipSlots">Scholarship Number of Slots:</label>
@@ -215,7 +216,7 @@ export default function SchedulePage() {
         <div>
           <label htmlFor="orientationDate">Orientation Date: <span className="italic text-sm">(leave blank if not decided yet)</span></label>
           <br />
-          <input type="date" id="orientationDate" name="orientationDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
+          <input type="date" id="orientationDate" name="orientationDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
           <input type="time" id="orientationTime" name="orientationTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Orientation Time" />
         </div>
 
@@ -223,7 +224,7 @@ export default function SchedulePage() {
         <div>
           <label htmlFor="examDate">Examination Date: <span className="italic text-sm">(leave blank if not decided yet)</span></label>
           <br />
-          <input type="date" id="examDate" name="examDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
+          <input type="date" id="examDate" name="examDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
           <input type="time" id="examTime" name="examTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Examination Time" />
         </div>
 
@@ -231,7 +232,7 @@ export default function SchedulePage() {
         <div>
           <label htmlFor="interviewDate">Interview Date: <span className="italic text-sm">(leave blank if not decided yet)</span></label>
           <br />
-          <input type="date" id="interviewDate" name="interviewDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
+          <input type="date" id="interviewDate" name="interviewDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
           <input type="time" id="interviewTime" name="interviewTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Interview Time" />
         </div>
         <div className="mt-4">
@@ -246,19 +247,19 @@ export default function SchedulePage() {
         { openUpdate === 'Orientation' && (<div>
           <label htmlFor="orientationDate2" className="text-xl font-[600] mt-4">Orientation Schedule</label>
           <br />
-          <input type="date" id="orientationDate2" name="orientationDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
+          <input type="date" id="orientationDate2" name="orientationDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
           <input type="time" id="orientationTime2" name="orientationTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Orientation Time" />
         </div>)}
         { openUpdate === 'Examination' && (<div>
           <label htmlFor="examDate2" className="text-xl font-[600] mt-4">Examination Schedule</label>
           <br />
-          <input type="date" id="examDate2" name="examDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
+          <input type="date" id="examDate2" name="examDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
           <input type="time" id="examTime2" name="examTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Examination Time" />
         </div>)}
         { openUpdate === 'Interview' && (<div>
           <label htmlFor="interviewDate2" className="text-xl font-[600] mt-4">Interview Schedule</label>
           <br />
-          <input type="date" id="interviewDate2" name="interviewDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
+          <input type="date" id="interviewDate2" name="interviewDate" min={(moment.tz('Asia/Manila').toDate()).getFullYear() + "-" + ((moment.tz('Asia/Manila').toDate()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((moment.tz('Asia/Manila').toDate()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
           <input type="time" id="interviewTime2" name="interviewTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Interview Time" />
         </div>)}
         <div className="mt-4">

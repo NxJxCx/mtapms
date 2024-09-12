@@ -8,6 +8,7 @@ import { Roles, ScheduleModel } from "@app/types";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { grantScholarship } from "./action";
+import moment from "moment-timezone";
 
 function getRankString(num: number): string {
   if (typeof num !== 'number' || num < 1 || !Number.isInteger(num)) {
@@ -179,14 +180,14 @@ export default function ResultsPage() {
     if (syData.length > 0) {
       sylist = syData.map((item: ScheduleModel) => item.academicYear);
     }
-    const thisYear: number = (new Date()).getFullYear();
+    const thisYear: number = moment.tz('Asia/Manila').toDate().getFullYear();
     if (!sylist.includes(thisYear)) {
       sylist.unshift(thisYear);
     }
     sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     return sylist
   }, [syData])
-  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number|string>((moment.tz('Asia/Manila').toDate()).getFullYear())
   const scheduleId = useMemo<string>(() => syData.find((item: ScheduleModel) => item.academicYear.toString() === schoolYear.toString())?._id || '', [syData, schoolYear])
 
   const getSYData = async () => {

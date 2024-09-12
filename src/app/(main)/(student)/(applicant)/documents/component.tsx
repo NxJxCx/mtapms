@@ -16,6 +16,7 @@ import {
 } from "@app/types";
 import { CheckBadgeIcon, ClockIcon, ExclamationCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
+import moment from "moment-timezone";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { uploadSubmission } from "./action";
@@ -178,7 +179,7 @@ export default function DocumentRequirementsPage() {
                 Submission status: <span className="text-red-500">{SubmissionStatus[selectedRequirement?.submission?.status]}</span>
               </div>
               <div className="text-gray-500">
-                Last update: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+                Last update: {(moment(selectedRequirement?.submission?.updatedAt!)).tz('Asia/Manila').toDate().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
               </div>
               <div className="max-w-[700px] max-h-[calc(100vh-400px)] mt-4 shadow-lg border overflow-y-auto">
                 <img src={!!selectedRequirement?.submission?.photo ? getURLForSubmission(selectedRequirement.submission.photo as string) : ''} alt="Submission" width={1000} height={1000} className="w-full h-full" />
@@ -192,7 +193,7 @@ export default function DocumentRequirementsPage() {
               Submission status: {SubmissionStatus[selectedRequirement?.submission?.status]}
             </div>
             <div className="mt-4 text-gray-500">
-              Last update: {(new Date(selectedRequirement?.submission?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+              Last update: {(moment(selectedRequirement?.submission?.updatedAt!)).tz('Asia/Manila').toDate().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
             </div>
             {selectedRequirement?.submission?.status === SubmissionStatus.Pending && (
               <div className="mt-4 text-center text-white bg-gray-600 rounded p-1">

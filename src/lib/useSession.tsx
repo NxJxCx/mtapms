@@ -1,9 +1,10 @@
 'use client';
+import { destroySession, updateSession } from "@app/lib/session";
 import { AuthenticationStatus, Roles } from "@app/types";
 import { type JWTPayload } from "jose";
+import moment from "moment-timezone";
 import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { destroySession, updateSession } from "@app/lib/session";
 
 export const SessionContext = createContext<{
   error: Error | undefined;
@@ -41,7 +42,7 @@ export function SessionProvider({ children }: Readonly<{ children: React.ReactNo
     fetch(url)
       .then((response) => response.json())
       .then(async ({ data: session }: { data: JWTPayload | { [key: string]: any;} | null;}) => {
-        if (!session || (new Date(session!.expiresAt as Date|string).getTime()) < (new Date()).getTime()) {
+        if (!session || moment(session!.expiresAt as Date|string).tz('Asia/Manila').toDate().getTime() < (moment.tz('Asia/Manila').toDate()).getTime()) {
           const signOut = destroySession
           await signOut()
           setData(null)

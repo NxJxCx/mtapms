@@ -5,6 +5,7 @@ import { getSession } from "@app/lib/session";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
 import { Roles } from "@app/types";
+import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -15,10 +16,8 @@ export async function GET(request: NextRequest) {
       const academicYear = request.nextUrl.searchParams.get('academicYear')
       const schedule = await Schedule.findOne({ academicYear }).exec()
       const students = !!schedule?._id ? (await Student.find({ 'applicationForm.scheduleId': schedule._id.toHexString() }).exec()) : null;
-      const examDate = new Date(schedule.examDate)
-      examDate.setHours(0,0,0,0)
-      const dateNow = new Date()
-      dateNow.setHours(0,0,0,0)
+      const examDate = moment(schedule.examDate).tz('Asia/Manila').toDate()
+      const dateNow = moment.tz('Asia/Manila').toDate()
       if (!!students && dateNow.getTime() >= examDate.getTime() && dateNow.getTime() <= examDate.getTime() + (1000 * 60 * 60 * 24 * 180)) {
         const data = students.map(student => ({ _id: student._id.toString(), email: student.email, scheduleId: student.applicationForm.scheduleId,
             firstName: student.applicationForm.firstName, lastName: student.applicationForm.lastName, middleName: student.applicationForm.middleName,

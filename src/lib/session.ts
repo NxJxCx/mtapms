@@ -4,6 +4,7 @@ import Admin from '@app/models/Admin';
 import Student from '@app/models/Student';
 import { Roles } from '@app/types';
 import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
+import moment from 'moment-timezone';
 import { cookies } from 'next/headers';
 
 const secretKey = process.env.SESSION_SECRET
@@ -78,7 +79,7 @@ export async function getSession(): Promise<JWTPayload | { [key: string]: any } 
 
 export async function destroySession() {
   cookies().delete('auth')
-  const expires = new Date()
+  const expires = moment.tz('Asia/Manila').toDate()
   expires.setFullYear(1901, 1, 1)
   cookies().set('auth', '', {
     httpOnly: true,

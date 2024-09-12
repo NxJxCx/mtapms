@@ -11,6 +11,7 @@ import { PlusIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { createRequirement, removeRequirement } from "./action";
+import moment from "moment-timezone";
 
 export default function RequirementsPage() {
   const { openDrawer, toggleDrawer } = useSidebar({ role: Roles.Admin })
@@ -21,14 +22,14 @@ export default function RequirementsPage() {
     if (syData.length > 0) {
       sylist = syData.map((item: ScheduleModel) => item.academicYear);
     }
-    const thisYear: number = (new Date()).getFullYear();
+    const thisYear: number = moment.tz('Asia/Manila').toDate().getFullYear();
     if (!sylist.includes(thisYear)) {
       sylist.unshift(thisYear);
     }
     sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     return sylist
   }, [syData])
-  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number|string>(moment.tz('Asia/Manila').toDate().getFullYear())
   const scheduleId = useMemo<string>(() => syData.find((item: ScheduleModel) => item.academicYear.toString() === schoolYear.toString())?._id || '', [syData, schoolYear])
 
   const getSYData = async () => {

@@ -14,6 +14,7 @@ import {
   SubmissionStatus,
   YearLevel,
 } from "@app/types";
+import moment from "moment-timezone";
 import { isObjectIdOrHexString } from 'mongoose';
 import { NextRequest, NextResponse } from "next/server";
 
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
           }))
           const filledSlots = data.filter((result: any) => !!result.grantee).length
           const totalSlots = schedule.scholarshipSlots
-          const isOpenSlots = (new Date(schedule.range.startDate)).getTime() <= (new Date()).getTime() && (new Date(schedule.range.endDate)).getTime() >= (new Date()).getTime() && totalSlots > filledSlots
+          const isOpenSlots = moment(schedule.range.startDate).tz('Asia/Manila').toDate().getTime() <= (moment.tz('Asia/Manila').toDate()).getTime() && moment(schedule.range.endDate).tz('Asia/Manila').toDate().getTime() >= (moment.tz('Asia/Manila').toDate()).getTime() && totalSlots > filledSlots
           return NextResponse.json({ data, filledSlots, totalSlots, isOpenSlots })
         }
       }

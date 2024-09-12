@@ -3,11 +3,12 @@
 import mongodbConnect from "@app/lib/db"
 import Student from "@app/models/Student"
 import { ScheduleModel, StudentModel } from "@app/types"
+import moment from "moment-timezone"
 
 export async function fetchPrintData(template: string, { ...args }: any) {
   await mongodbConnect()
   if (template === 'application') {
-    const academicYear = parseInt(args.academicYear as string) || (new Date()).getFullYear()
+    const academicYear = parseInt(args.academicYear as string) || (moment.tz('Asia/Manila').toDate()).getFullYear()
     const studentId = args.studentId as string
     const student = await Student.findOne({ _id: studentId }).select('-applicationSubmission -password -emailVerified').populate('applicationForm.scheduleId').lean<StudentModel>().exec()
     if (!!student?._id) {

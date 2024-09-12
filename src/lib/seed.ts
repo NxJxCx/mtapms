@@ -6,6 +6,7 @@ import RequirementSubmission from '@app/models/RequirementSubmission';
 import Schedule from '@app/models/Schedule';
 import Student from '@app/models/Student';
 import { CivilStatus, Gender, SchoolSector, Semester, SubmissionStatus, YearLevel } from '@app/types/index';
+import moment from 'moment-timezone';
 import 'server-only';
 import mongodbConnect from './db';
 import { getImageBufferSample } from './testPhoto';
@@ -39,7 +40,7 @@ export default async function seed() {
       const newStudent = await Student.create({
         email: 'applicant_test@gmail.com',
         password: 'password',
-        emailVerified: (new Date()).toISOString(),
+        emailVerified: (moment.tz('Asia/Manila').toDate()).toISOString(),
       });
     } catch (e) {
       console.log("student error:", e)
@@ -52,17 +53,17 @@ export default async function seed() {
   let thisYearScheduleId = null;
   if (schedule.length === 0) {
     try {
-      const lastYear = new Date()
-      lastYear.setHours(0,0,0,0)
+      const lastYear = moment.tz('Asia/Manila').toDate()
+      lastYear.setHours(8,0,0,0)
       lastYear.setFullYear(lastYear.getFullYear() - 1)
-      const end = new Date(lastYear)
-      end.setHours(0,0,0,0)
+      const end = moment(lastYear).tz('Asia/Manila').toDate()
+      end.setHours(8,0,0,0)
       end.setMonth(end.getMonth() + 1)
-      const examDate = new Date(lastYear)
-      examDate.setHours(0,0,0,0)
+      const examDate = moment(lastYear).tz('Asia/Manila').toDate()
+      examDate.setHours(8,0,0,0)
       examDate.setDate(examDate.getDate() + 3)
-      const interviewDate = new Date(examDate)
-      interviewDate.setHours(0,0,0,0)
+      const interviewDate = moment(examDate).tz('Asia/Manila').toDate()
+      interviewDate.setHours(8,0,0,0)
       interviewDate.setDate(interviewDate.getDate() + 2)
       const newSchedule = await Schedule.create({
         academicYear: lastYear.getFullYear(),
@@ -80,20 +81,20 @@ export default async function seed() {
       scheduleId = newSchedule._id.toHexString();
       // this year
       try {
-        const now = new Date()
-        now.setHours(0,0,0,0)
-        const endNow = new Date(now)
-        endNow.setHours(0,0,0,0)
+        const now = moment.tz('Asia/Manila').toDate()
+        now.setHours(8,0,0,0)
+        const endNow = moment(now).tz('Asia/Manila').toDate()
+        endNow.setHours(8,0,0,0)
         endNow.setMonth(endNow.getMonth() + 1)
-        const orientationDate = new Date(now)
-        orientationDate.setHours(0,0,0,0)
+        const orientationDate = moment(now).tz('Asia/Manila').toDate()
+        orientationDate.setHours(8,0,0,0)
         orientationDate.setDate(orientationDate.getDate() + 3)
-        const examDate2 = new Date(orientationDate)
-        examDate2.setHours(0,0,0,0)
+        const examDate2 = moment(orientationDate).tz('Asia/Manila').toDate()
+        examDate2.setHours(8,0,0,0)
         examDate2.setDate(examDate2.getDate() + 3)
-        const interviewDate2 = new Date(examDate2)
+        const interviewDate2 = moment(examDate2).tz('Asia/Manila').toDate()
         interviewDate2.setDate(interviewDate2.getDate() + 2)
-        interviewDate2.setHours(0,0,0,0)
+        interviewDate2.setHours(8,0,0,0)
         const thisYear = await Schedule.create({
           academicYear: now.getFullYear(),
           range: {
@@ -144,7 +145,7 @@ export default async function seed() {
       const newGrantee = await Student.create({
         email: 'grantee_test@gmail.com',
         password: 'password',
-        emailVerified: (new Date()).toISOString(),
+        emailVerified: (moment.tz('Asia/Manila').toDate()).toISOString(),
         isGrantee: false,
         applicationForm: {
           scheduleId,
@@ -178,14 +179,14 @@ export default async function seed() {
       if (!!newGrantee?._id) {
         try {
           const attendance = await Schedule.findById(scheduleId).exec()
-          const lastYear = new Date()
-          lastYear.setHours(0,0,0,0)
+          const lastYear = moment.tz('Asia/Manila').toDate()
+          lastYear.setHours(8,0,0,0)
           lastYear.setFullYear(lastYear.getFullYear() - 1)
-          const examDate = new Date(lastYear)
-          examDate.setHours(0,0,0,0)
+          const examDate = moment(lastYear).tz('Asia/Manila').toDate()
+          examDate.setHours(8,0,0,0)
           examDate.setDate(examDate.getDate() + 5)
-          const submitDate = new Date(examDate)
-          submitDate.setHours(0,0,0,0)
+          const submitDate = moment(examDate).tz('Asia/Manila').toDate()
+          submitDate.setHours(8,0,0,0)
           submitDate.setDate(submitDate.getDate() +  15)
           attendance.orientationAttendance.push({ studentId: newGrantee._id.toHexString(), createdAt: lastYear.toISOString(), updatedAt: lastYear.toISOString() })
           attendance.examScores.push({ studentId: newGrantee._id.toHexString(), percentageScore: 94.24, createdAt: examDate.toISOString(), updatedAt: examDate.toISOString() })
@@ -206,7 +207,7 @@ export default async function seed() {
           console.log('grantee created:', grant?._id?.toHexString())
           const granteeSubmission = await Grantee.create({
             studentId: grant?._id?.toHexString(),
-            academicYear: (new Date()).getFullYear(),
+            academicYear: (moment.tz('Asia/Manila').toDate()).getFullYear(),
             semester: Semester.FirstSemester,
           })
           console.log('grantee submission created', granteeSubmission?._id?.toHexString())

@@ -5,13 +5,14 @@ import { getSession } from "@app/lib/session";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
 import { Roles } from "@app/types";
+import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
     const session = await getSession();
-    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
+    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (moment.tz('Asia/Manila').toDate()).getFullYear()
     if (session?.user?.role === Roles.Admin) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {

@@ -8,6 +8,7 @@ import { ArrowPathIcon, PlusCircleIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { addExamScore } from "./action";
+import moment from "moment-timezone";
 
 const columns = (onGrade?: (rowData: any) => void): TableColumnProps[] => ([
   {
@@ -96,7 +97,7 @@ const columns = (onGrade?: (rowData: any) => void): TableColumnProps[] => ([
 export default function ExamPage() {
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState<boolean>(true)
-  const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number>((moment.tz('Asia/Manila').toDate()).getFullYear())
 
   const [data, setData] = useState<any[]>([])
   const [selectedStudent, setSelectedStudent] = useState<any>()

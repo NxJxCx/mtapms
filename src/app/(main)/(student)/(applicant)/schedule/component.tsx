@@ -3,6 +3,7 @@ import { LoadingSpinner } from '@app/components/loadings';
 import { useSession } from '@app/lib/useSession';
 import { ScheduleModel } from '@app/types/index';
 import clsx from 'clsx';
+import moment from 'moment-timezone';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function ScheduleAndResultPage() {
@@ -21,14 +22,14 @@ export default function ScheduleAndResultPage() {
   }|undefined>()
   const [examScore, setExamScore] = useState<number|undefined>()
   const isOpen = useMemo(() => {
-    const startDate = !!syData?.range?.startDate ? new Date(syData?.range?.startDate) : undefined
+    const startDate = !!syData?.range?.startDate ? moment(syData?.range?.startDate).tz('Asia/Manila').toDate() : undefined
     if (!startDate) return false
-    const now = new Date()
+    const now = moment.tz('Asia/Manila').toDate()
     return startDate.getTime() <= now.getTime()
   }, [syData])
-  const orientationDate = useMemo(() => !!syData?.orientationDate ? (new Date(syData?.orientationDate)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, [syData])
-  const examDate = useMemo(() => !!syData?.examDate ? (new Date(syData?.examDate)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, [syData])
-  const endDate = useMemo(() => !!syData?.range?.endDate ? (new Date(syData?.range?.endDate)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, [syData])
+  const orientationDate = useMemo(() => !!syData?.orientationDate ? moment(syData?.orientationDate).tz('Asia/Manila').toDate().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, [syData])
+  const examDate = useMemo(() => !!syData?.examDate ? moment(syData?.examDate).tz('Asia/Manila').toDate().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, [syData])
+  const endDate = useMemo(() => !!syData?.range?.endDate ? moment(syData?.range?.endDate).tz('Asia/Manila').toDate().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined, [syData])
   const scheduleId = useMemo(() => syData?._id || '', [syData])
 
   const getSYData = async () => {
@@ -94,7 +95,7 @@ export default function ScheduleAndResultPage() {
           <h1 className="px-4 py-3 pb-2 border-b text-xl font-bold bg-yellow-300">Result</h1>
           <div className="p-4 grid grid-cols-2">
             <div>Attended Orientation:</div>
-            <div className="font-bold text-gray-500">{data?.orientation ? 'Yes' : ((new Date(syData?.orientationDate || '')).getTime() > (new Date()).getTime() ? 'N/A' : 'No')}</div>
+            <div className="font-bold text-gray-500">{data?.orientation ? 'Yes' : (moment(syData?.orientationDate).tz('Asia/Manila').toDate().getTime() > (moment.tz('Asia/Manila').toDate()).getTime() ? 'N/A' : 'No')}</div>
             <div>Exam Result:</div>
             <div className={clsx('font-bold', !examScore ? 'text-gray-500' : examScore < 75 ? 'text-red-600' : 'text-green-700')}>{examScore || 'N/A'}</div>
             <div>Submitted Documents:</div>

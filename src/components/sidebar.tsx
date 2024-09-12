@@ -4,6 +4,7 @@ import { useSession } from "@app/lib/useSession";
 import { AdminModel, ApplicationFormProps, Roles, StudentModel } from "@app/types";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
+import moment from "moment-timezone";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -163,18 +164,16 @@ function AdminAdditionalSidebar() {
     if (response.ok) {
       const { data } = await response.json()
       if (!!data) {
-        const dateNow = new Date()
-        dateNow.setHours(0, 0, 0, 0)
-        const orientationDate = new Date(data.orientationDate)
-        orientationDate.setHours(0,0,0,0)
+        const dateNow = moment.tz('Asia/Manila').toDate()
+        const orientationDate = moment(data.orientationDate).tz('Asia/Manila').toDate()
+        dateNow.setHours(orientationDate.getHours(), orientationDate.getMinutes(), orientationDate.getSeconds(), orientationDate.getMilliseconds())
         if (dateNow.getTime() === orientationDate.getTime()) {
           additionalSidebars.push({
             label: 'Orientation Attendance',
             href: '/admin/orientation'
           })
         }
-        const examDate = new Date(data.examDate)
-        examDate.setHours(0,0,0,0)
+        const examDate = moment(data.examDate).tz('Asia/Manila').toDate()
         if (dateNow.getTime() >= examDate.getTime() && dateNow.getTime() <= examDate.getTime() + (1000 * 60 * 60 * 24 * 180)) {
           additionalSidebars.push({
             label: 'Exam Scores',

@@ -20,6 +20,7 @@ import {
 } from "@app/types"
 import { CheckBadgeIcon, CheckIcon, XMarkIcon } from "@heroicons/react/16/solid"
 import clsx from "clsx"
+import moment from 'moment-timezone'
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { approvePendingSubmission, disapprovePendingSubmission } from './action'
 
@@ -192,14 +193,14 @@ export default function ScholarListPage() {
     if (syData.length > 0) {
       sylist = syData.map((item: ScheduleModel) => item.academicYear);
     }
-    const thisYear: number = (new Date()).getFullYear();
+    const thisYear: number = moment.tz('Asia/Manila').toDate().getFullYear();
     if (!sylist.includes(thisYear)) {
       sylist.unshift(thisYear);
     }
     sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     return sylist
   }, [syData])
-  const [schoolYear, setSchoolYear] = useState<number|string>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number|string>((moment.tz('Asia/Manila').toDate()).getFullYear())
   const [semester, setSemester] = useState<Semester|string>(Semester.FirstSemester)
 
   const getSYData = async () => {
@@ -432,7 +433,7 @@ export default function ScholarListPage() {
               Submitted by: <span className="font-bold">{displayFullName(selected?.student as any)}</span>
             </div>
             <div className=" text-gray-500">
-              Last update: {(new Date(selected?.data?.updatedAt!)).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
+              Last update: {moment(selected?.data?.updatedAt!).tz('Asia/Manila').toDate().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, })}
             </div>
             <div className="lg:absolute lg:right-6 lg:top-0 aspect-square object-contain h-[80px] w-[80px] overflow-hidden border border-black/50 rounded p-[5px]">
               <img src={"/api/user/photo/" + selected?.student?.photo} width={70} height={70} className="aspect-square" alt="photo" />

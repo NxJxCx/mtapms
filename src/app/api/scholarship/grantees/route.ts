@@ -7,23 +7,24 @@ import Requirement from "@app/models/Requirement";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
 import {
-  ApplicationFormProps,
-  GranteeModel,
-  RequirementModel,
-  RequirementSubmissionModel,
-  Roles,
-  ScheduleModel,
-  Semester,
-  StudentModel,
-  YearLevel,
+    ApplicationFormProps,
+    GranteeModel,
+    RequirementModel,
+    RequirementSubmissionModel,
+    Roles,
+    ScheduleModel,
+    Semester,
+    StudentModel,
+    YearLevel,
 } from "@app/types";
+import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
     const session = await getSession();
-    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
+    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (moment.tz('Asia/Manila').toDate()).getFullYear()
     const type = request.nextUrl.searchParams.get('type') as string
     if (session?.user?.role === Roles.Admin) {
       const semester = request.nextUrl.searchParams.get('semester') as Semester|null

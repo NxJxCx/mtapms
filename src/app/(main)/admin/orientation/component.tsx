@@ -8,6 +8,7 @@ import { Roles } from "@app/types";
 import { ArrowPathIcon, CheckIcon } from "@heroicons/react/16/solid";
 import { useCallback, useEffect, useState } from "react";
 import { attendOrientation } from "./action";
+import moment from "moment-timezone";
 
 const columns = (type: 'notAttended'|'attended', onAttended?: (rowData: any) => void): TableColumnProps[] => ([
   {
@@ -73,7 +74,7 @@ const columns = (type: 'notAttended'|'attended', onAttended?: (rowData: any) => 
 export default function OrientationAttendancePage() {
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState<boolean>(true)
-  const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number>((moment.tz('Asia/Manila').toDate()).getFullYear())
 
   const [notAttended, setNotAttended] = useState<any[]>([])
   const [attended, setAttended] = useState<any[]>([])

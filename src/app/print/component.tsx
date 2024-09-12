@@ -3,6 +3,7 @@ import { displayFullName, displayYearLevel } from "@app/components/display";
 import { ApplicationFormProps, SchoolSector, StudentModel } from "@app/types";
 import { Gender } from '@app/types/index';
 import { CheckIcon } from "@heroicons/react/16/solid";
+import moment from "moment-timezone";
 import Image from "next/image";
 
 export default function Print({ template, data, ...props }: { template: string, data: any } & any) {
@@ -42,7 +43,7 @@ export default function Print({ template, data, ...props }: { template: string, 
           <div className="border px-1 text-center text-[6pt]">(Maiden Name for Married Women)</div>
 
           <div className="border px-1 row-span-2"><div className="flex h-full items-center">Date of Birth</div></div>
-          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{(new Date(studentData?.dateOfBirth))?.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</div></div>
+          <div className="border px-1 row-span-2 font-[500] text-wrap break-words"><div className="flex h-full items-center">{moment(studentData?.dateOfBirth).tz('Asia/Manila').toDate()?.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</div></div>
           <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.permanentAddress}</div>
           <div className="border px-1 text-center font-[500] text-wrap break-words">{studentData?.zipCode}</div>
           <div className="border px-1 col-span-2 text-center">Permanent Address</div>
@@ -155,7 +156,7 @@ export default function Print({ template, data, ...props }: { template: string, 
         {/* Date Section */}
         <div className="w-full">
           <div className="mx-auto w-64">
-            <div className="text-center w-64">{(new Date(studentData?.updatedAt!))?.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+            <div className="text-center w-64">{moment(studentData?.updatedAt!).tz('Asia/Manila').toDate()?.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
             <p className="text-center mt-1 border-t border-black w-64">Date Accomplished</p>
           </div>
         </div>

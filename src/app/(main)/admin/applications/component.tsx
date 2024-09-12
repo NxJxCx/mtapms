@@ -9,6 +9,7 @@ import Table, { TableColumnProps } from "@app/components/tables";
 import { ApplicationFormProps, Roles, StudentModel, YearLevel } from '@app/types';
 import { CheckIcon, EyeIcon, PrinterIcon } from "@heroicons/react/16/solid";
 import clsx from 'clsx';
+import moment from "moment-timezone";
 import { Montserrat } from 'next/font/google';
 import { useCallback, useEffect, useState } from "react";
 
@@ -49,7 +50,7 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     sortable: true,
     searchable: true,
     render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
-      return new Date(rowData.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      return moment(rowData.dateOfBirth).tz('Asia/Manila').toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     }
   },
   {
@@ -127,12 +128,12 @@ const montserrat = Montserrat({ subsets: ['latin'], weight: ['400', '700'] })
 export default function ApplicationListPage() {
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Admin })
   const [loading, setLoading] = useState<boolean>(true)
-  const [schoolYear, setSchoolYear] = useState<number>((new Date()).getFullYear())
+  const [schoolYear, setSchoolYear] = useState<number>((moment.tz('Asia/Manila').toDate()).getFullYear())
   const [data, setData] = useState<StudentModel[]>([])
   const fetchAcademicYear = async () => {
     const url = new URL('/api/schedule/now', window.location.origin)
     const response = await fetch(url)
-    let sy = (new Date()).getFullYear()
+    let sy = (moment.tz('Asia/Manila').toDate()).getFullYear()
     if (response.ok) {
       const { data } = await response.json()
       if (!!data) {
@@ -149,7 +150,7 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studId: item._id, email: item.email, age: Math.floor(((new Date()).getTime() - (new Date(item.applicationForm!.dateOfBirth)).getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
+      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studId: item._id, email: item.email, age: Math.floor(((moment.tz('Asia/Manila').toDate()).getTime() - moment(item.applicationForm!.dateOfBirth).tz('Asia/Manila').toDate().getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
       setData(d);
     }
     setLoading(false);
@@ -227,7 +228,7 @@ export default function ApplicationListPage() {
             </tr>
             <tr className="*:px-2">
               <td className="pt-2 border-l border-black">Date of Birth:</td>
-              <td>{new Date(openViewModal?.dateOfBirth || '1990-01-01').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })?? 'N/A'}</td>
+              <td>{moment(openViewModal?.dateOfBirth || '1990-01-01').tz('Asia/Manila').toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })?? 'N/A'}</td>
               <td className="border-l border-black">Present Address:</td>
               <td colSpan={2}>{openViewModal?.presentAddress || 'N/A'}</td>
               <td rowSpan={8} className="border-l border-black align-top pt-1">Province:</td>

@@ -5,6 +5,7 @@ import { getSession } from "@app/lib/session";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
 import { Roles, ScheduleModel } from "@app/types";
+import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -18,12 +19,9 @@ export async function GET(request: NextRequest) {
       result.sort((a, b) => b.academicYear - a.academicYear)
       const dataRecent: ScheduleModel = result?.[0] || null
       if (!!dataRecent) {
-        const recentStartDate = new Date(dataRecent?.range.startDate)
-        recentStartDate.setHours(0, 0, 0, 0)
-        const recentEndDate = new Date(dataRecent?.range.endDate)
-        recentEndDate.setHours(0, 0, 0, 0)
-        const now = new Date()
-        now.setHours(0, 0, 0, 0)
+        const recentStartDate = moment(dataRecent?.range.startDate).tz('Asia/Manila').toDate()
+        const recentEndDate = moment(dataRecent?.range.endDate).tz('Asia/Manila').toDate()
+        const now = moment.tz('Asia/Manila').toDate()
         const data = !!dataRecent && recentStartDate.getTime() <= now.getTime() && recentEndDate.getTime() >= now.getTime() ? dataRecent : null
         if (!!data) {
           const student = await Student.findById(session.user._id).exec()

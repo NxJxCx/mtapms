@@ -4,13 +4,14 @@ import { getSession } from "@app/lib/session";
 import Requirement from "@app/models/Requirement";
 import Schedule from "@app/models/Schedule";
 import { Roles } from "@app/types";
+import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   await mongodbConnect()
   try {
     const session = await getSession();
-    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (new Date()).getFullYear()
+    const academicYear = parseInt(request.nextUrl.searchParams.get('academicYear') as string) || (moment.tz('Asia/Manila').toDate()).getFullYear()
     const forFirstYearOnly = request.nextUrl.searchParams.get('firstYearOnly') === 'true' ? true : request.nextUrl.searchParams.get('firstYearOnly') === 'false' ? false : undefined;
     if ([Roles.Admin, Roles.Applicant, Roles.Grantee].includes(session?.user?.role)) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
