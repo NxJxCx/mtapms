@@ -35,16 +35,15 @@ const getApplicantRequirements = async (academicYear: number, firstYearOnly: boo
       label: r.name,
       field: r.name,
       align: 'center',
-      sortable: true,
       render: (rowData: StudentModel) => (
-        <button type="button" onClick={() => onViewSubmission && onViewSubmission(r, rowData, (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id))} title="View Study Load">
+        <button type="button" onClick={() => onViewSubmission && onViewSubmission(r, rowData, (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => (subm.requirementId as RequirementModel)?._id === r._id))} title="View Study Load">
           <span className={clsx(
             "font-bold capitalize",
-            (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Pending
+            (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => (subm.requirementId as RequirementModel)?._id === r._id)?.status === SubmissionStatus.Pending
             ? 'text-gray-500 bg-gray-100 px-2 py-1 hover:bg-gray-200'
-            :  (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status === SubmissionStatus.Approved
+            :  (rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => (subm.requirementId as RequirementModel)?._id === r._id)?.status === SubmissionStatus.Approved
             ? 'text-green-600'
-            : 'text-red-500')}>{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => subm.requirementId === r._id)?.status || 'N/A'}</span>
+            : 'text-red-500')}>{(rowData.applicationSubmission as RequirementSubmissionModel[]).find(subm => (subm.requirementId as RequirementModel)?._id === r._id)?.status || 'N/A'}</span>
         </button>
       ),
     }))
