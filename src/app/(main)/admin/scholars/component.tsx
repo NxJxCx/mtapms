@@ -308,7 +308,6 @@ export default function ScholarListPage() {
         ...(applicant1stYearColumns.filter(({ field: key }) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
           .reduce((acc: any, { field: key }) => ({...acc, [key]: true }), ({})))
       })], [])
-      console.log(d, applicant1stYearColumns)
       setDataApplicant1stYear(d);
     }
     const url3 = new URL('/api/scholarship/grantees', window.location.origin)
