@@ -129,7 +129,7 @@ export default function DocumentRequirementsPage() {
 
   useEffect(() => {
     if (!schoolYear) {
-      const latestSY = Math.max(...d.map((item: ScheduleModel) => item.academicYear))
+      const latestSY = Math.max(...syData.map((item: ScheduleModel) => item.academicYear))
       setSchoolYear(latestSY)
     }
     // eslint-disable-next-line
