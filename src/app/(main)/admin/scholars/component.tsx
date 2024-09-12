@@ -116,7 +116,6 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
     {
       label: 'COG',
       field: 'COG',
-      sortable: true,
       align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => (
         <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('COG', rowData.granteeSubmissions, rowData as StudentModel)} title="View COG">
@@ -133,7 +132,6 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
     {
       label: 'StudyLoad',
       field: 'studyLoad',
-      sortable: true,
       align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>(
         <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('studyLoad', rowData.granteeSubmissions, rowData as StudentModel)} title="View Study Load">
@@ -150,7 +148,6 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
     {
       label: 'Statement of Account',
       field: 'statementOfAccount',
-      sortable: true,
       align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) =>(
         <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('statementOfAccount', rowData.granteeSubmissions, rowData as StudentModel)} title="View Statement of Account">
@@ -167,7 +164,6 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
     {
       label: 'CONS',
       field: 'CONS',
-      sortable: true,
       align: 'center',
       render: (rowData: StudentModel & { granteeSubmissions: GranteeModel }) => (
         <button type="button" onClick={() => onViewGranteeSubmission && onViewGranteeSubmission('CONS', rowData.granteeSubmissions, rowData as StudentModel)} title="View CONS">
