@@ -5,7 +5,7 @@ import { compare } from "@app/lib/hash";
 import { createSession } from "@app/lib/session";
 import Admin from "@app/models/Admin";
 import Student from "@app/models/Student";
-import { Roles, StudentModel } from "@app/types";
+import { ActionResponse, Roles, StudentModel } from "@app/types";
 
 export interface ResponseAction {
   success?: boolean;
@@ -100,43 +100,48 @@ export async function loginAction(prevState: ResponseAction, formData: FormData)
 }
 
 
-export async function signupAction(prevState: ResponseAction, formData: any): Promise<ResponseAction> {
+export async function signupAction(prevState: ActionResponse, formData: any): Promise<ActionResponse> {
   if (prevState?.success) {
     return {
-      success: false,
-      error: {
-        signup: 'Previous sign up attempt failed. Please try again later or refresh page.'
-      }
+      error: 'Previous sign up attempt failed. Please try again later or refresh page.'
     }
   }
-  const { email, firstName, middleName, lastName, schoolId, password, confirmPassword } = Object.fromEntries(formData.entries());
-
-  await new Promise((res) => setTimeout(res, 1000));
-
-  if (password >= 8 && password === confirmPassword) {
-    return {
-      success: true
-    }
-  } else if (password < 8) {
-    return {
-      success: false,
-      error: {
-        password: 'Password should be at least 8 characters long'
+  await mongodbConnect()
+  try {
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const confirmPassword = formData.get('confirmPassword') as string
+    if (!email) {
+      return {
+        error: 'Missing email'
       }
     }
-  } else if (password!== confirmPassword) {
-    return {
-      success: false,
-      error: {
-        confirmPassword: 'Password should be at least 8 characters long'
+    if (!password) {
+      return {
+        error: 'Missing password'
       }
     }
+    if (!confirmPassword || password !== confirmPassword) {
+      return {
+        error: 'Password does not match'
+      }
+    }
+    const student = await Student.exists({ email }).exec()
+    if (student) {
+      return {
+        error: 'Email already registered'
+      }
+    }
+    const newStudent = await Student.create({ email, password })
+    if (!!newStudent?._id) {
+      return {
+        success: 'Successfully signed up',
+      }
+    }
+  } catch (e) {
+    console.log(e)
   }
-
   return {
-    success: false,
-    error: {
-      signup: 'Failed to Sign Up. Please try again.'
-    }
+    error: 'Failed to sign up. Please try again.',
   }
 }
