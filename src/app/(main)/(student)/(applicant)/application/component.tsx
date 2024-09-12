@@ -6,7 +6,6 @@ import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
 import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
 import { PrinterIcon } from "@heroicons/react/16/solid";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { ScholarshipApplicationAction } from "./action";
@@ -70,7 +69,6 @@ export default function ApplicationComponent() {
   useEffect(() => {
     if (!pending && state?.success) {
       Toaster.success(state?.success)
-      setTimeout(fetchData, 500)
       setTimeout(() => window.location.reload(), 1000)
     } else if (!pending && state?.error) {
       Toaster.error(state?.error)
