@@ -8,10 +8,10 @@ import Tabs from "@app/components/tabs";
 import Toaster from "@app/components/toaster";
 import { RequirementModel, Roles, ScheduleModel } from "@app/types";
 import { PlusIcon, XCircleIcon } from "@heroicons/react/16/solid";
+import moment from "moment-timezone";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { createRequirement, removeRequirement } from "./action";
-import moment from "moment-timezone";
 
 export default function RequirementsPage() {
   const { openDrawer, toggleDrawer } = useSidebar({ role: Roles.Admin })
@@ -144,21 +144,27 @@ export default function RequirementsPage() {
                     <div key={"1st_" + index} className="flex flex-col min-h-[150px] min-w-72 max-w-sm border rounded-lg p-2 mx-auto bg-green-50 shadow-lg">
                       <div className="uppercase border-b text-center font-bold flex justify-between flex-nowrap pb-1">
                         <div className="flex-grow">{item.name}</div>
-                        <button type="button" className="text-red-500 hover:scale-150 hover:drop-shadow rounded aspect-square p-1" title="Remove Requirement" onClick={() => onDeleteRequirement(item._id!)}><XCircleIcon className="w-4 h-4 aspect-square" /></button>
+                        {Math.max(...schoolYearList) == schoolYear && (
+                          <button type="button" className="text-red-500 hover:scale-150 hover:drop-shadow rounded aspect-square p-1" title="Remove Requirement" onClick={() => onDeleteRequirement(item._id!)}><XCircleIcon className="w-4 h-4 aspect-square" /></button>
+                        )}
                       </div>
                       <div className="flex-grow px-3 py-1">{item.description}</div>
                     </div>
                   ))}
                 </div>
-                <div className="w-full flex-shrink">
-                  <div className="max-w-64 mx-auto"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new_firstYear')} /></div>
-                </div>
+                {Math.max(...schoolYearList) == schoolYear && (
+                  <div className="w-full flex-shrink">
+                    <div className="max-w-64 mx-auto"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new_firstYear')} /></div>
+                  </div>
+                )}
               </div>
             )}
             { !loading && firstYearData.length === 0 && (
               <div className="flex flex-col min-h-[520px] w-full items-center justify-center text-2xl text-gray-500 italic gap-y-4">
                 <div>No requirements setted for 1st year only scholars</div>
-                <div className="max-w-64"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new_firstYear')} /></div>
+                {Math.max(...schoolYearList) == schoolYear && (
+                  <div className="max-w-64"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new_firstYear')} /></div>
+                )}
               </div>
             )}
           </div>
@@ -173,21 +179,27 @@ export default function RequirementsPage() {
                     <div key={"2nd_" + index} className="flex flex-col min-h-[150px] min-w-80 max-w-sm border rounded-lg p-2 mx-auto bg-green-50 shadow-lg">
                       <div className="uppercase border-b text-center font-bold flex justify-between flex-nowrap pb-1">
                         <div className="flex-grow">{item.name}</div>
-                        <button type="button" className="text-red-500 hover:scale-150 hover:drop-shadow rounded aspect-square p-1" title="Remove Requirement" onClick={() => onDeleteRequirement(item._id!)}><XCircleIcon className="w-4 h-4 aspect-square" /></button>
+                        {Math.max(...schoolYearList) == schoolYear && (
+                          <button type="button" className="text-red-500 hover:scale-150 hover:drop-shadow rounded aspect-square p-1" title="Remove Requirement" onClick={() => onDeleteRequirement(item._id!)}><XCircleIcon className="w-4 h-4 aspect-square" /></button>
+                        )}
                       </div>
                       <div className="flex-grow px-3 py-1">{item.description}</div>
                     </div>
                   ))}
                 </div>
-                <div className="w-full flex-shrink">
-                  <div className="max-w-64 mx-auto"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new')} /></div>
-                </div>
+                {Math.max(...schoolYearList) == schoolYear && (
+                  <div className="w-full flex-shrink">
+                    <div className="max-w-64 mx-auto"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new')} /></div>
+                  </div>
+                )}
               </div>
             )}
             { !loading && secondYearAboveData.length === 0 && (
               <div className="flex flex-col min-h-[520px] w-full items-center justify-center text-2xl text-gray-500 italic gap-y-4">
                 <div>No requirements setted for 2nd year above scholars</div>
-                <div className="max-w-64"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new')} /></div>
+                {Math.max(...schoolYearList) == schoolYear && (
+                  <div className="max-w-64"><Buttons.SignupButton type="button" label={<><PlusIcon className="inline w-5 h-5" /> <span>Add Requirement</span></>} onClick={() => onOpenModal('new')} /></div>
+                )}
               </div>
             )}
           </div>
