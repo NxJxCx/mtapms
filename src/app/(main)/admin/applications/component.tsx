@@ -150,7 +150,9 @@ export default function ApplicationListPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
-      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studId: item._id, email: item.email, age: Math.floor(((moment.tz('Asia/Manila').toDate()).getTime() - moment(item.applicationForm!.dateOfBirth).tz('Asia/Manila').toDate().getTime()) / (1000 * 60 * 60 * 24 * 365)) }], [])
+      console.log(data)
+      const d = data.filter((item: StudentModel) => !!item.applicationForm).reduce((init: (StudentModel & ApplicationFormProps & { age: number, studId: string })[] | [], item: StudentModel) => [...init, {...item, ...item.applicationForm, studId: item._id, email: item.email, photo: item.photo, studentId: item.studentId, age: Math.floor(((moment.tz('Asia/Manila').toDate()).getTime() - moment(item.applicationForm!.dateOfBirth).tz('Asia/Manila').toDate().getTime()) / (1000 * 60 * 60 * 24 * 365)), applicationForm: undefined }], [])
+      console.log(d)
       setData(d);
     }
     setLoading(false);
@@ -207,8 +209,8 @@ export default function ApplicationListPage() {
           <tbody>
             <tr>
               <td colSpan={3}>
-                <div className="aspect-square object-contain h-[80px] w-[80px] overflow-hidden border border-black/50 rounded p-[5px]">
-                  <img src={"/api/user/photo/" + openViewModal?.photo} width={70} height={70} className="aspect-square" alt="photo" />
+                <div className="aspect-square object-contain h-[80px] w-[80px] overflow-hidden rounded">
+                  <img src={"/api/user/photo/" + openViewModal?.photo} width={80} height={80} className="w-auto h-auto" alt="photo" />
                 </div>
               </td>
               <td colSpan={4}></td>
