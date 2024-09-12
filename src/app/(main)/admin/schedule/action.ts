@@ -62,7 +62,7 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
       const result = await Schedule.create(data);
       if (!!result?._id) {
         // initiate all grantees for their requirement submission
-        const grantees = await Student.find({ isGrantee: true, 'applicationForm.scheduleId': { $exists: true } }).select('_id').lean<StudentModel[]>()
+        const grantees = await Student.find({ isGrantee: true, $and: [{'applicationForm.scheduleId': { $exists: true } }]}).select('_id applicationForm').lean<StudentModel[]>()
         await Promise.all(grantees.map(async (grantee: StudentModel) => {
           const sched = await Schedule.findById(grantee.applicationForm!.scheduleId.toString()).lean<ScheduleModel>().exec()
           if (!!sched?._id && (academicYear - sched.academicYear) < (4 - grantee.applicationForm!.yearLevel)) {
