@@ -81,8 +81,12 @@ export default function DocumentRequirementsPage() {
     if (response.ok) {
       const { data: d } = await response.json()
       setSYData(d)
+      const latestSY = Math.max(...d.map((item: ScheduleModel) => item.academicYear))
+      if (!schoolYear) {
+        setSchoolYear(latestSY)
+      }
       setLoading(false)
-      return d
+      return latestSY
     }
     return ''
   }
