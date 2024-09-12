@@ -1,9 +1,8 @@
-'use server'
-
+'use server';
 import mongodbConnect from "@app/lib/db";
 import { getSession } from "@app/lib/session";
+import Admin from "@app/models/Admin";
 import FileDocument from "@app/models/FileDocument";
-import Student from "@app/models/Student";
 import { ActionResponseInterface } from "@app/types";
 
 async function fileToBuffer(file: File): Promise<Buffer>
@@ -24,7 +23,7 @@ async function savePhotoToDatabase(photo: File, userId: string): Promise<boolean
   } catch (e) {}
   try {
     if (!!photoFile?._id) {
-      const updatedUser = await Student.updateOne({_id: userId }, { photo: photoFile._id }, { upsert: false, runValidators: true }).exec()
+      const updatedUser = await Admin.updateOne({_id: userId }, { photo: photoFile._id }, { upsert: false, runValidators: true }).exec()
       if (updatedUser.acknowledged && updatedUser.modifiedCount > 0) {
         // success
         return true
@@ -54,6 +53,7 @@ export async function uploadPhoto(prevPhoto: string, formData: FormData): Promis
     // save photo to database
     if (!!photo) {
       const uploaded = await savePhotoToDatabase(photo as File, session.user._id)
+      console.log('photo uploaded:', uploaded)
       if (uploaded) {
         if (!!prevPhoto) {
           await FileDocument.findByIdAndDelete(prevPhoto)
