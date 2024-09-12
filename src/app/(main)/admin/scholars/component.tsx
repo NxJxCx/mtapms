@@ -388,7 +388,7 @@ export default function ScholarListPage() {
           <option value={Semester.SecondSemester}>Second Semester</option>
         </select>
       </div>
-      <Tabs.TabNav tabs={[{ label: '1st Year New Grantees', key: 'new_firstYear'}, { label: 'New Grantees', key: 'new' }, { label: 'Old Grantees', key:'grantee' }]}>
+      <Tabs.TabNav tabs={[{ label: '1st Year Applicants', key: 'new_firstYear'}, { label: '2nd Year+ Applicants', key: 'new' }, { label: 'Old Grantees', key:'grantee' }]}>
         <Tabs.TabContent name="new">
           <div className="w-full font-[500] text-[15px] min-w-[500px] text-black p-4">
             {applicantColumns.length === 0 && (
