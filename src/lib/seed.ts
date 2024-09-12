@@ -54,16 +54,16 @@ export default async function seed() {
   if (schedule.length === 0) {
     try {
       const lastYear = moment.tz('Asia/Manila').toDate()
-      lastYear.setHours(8,0,0,0)
+      lastYear.setHours(0,0,0,0)
       lastYear.setFullYear(lastYear.getFullYear() - 1)
       const end = moment(lastYear).tz('Asia/Manila').toDate()
-      end.setHours(8,0,0,0)
+      end.setHours(0,0,0,0)
       end.setMonth(end.getMonth() + 1)
       const examDate = moment(lastYear).tz('Asia/Manila').toDate()
       examDate.setHours(8,0,0,0)
       examDate.setDate(examDate.getDate() + 3)
       const interviewDate = moment(examDate).tz('Asia/Manila').toDate()
-      interviewDate.setHours(8,0,0,0)
+      interviewDate.setHours(10,0,0,0)
       interviewDate.setDate(interviewDate.getDate() + 2)
       const newSchedule = await Schedule.create({
         academicYear: lastYear.getFullYear(),
@@ -71,7 +71,7 @@ export default async function seed() {
           startDate: lastYear,
           endDate: end,
         },
-        orientationDate: lastYear,
+        orientationDate: examDate,
         examDate: examDate,
         interviewDate: interviewDate,
         scholarshipSlots: 2,
@@ -82,19 +82,17 @@ export default async function seed() {
       // this year
       try {
         const now = moment.tz('Asia/Manila').toDate()
-        now.setHours(8,0,0,0)
+        now.setHours(0,0,0,0)
         const endNow = moment(now).tz('Asia/Manila').toDate()
-        endNow.setHours(8,0,0,0)
+        endNow.setHours(0,0,0,0)
         endNow.setMonth(endNow.getMonth() + 1)
         const orientationDate = moment(now).tz('Asia/Manila').toDate()
         orientationDate.setHours(8,0,0,0)
-        orientationDate.setDate(orientationDate.getDate() + 3)
         const examDate2 = moment(orientationDate).tz('Asia/Manila').toDate()
         examDate2.setHours(8,0,0,0)
-        examDate2.setDate(examDate2.getDate() + 3)
         const interviewDate2 = moment(examDate2).tz('Asia/Manila').toDate()
-        interviewDate2.setDate(interviewDate2.getDate() + 2)
-        interviewDate2.setHours(8,0,0,0)
+        interviewDate2.setDate(interviewDate2.getDate() + 1)
+        interviewDate2.setHours(9,0,0,0)
         const thisYear = await Schedule.create({
           academicYear: now.getFullYear(),
           range: {
@@ -104,7 +102,7 @@ export default async function seed() {
           orientationDate: orientationDate,
           examDate: examDate2,
           interviewDate: interviewDate2,
-          scholarshipSlots: 30,
+          scholarshipSlots: 25,
         })
         thisYearScheduleId = thisYear._id.toHexString();
       } catch (err) {
