@@ -31,33 +31,32 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
           error: 'Scholarship Slots Required'
         }
       }
-      const startDate = new Date(dataForm['range.startDate'] as string)
-      const endDate = new Date(dataForm['range.endDate'] as string)
-      startDate.setHours(0, 0, 0, 0)
-      endDate.setHours(0, 0, 0, 0)
+      const startDate = (new Date(dataForm['range.startDate'].toString() + 'T00:00:00')).toISOString()
+      const endDate = new Date(dataForm['range.endDate'].toString() + 'T00:00:00').toISOString()
       let orientationDate, examDate, interviewDate;
       if (dataForm.orientationDate) {
         const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
-        orientationDate = new Date(combined)
+        orientationDate = (new Date(combined)).toISOString()
       }
       if (dataForm.examDate) {
         const combined = `${dataForm.examDate}T${dataForm.examTime}:00`
-        examDate = new Date(combined)
+        examDate = (new Date(combined)).toISOString()
       }
       if (dataForm.interviewDate) {
         const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
-        interviewDate = new Date(combined)
+        interviewDate = (new Date(combined)).toISOString()
       }
+      console.log(orientationDate, examDate, interviewDate)
       const scholarshipSlots = dataForm.scholarshipSlots as string
       const data = {
         academicYear,
         range: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate,
+          endDate
         },
-        orientationDate: orientationDate?.toISOString(),
-        examDate: examDate?.toISOString(),
-        interviewDate: interviewDate?.toISOString(),
+        orientationDate,
+        examDate,
+        interviewDate,
         scholarshipSlots
       }
       const result = await Schedule.create(data);
