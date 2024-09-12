@@ -8,7 +8,6 @@ import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector,
 import { PrinterIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useFormState } from "react-dom";
 import { ScholarshipApplicationAction } from "./action";
 
 export default function ApplicationComponent() {
@@ -64,17 +63,23 @@ export default function ApplicationComponent() {
     otherEducationalFinancialAssistance: false,
   })
 
-  const actionBind = useMemo(() => ScholarshipApplicationAction.bind(null, scheduleId), [scheduleId])
-  const [state, action, pending] = useFormState(actionBind, undefined)
+  const actionForm = useMemo(() => ScholarshipApplicationAction.bind(null, scheduleId), [scheduleId])
 
-  useEffect(() => {
-    if (!pending && state?.success) {
-      Toaster.success(state?.success)
+  const handleFormAction = useCallback(async (e: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const fData = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {
+      fData.append(key, value)
+    })
+    const { error, success } = await actionForm(fData)
+    if (success) {
+      Toaster.success(success)
       setTimeout(() => window.location.reload(), 1000)
-    } else if (!pending && state?.error) {
-      Toaster.error(state?.error)
+    } else if (error) {
+      Toaster.error(error)
     }
-  }, [state, pending])
+  }, [formData, actionForm])
 
   const [applicationData, setApplicationData] = useState<StudentModel & ApplicationFormProps & { studId: string }|undefined>()
   const fetchApplicationData = useCallback(() => {
@@ -130,7 +135,7 @@ export default function ApplicationComponent() {
       )}
       {data !== true && !!data && (<>
         <h1 className="text-2xl font-[600] mt-4">Scholarship Application Form</h1>
-        <form action={action} className="mt-4 border px-16 py-8 bg-white rounded-lg shadow mb-4">
+        <form onSubmit={handleFormAction} className="mt-4 border px-16 py-8 bg-white rounded-lg shadow mb-4">
           <div className="grid grid-cols-3 gap-x-3 gap-y-2">
             <div>
               <label htmlFor="lastName" className="font-[500]">Last Name:</label>

@@ -3,9 +3,9 @@
 import mongodbConnect from "@app/lib/db";
 import { getSession } from "@app/lib/session";
 import Student from "@app/models/Student";
-import { ActionResponse, Roles } from "@app/types";
+import { ActionResponseInterface, Roles } from "@app/types";
 
-export async function ScholarshipApplicationAction(scheduleId: string, prevState: ActionResponse, formData: FormData): Promise<ActionResponse>
+export async function ScholarshipApplicationAction(scheduleId: string, formData: FormData): Promise<ActionResponseInterface>
 {
   await mongodbConnect()
   try {
@@ -20,9 +20,10 @@ export async function ScholarshipApplicationAction(scheduleId: string, prevState
           applicant.studentId = studentId
           delete data.studentId
         }
+        console.log({ ...data })
         applicant.applicationForm = { ...data }
         const updated = await applicant.save({ new: true, upsert: false, runValidators: true })
-        if (!!updated) {
+        if (!!updated?._id) {
           return {
             success: 'Successfully saved application form'
           }
