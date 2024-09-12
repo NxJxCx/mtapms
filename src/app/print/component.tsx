@@ -112,7 +112,7 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
         <div className="grid grid-cols-5 gap-px border border-black">
           <div></div>
           <div className="border px-1 text-center col-span-2">Father: ({studentData?.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData?.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
-          <div className="border px-1 text-center col-span-2">Mother: ({studentData?.motherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData?.fatherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
+          <div className="border px-1 text-center col-span-2">Mother: ({studentData?.motherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Living ({!studentData?.motherLiving ? <CheckIcon className="w-4 h-4 inline"/> : <>&nbsp;&nbsp;</>}) Deceased</div>
 
           <div className="border px-1">Name</div>
           <div className="border px-1 col-span-2 font-[500] text-wrap break-words">{studentData?.fatherName}</div>
