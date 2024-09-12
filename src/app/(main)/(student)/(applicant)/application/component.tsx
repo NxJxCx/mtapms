@@ -128,7 +128,7 @@ export default function ApplicationComponent() {
               <div className="absolute left-4 top-1">
                 <Buttons.SignupButton type="button" onClick={onPrint} label={<div className="font-bold"><PrinterIcon className="w-6 h-6 inline" /> Print</div>} />
               </div>
-              <div className="mx-auto w-fit shadow border p-8 bg-white">
+              <div className="mx-auto w-fit shadow border p-8 bg-white text-left block">
                 <Print template="application" data={applicationData} />
               </div>
             </div>
