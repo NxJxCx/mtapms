@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { addStudentId } from "./action"
 
 export default function StudentIdModal() {
-  const { data: sessionData, status } = useSession({ redirect: false })
+  const { data: sessionData, status, logout } = useSession({ redirect: false })
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Grantee })
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [data, setData] = useState<StudentModel>()
@@ -75,6 +75,9 @@ export default function StudentIdModal() {
           <br />
           <Buttons.SignupButton type="submit" label="Submit" />
         </form>
+        <div className="my-4 w-fit mx-auto">
+          <button type="button" onClick={logout} className="underline mx-auto font-[500]">Logout</button>
+        </div>
       </div>
     </Modal>
   )
