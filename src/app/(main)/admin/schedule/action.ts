@@ -37,16 +37,16 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
       endDate.setHours(0, 0, 0, 0)
       let orientationDate, examDate, interviewDate;
       if (dataForm.orientationDate) {
-        orientationDate = new Date(dataForm.orientationDate as string)
-        orientationDate.setHours(0, 0, 0, 0)
+        const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
+        orientationDate = new Date(combined)
       }
       if (dataForm.examDate) {
-        examDate = new Date(dataForm.examDate as string)
-        examDate.setHours(0, 0, 0, 0)
+        const combined = `${dataForm.examDate}T${dataForm.examTime}:00`
+        examDate = new Date(combined)
       }
       if (dataForm.interviewDate) {
-        interviewDate = new Date(dataForm.interviewDate as string)
-        interviewDate.setHours(0, 0, 0, 0)
+        const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
+        interviewDate = new Date(combined)
       }
       const scholarshipSlots = dataForm.scholarshipSlots as string
       const data = {
@@ -100,10 +100,23 @@ export async function scheduleUpdateAction(academicYear: number, prevState: Acti
           error: 'Schedule not found'
         }
       }
+      let orientationDate, examDate, interviewDate;
+      if (dataForm.orientationDate) {
+        const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
+        orientationDate = (new Date(combined)).toISOString()
+      }
+      if (dataForm.examDate) {
+        const combined = `${dataForm.examDate}T${dataForm.examTime}:00`
+        examDate = (new Date(combined)).toISOString()
+      }
+      if (dataForm.interviewDate) {
+        const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
+        interviewDate = (new Date(combined)).toISOString()
+      }
       const dataSet = {
-        orientationDate: dataForm.orientationDate,
-        examDate: dataForm.examDate,
-        interviewDate: dataForm.interviewDate,
+        orientationDate,
+        examDate,
+        interviewDate,
       }
       const $set = Object.fromEntries(Object.entries(dataSet).filter(([key, value]) => !!value && value))
       const result = await Schedule.findByIdAndUpdate(schedule?._id, { $set }, { new: true, upsert: false, runValidators: true }).exec();

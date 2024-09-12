@@ -214,19 +214,25 @@ export default function SchedulePage() {
         <h2 className="text-xl font-[600] mt-4">Orientation Schedule</h2>
         <div>
           <label htmlFor="orientationDate">Orientation Date: <span className="italic text-sm">(leave blank if not decided yet)</span></label>
-          <input type="date" id="orientationDate" name="orientationDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" />
+          <br />
+          <input type="date" id="orientationDate" name="orientationDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
+          <input type="time" id="orientationTime" name="orientationTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Orientation Time" />
         </div>
 
         <h2 className="text-xl font-[600] mt-4">Examination Schedule</h2>
         <div>
           <label htmlFor="examDate">Examination Date: <span className="italic text-sm">(leave blank if not decided yet)</span></label>
-          <input type="date" id="examDate" name="examDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" />
+          <br />
+          <input type="date" id="examDate" name="examDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
+          <input type="time" id="examTime" name="examTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Examination Time" />
         </div>
 
         <h2 className="text-xl font-[600] mt-4">Interview Schedule</h2>
         <div>
           <label htmlFor="interviewDate">Interview Date: <span className="italic text-sm">(leave blank if not decided yet)</span></label>
-          <input type="date" id="interviewDate" name="interviewDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" />
+          <br />
+          <input type="date" id="interviewDate" name="interviewDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" />
+          <input type="time" id="interviewTime" name="interviewTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Interview Time" />
         </div>
         <div className="mt-4">
           <Buttons.SignupButton type="submit" label="Create Schedule" />
@@ -238,16 +244,22 @@ export default function SchedulePage() {
       {/* Add Schedule Form */}
       <form action={updateAction} ref={formRef} className="min-w-[500px] p-4 flex flex-col gap-y-2">
         { openUpdate === 'Orientation' && (<>
-          <label htmlFor="orientationDate" className="text-xl font-[600] mt-4">Orientation Schedule</label>
-          <input type="date" id="orientationDate" name="orientationDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
+          <label htmlFor="orientationDate2" className="text-xl font-[600] mt-4">Orientation Schedule</label>
+          <br />
+          <input type="date" id="orientationDate2" name="orientationDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
+          <input type="time" id="orientationTime2" name="orientationTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Orientation Time" />
         </>)}
         { openUpdate === 'Examination' && (<>
-          <label htmlFor="examDate" className="text-xl font-[600] mt-4">Examination Schedule</label>
-          <input type="date" id="examDate" name="examDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
+          <label htmlFor="examDate2" className="text-xl font-[600] mt-4">Examination Schedule</label>
+          <br />
+          <input type="date" id="examDate2" name="examDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
+          <input type="time" id="examTime2" name="examTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Examination Time" />
         </>)}
         { openUpdate === 'Interview' && (<>
-          <label htmlFor="interviewDate" className="text-xl font-[600] mt-4">Interview Schedule</label>
-          <input type="date" id="interviewDate" name="interviewDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="block px-2 py-1 border border-black rounded-lg" required />
+          <label htmlFor="interviewDate2" className="text-xl font-[600] mt-4">Interview Schedule</label>
+          <br />
+          <input type="date" id="interviewDate2" name="interviewDate" min={(new Date()).getFullYear() + "-" + ((new Date()).getMonth() + 1).toString().padStart(2, '0') + "-" + ((new Date()).getDate()).toString().padStart(2, '0')} className="inline px-2 py-1 border border-black rounded-lg" required />
+          <input type="time" id="interviewTime2" name="interviewTime" className="ml-2 inline px-2 py-1 border border-black rounded-lg" title="Interview Time" />
         </>)}
         <div className="mt-4">
           <Buttons.SignupButton type="submit" label="Create Schedule" />
