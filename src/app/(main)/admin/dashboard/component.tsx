@@ -6,58 +6,13 @@ import clsx from "clsx";
 import { Montserrat, Outfit } from "next/font/google";
 import { useEffect, useState } from "react";
 const outfit = Outfit({ subsets: ["latin"], weight: ["400", "600", "700"],  })
+
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "600", "700"] })
 
-export default function AdminDashboardComponent() {
-  const [statisticNumbers, setStatisticNumbers] = useState<{title: string, value: number, icon: JSX.Element }[]>([
-    {
-      title: "Total Scholar",
-      value: 0,
-      icon: <UsersIcon className="h-[20px] w-[20px]" />
-    },
-    {
-      title: "Total Graduates",
-      value: 0,
-      icon: <UsersIcon className="h-[20px] w-[20px]" />
-    },
-    {
-      title: "Total Users",
-      value: 0,
-      icon: <UsersIcon className="h-[20px] w-[20px]" />
-    },
-  ])
 
-  const fetchDataDashboard = () => {
-    const url = new URL('/api/admin/dashboard', window.location.origin)
-    fetch(url)
-      .then(resp => resp.json())
-      .then(({ data }) => setStatisticNumbers([
-        {
-          title: "Total Scholar",
-          value: data.totalScholars || 0,
-          icon: <UsersIcon className="h-[20px] w-[20px]" />
-        },
-        {
-          title: "Total Graduates",
-          value: data.totalGraduates || 0,
-          icon: <UsersIcon className="h-[20px] w-[20px]" />
-        },
-        {
-          title: "Total Users",
-          value: data.totalUsers || 0,
-          icon: <UsersIcon className="h-[20px] w-[20px]" />
-        },
-      ]))
-  }
-
-  useEffect(() => {
-    fetchDataDashboard()
-  }, [])
-
+function Charts(props: any) {
   return (
-    <div className={clsx("p-4", outfit.className)}>
-      <StatisticNumbers items={statisticNumbers} className={clsx("mb-3", outfit.className)} />
-      <div className="flex flex-wrap mb-4 xl:gap-x-4 gap-y-4 xl:space-y-0">
+    <div className="flex flex-wrap mb-4 xl:gap-x-4 gap-y-4 xl:space-y-0">
         <div className="flex-grow rounded-lg bg-white border p-4">
           <div className="flex justify-between gap-x-4">
             <h2 className="font-[500] text-[20px] leading-[30px]">
@@ -118,6 +73,59 @@ export default function AdminDashboardComponent() {
           </div>
         </div>
       </div>
+  )
+}
+
+export default function AdminDashboardComponent() {
+  const [statisticNumbers, setStatisticNumbers] = useState<{title: string, value: number, icon: JSX.Element }[]>([
+    {
+      title: "Total Scholar",
+      value: 0,
+      icon: <UsersIcon className="h-[20px] w-[20px]" />
+    },
+    {
+      title: "Total Graduates",
+      value: 0,
+      icon: <UsersIcon className="h-[20px] w-[20px]" />
+    },
+    {
+      title: "Total Users",
+      value: 0,
+      icon: <UsersIcon className="h-[20px] w-[20px]" />
+    },
+  ])
+
+  const fetchDataDashboard = () => {
+    const url = new URL('/api/admin/dashboard', window.location.origin)
+    fetch(url)
+      .then(resp => resp.json())
+      .then(({ data }) => setStatisticNumbers([
+        {
+          title: "Total Scholar",
+          value: data.totalScholars || 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+        {
+          title: "Total Graduates",
+          value: data.totalGraduates || 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+        {
+          title: "Total Users",
+          value: data.totalUsers || 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+      ]))
+  }
+
+  useEffect(() => {
+    fetchDataDashboard()
+  }, [])
+
+  return (
+    <div className={clsx("p-4", outfit.className)}>
+      <StatisticNumbers items={statisticNumbers} className={clsx("mb-3", outfit.className)} />
+      {/* <Charts /> */}
     </div>
   )
 }
