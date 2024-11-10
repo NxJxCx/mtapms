@@ -184,5 +184,84 @@ export default function Print({ template, data, viewOnly = false, ...props }: { 
       </div>
     </div>
     )
+  } else if (template === 'application-list' || template === 'grantees-list') {
+    const listData: { applicants?: StudentModel[], grantees?: StudentModel[], oldGrantees?: StudentModel[], academicYear: string } = data
+    return (
+    <div className="w-[8.5in] min-h-[13in] bg-white text-black text-[11pt] font-sans">
+      {/* Header */}
+      <div className="grid grid-cols-3 items-center pb-2 w-full bg-white">
+        <Image ref={img1} width={1000} height={1000} loading="eager" src="/municipal-logo.svg" alt="Logo 1" className="w-20 h-20 mx-auto" />
+        <div className="text-center">
+          <p>The Republic of the Philippines</p>
+          <p>Province of Agusan del Norte</p>
+          <p>Municipality of Buenavista</p>
+          <p className="font-bold">Office of the Municipal Mayor</p>
+        </div>
+        <Image ref={img2} width={1000} height={1000} loading="eager" src="/bagong-pilipinas-logo.svg" alt="Logo 2" className="w-24 h-24 translate-y-1 mx-auto" />
+      </div>
+
+      {/* Table List */}
+      <table className="border-collapse w-full">
+        <thead>
+          <tr>
+            <th colSpan={3} className="text-center text-[14pt] border-t border-x border-black">
+              LIST OF {Array.isArray(listData.applicants) ? "APPLICANTS" : "RECIPIENTS"} OF THE LGU SCHOLARSHIP PROGRAM
+            </th>
+          </tr>
+          <tr>
+            <th colSpan={3} className="text-center text-[14pt] border-b border-x border-black">
+              {listData.academicYear}
+            </th>
+          </tr>
+          <tr>
+            <th className="border border-black px-1">
+              &nbsp;
+            </th>
+            <th className="border border-black text-left px-1">
+              NAME
+            </th>
+            <th className="border border-black text-left px-1">
+              ADDRESS
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {listData.applicants?.map((stud, n: number) => (
+            <tr key={stud._id}>
+              <td className="text-right min-w-[15px] border border-black px-1">{n+1}</td>
+              <td className="border border-black px-1 capitalize">{stud.applicationForm?.lastName}, {stud.applicationForm?.firstName} {stud.applicationForm?.middleName ? stud.applicationForm?.middleName[0] + "." : ""}</td>
+              <td className="border border-black px-1 capitalize">{stud.applicationForm?.presentAddress || stud.applicationForm?.permanentAddress}</td>
+            </tr>
+          ))}
+          {Array.isArray(listData.grantees) && [{_id: "new-grantees", category: "New Grantees" }, ...listData.grantees]?.map((stud: StudentModel|{_id: string, category: string}, n: number) => (
+            <tr key={stud._id}>
+              {!!(stud as any).category ? (
+                <th className="text-left border border-black px-1" colSpan={3}>{(stud as any).category}</th>
+              ) : (
+              <>
+                <td className="text-right min-w-[15px] border border-black px-1">{n}</td>
+                <td className="border border-black px-1 capitalize">{(stud as StudentModel).applicationForm?.lastName}, {(stud as any).applicationForm?.firstName} {(stud as StudentModel).applicationForm?.middleName ? (stud as any).applicationForm.middleName[0] + "." : ""}</td>
+                <td className="border border-black px-1 capitalize">{(stud as any).applicationForm?.presentAddress || (stud as any).applicationForm?.permanentAddress}</td>
+              </>
+              )}
+            </tr>
+          ))}
+          {Array.isArray(listData.oldGrantees) && [{_id: "old-grantees", category: "Old Grantees" }, ...listData.oldGrantees]?.map((stud: StudentModel|{_id: string, category: string}, n: number) => (
+            <tr key={stud._id}>
+              {!!(stud as any).category ? (
+                <th className="text-left border border-black px-1" colSpan={3}>{(stud as any).category}</th>
+              ) : (
+              <>
+                <td className="text-right min-w-[15px] border border-black px-1">{n}</td>
+                <td className="border border-black px-1 capitalize">{(stud as StudentModel).applicationForm?.lastName}, {(stud as any).applicationForm?.firstName} {(stud as StudentModel).applicationForm?.middleName ? (stud as any).applicationForm.middleName[0] + "." : ""}</td>
+                <td className="border border-black px-1 capitalize">{(stud as any).applicationForm?.presentAddress || (stud as any).applicationForm?.permanentAddress}</td>
+              </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    )
   }
 }

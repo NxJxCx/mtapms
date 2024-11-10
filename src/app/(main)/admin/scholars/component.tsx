@@ -391,7 +391,11 @@ export default function ScholarListPage() {
               <LoadingSpinnerFull/>
             )}
             {applicantColumns.length > 0 && (
-              <Table columns={applicantColumns} loading={loading} data={dataApplicant} searchable />
+              <Table columns={applicantColumns} loading={loading} data={dataApplicant} searchable toolbars={[
+                <div key="print-all-applicants">
+                  <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500" onClick={() => window.open(`/print?template=application-list&academicYear=${schoolYear}`)}> Print</button>
+                </div>,
+              ]} />
             )}
           </div>
         </Tabs.TabContent>
@@ -401,7 +405,11 @@ export default function ScholarListPage() {
               <LoadingSpinnerFull/>
             )}
             {applicant1stYearColumns.length > 0 && (
-              <Table columns={applicant1stYearColumns} loading={loading} data={dataApplicant1stYear} searchable />
+              <Table columns={applicant1stYearColumns} loading={loading} data={dataApplicant1stYear} searchable toolbars={[
+                <div key="print-all-applicants-2">
+                  <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500" onClick={() => window.open(`/print?template=application-list&academicYear=${schoolYear}`)}> Print</button>
+                </div>,
+              ]} />
             )}
           </div>
         </Tabs.TabContent>
@@ -411,7 +419,11 @@ export default function ScholarListPage() {
               <LoadingSpinnerFull/>
             )}
             {granteeColumns.length > 0 && (
-              <Table columns={granteeColumns} loading={loading} data={dataGrantee} searchable />
+              <Table columns={granteeColumns} loading={loading} data={dataGrantee} searchable toolbars={[
+                <div key="print-all-grantees">
+                  <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500" onClick={() => window.open(`/print?template=grantees-list&academicYear=${schoolYear}`)}> Print</button>
+                </div>,
+              ]} />
             )}
           </div>
         </Tabs.TabContent>
@@ -419,7 +431,7 @@ export default function ScholarListPage() {
     </div>
     <Modal title={selected?.name} open={!!selected} onClose={onModalClose}>
       <div className="flex flex-col">
-      {!!selected?.data?.status && (
+        {!!selected?.data?.status && (
           <div className="font-[500] p-4 relative">
             <div className="text-gray-500">
               Submission status: <span className="font-bold">{SubmissionStatus[selected?.data?.status]}</span>
