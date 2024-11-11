@@ -35,7 +35,6 @@ export async function uploadSubmission(requirementKey: string, academicYear: str
         const photo = await uploadRequirement(file)
         if (!!photo) {
           // find if grantee submission is available for this student and semester
-          console.log(studentId, academicYear, semester)
           const submission = await Grantee.findOne({ studentId, academicYear, semester }).exec()
           if (!!submission?._id) {
             if (!submission[requirementKey]) {

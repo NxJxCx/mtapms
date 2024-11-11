@@ -46,6 +46,7 @@ export default function DocumentRequirementsPage() {
     sylist = sylist.sort((a: number, b: number) => b - a > 0 ? 1 : b - a < 0 ? -1 : 0);
     return sylist
   }, [syData])
+
   const [schoolYear, setSchoolYear] = useState<number|string|undefined>()
   const [semester, setSemester] = useState<Semester|string>(Semester.FirstSemester)
 
@@ -80,8 +81,9 @@ export default function DocumentRequirementsPage() {
     const response = await fetch(url)
     if (response.ok) {
       const { data: d } = await response.json()
-      setSYData(d)
-      const latestSY = Math.max(...d.map((item: ScheduleModel) => item.academicYear))
+      setSYData([...d])
+      const mappedData = d.map((item: ScheduleModel) => item.academicYear);
+      const latestSY = Math.max(...mappedData);
       setLoading(false)
       return latestSY
     }
@@ -94,7 +96,7 @@ export default function DocumentRequirementsPage() {
     try {
       const url = new URL('/api/scholarship/applications', window.location.origin)
       url.searchParams.append('studentId', sessionData.user._id)
-      url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
+      url.searchParams.append('academicYear', !schoolYear ? sy.toString() : schoolYear.toString())
       const response = await fetch(url)
       if (response.ok) {
         const { data: st } = await response.json()
@@ -103,7 +105,7 @@ export default function DocumentRequirementsPage() {
     } catch (e) {}
     try {
       const url = new URL('/api/scholarship/grantees', window.location.origin)
-      url.searchParams.append('academicYear', schoolYear?.toString() || sy.toString())
+      url.searchParams.append('academicYear', !schoolYear ? sy.toString() : schoolYear.toString())
       url.searchParams.append('semester', semester?.toString() || '')
       url.searchParams.append('type', 'grantee')
       const response = await fetch(url)
@@ -128,8 +130,9 @@ export default function DocumentRequirementsPage() {
   }, [refreshData, status])
 
   useEffect(() => {
-    if (!schoolYear) {
-      const latestSY = Math.max(...syData.map((item: ScheduleModel) => item.academicYear))
+    if (!!syData && syData.length > 0 && !schoolYear) {
+      const mappedSY = syData.map((item: ScheduleModel) => item.academicYear);
+      const latestSY = Math.max(...mappedSY);
       setSchoolYear(latestSY)
     }
     // eslint-disable-next-line
