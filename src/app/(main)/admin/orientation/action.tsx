@@ -14,10 +14,9 @@ export async function attendOrientation(academicYear: number, studentId: string)
     if (session?.user?.role === Roles.Admin) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       const student = !!schedule?._id ? (await Student.findOne({ _id: studentId, 'applicationForm.scheduleId': schedule._id.toHexString() }).exec()) : null;
-      if (!!student && !(schedule as ScheduleModel).orientationAttendance.map(student => student.studentId.toString()).some((studentId) => studentId === student._id.toString())) {
-        schedule.orientationAttendance.push({ studentId: student._id.toString() })
-        const updated = await schedule.save({ new: true, upsert: false, runValidators: true })
-        const result = !!updated && updated.orientationAttendance.map((student: any) => student.studentId.toString()).some((studentId: string) => studentId === student._id.toString())
+      if (!!student && !(schedule as ScheduleModel).orientationAttendance.map(st => st.studentId.toString()).some((st) => st === student._id.toString())) {
+        const updated = await Schedule.updateOne({ academicYear }, { $push: { orientationAttendance: { studentId: student.id.toString() } } }, { runValidators: true }).exec();
+        const result = !!updated && updated.acknowledged && updated.modifiedCount > 0;
         return { success: result ? student.applicationForm.firstName + ' ' + student.applicationForm.lastName + ' (' + student.email + ') has attended' : undefined }
       }
     }
