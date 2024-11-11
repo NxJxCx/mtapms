@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
       const latestSchedule = await Schedule.find({}).sort('-academicYear').select('academicYear').limit(1).lean<ScheduleModel[]>().exec()
       const latestAcademicYear = latestSchedule.length > 0 ? latestSchedule[0].academicYear : (moment.tz('Asia/Manila').toDate()).getFullYear()
       const graduates = scholars.filter(s => latestAcademicYear - (s.applicationForm!.scheduleId as ScheduleModel).academicYear > 4 - s.applicationForm!.yearLevel)
-      const data = { totalScholars: scholars.length, totalGraduates: graduates.length, totalUsers }
+      const totalApplicants = await Student.find({ applicationForm: { $exists: true }, 'applicationForm.scheduleId': latestSchedule?.[0]?._id?.toString() }).countDocuments().exec()
+      const data = { totalScholars: scholars.length, totalGraduates: graduates.length, totalUsers, totalApplicants }
       return NextResponse.json({ data })
     }
   } catch (e) {
