@@ -113,6 +113,15 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     searchable: true,
   },
   {
+    label: 'Grantee?',
+    field: 'isGrantee',
+    sortable: true,
+    searchable: true,
+    render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
+      return rowData.isGrantee ? <div className="text-semibold text-green-700">Yes</div> : 'No'
+    }
+  },
+  {
     label: 'Action',
     field: 'action',
     render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
@@ -147,6 +156,7 @@ export default function ApplicationListPage() {
     const url = new URL('/api/scholarship/applications', window.location.origin)
     url.searchParams.append('academicYear', sy.toString())
     url.searchParams.append('application', 'applicant')
+    console.log(url.toString())
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
@@ -191,7 +201,11 @@ export default function ApplicationListPage() {
         SCHOLARSHIP APPLICATIONS (A.Y. {schoolYear} - {schoolYear + 1})
       </div>
       { loading && <LoadingSpinnerFull />}
-      <Table columns={columns(onView)} data={data} searchable />
+      <Table columns={columns(onView)} data={data} searchable toolbars={[
+        <div key="print-all-applicants">
+          <button type="button" className="px-2 py-1 bg-green-50 rounded border border-green-500" onClick={() => window.open(`/print?template=application-list&academicYear=${schoolYear}`)}> Print</button>
+        </div>,]}
+      />
     </div>
     <Modal title="Scholar Applicant Information" open={!!openViewModal} onClose={onCloseViewModal}>
       <div className={clsx(montserrat.className, "text-[15px] leading-[19px] w-full p-4")}>

@@ -16,15 +16,15 @@ export async function GET(request: NextRequest) {
     if (session?.user?.role === Roles.Admin) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const filter: any = { 'applicationForm.scheduleId': schedule._id.toString(), isGrantee: false }
-        const data = await Student.find(filter).select('email applicationForm studentId photo').exec()
+        const filter: any = { 'applicationForm.scheduleId': schedule._id.toString() }
+        const data = await Student.find(filter).select('isGrantee email applicationForm studentId photo').exec()
         return NextResponse.json({ data })
       }
     } else if (session?.user?.role === Roles.Applicant || session?.user?.role === Roles.Grantee) {
       const studentId = session?.user?._id?.toString()
       const schedule = await Schedule.findOne({ academicYear }).exec()
       if (!!schedule?._id) {
-        const student = await Student.findById(studentId).select('email applicationForm studentId').exec()
+        const student = await Student.findById(studentId).select('isGrantee email applicationForm studentId').exec()
         if (!!student && student.applicationForm.scheduleId.toString() === schedule._id.toString()) {
           return NextResponse.json({ data: student.applicationForm })
         }
