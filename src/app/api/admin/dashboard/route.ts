@@ -5,9 +5,9 @@ import { getSession } from "@app/lib/session";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
 import { Roles, ScheduleModel, StudentModel } from "@app/types";
+import { YearLevel } from '@app/types/index';
 import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
-import { YearLevel } from '../../../../types/index';
 
 export async function GET(request: NextRequest) {
   await mongodbConnect()
