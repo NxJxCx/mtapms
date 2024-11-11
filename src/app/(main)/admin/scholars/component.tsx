@@ -337,7 +337,7 @@ export default function ScholarListPage() {
       if (error) {
         Toaster.error(error)
       } else if (success) {
-        Toaster.success(success)
+        Toaster.success("Submission has been approved.")
         fetchData()
         setSelected(undefined)
       }
