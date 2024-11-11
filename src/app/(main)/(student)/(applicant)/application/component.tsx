@@ -201,15 +201,15 @@ export default function ApplicationComponent() {
             </div>
             <div>
               <label htmlFor="nameOfSchoolAttended" className="font-[500]">Name of School Attended:</label>
-              <input type="text" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} required />
+              <input type="text" id="nameOfSchoolAttended" name="nameOfSchoolAttended" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.nameOfSchoolAttended} onChange={(e) => setFormData({...formData, nameOfSchoolAttended: e.target.value })} />
             </div>
             <div>
               <label htmlFor="schoolAddress" className="font-[500]">School Address:</label>
-              <input type="text" id="schoolAddress" name="schoolAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolAddress} onChange={(e) => setFormData({...formData, schoolAddress: e.target.value })} required />
+              <input type="text" id="schoolAddress" name="schoolAddress" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolAddress} onChange={(e) => setFormData({...formData, schoolAddress: e.target.value })} />
             </div>
             <div>
               <label htmlFor="schoolSector" className="font-[500]">School Sector:</label>
-              <select id="schoolSector" name="schoolSector" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolSector} onChange={(e) => setFormData({...formData, schoolSector: e.target.value as SchoolSector })} required>
+              <select id="schoolSector" name="schoolSector" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.schoolSector} onChange={(e) => setFormData({...formData, schoolSector: e.target.value as SchoolSector })} >
                 <option value={SchoolSector.Public}>Public</option>
                 <option value={SchoolSector.Private}>Private</option>
               </select>
@@ -275,7 +275,7 @@ export default function ApplicationComponent() {
               <label htmlFor="totalParentGrossIncome" className="font-[500]">Total Parent Gross Income:</label>
               <div className="flex justify-start items-center">
                 <span className="font-bold max-w-4 mr-2">&#8369;</span>
-                <input type="number" min={0} id="totalParentGrossIncome" name="totalParentGrossIncome" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.totalParentGrossIncome === 0 ? '' : formData.totalParentGrossIncome} onChange={(e) => setFormData({ ...formData, totalParentGrossIncome: e.target.value !== '' ? parseFloat(e.target.value) : 0 })} required />
+                <input type="number" min={0} id="totalParentGrossIncome" name="totalParentGrossIncome" className="block border border-black px-2 py-1 rounded flex-grow w-full" value={formData.totalParentGrossIncome === 0 ? '' : formData.totalParentGrossIncome} onChange={(e) => setFormData({ ...formData, totalParentGrossIncome: e.target.value !== '' ? parseFloat(e.target.value) : 0 })} />
               </div>
             </div>
             <div>

@@ -65,16 +65,19 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   nameOfSchoolAttended: {
     type: String,
-    required: [true, 'Name of School Attended is required']
+    default: '',
+    // required: [true, 'Name of School Attended is required']
   },
   schoolAddress: {
     type: String,
-    required: [true, 'School Address is required']
+    default: '',
+    // required: [true, 'School Address is required']
   },
   schoolSector: {
     type: String,
     enum: SchoolSector,
-    required: [true, 'School Sector is required']
+    default: SchoolSector.None,
+    // required: [true, 'School Sector is required']
   },
   yearLevel: {
     type: Number,
@@ -82,7 +85,8 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   course: {
     type: String,
-    required: [true, 'Course is required']
+    default: '',
+    // required: [true, 'Course is required']
   },
   tribalMembership: String,
   typeOfDisability: String,
@@ -120,7 +124,8 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
   },
   totalParentGrossIncome: {
     type: Number,
-    required: [true, 'Total Parent Gross Income is required']
+    default: 0,
+    // required: [true, 'Total Parent Gross Income is required']
   },
   siblings: {
     type: Number,

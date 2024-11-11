@@ -31,6 +31,7 @@ export enum YearLevel {
 export enum SchoolSector {
   Public = 'Public',
   Private = 'Private',
+  None = '',
 }
 
 export enum SubmissionStatus {

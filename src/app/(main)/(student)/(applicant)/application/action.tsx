@@ -20,7 +20,7 @@ export async function ScholarshipApplicationAction(scheduleId: string, formData:
           applicant.studentId = studentId
           delete data.studentId
         }
-        console.log({ ...data })
+        // console.log({ ...data })
         applicant.applicationForm = { ...data }
         const updated = await applicant.save({ new: true, upsert: false, runValidators: true })
         if (!!updated?._id) {
