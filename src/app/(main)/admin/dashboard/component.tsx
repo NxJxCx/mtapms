@@ -115,7 +115,12 @@ export default function AdminDashboardComponent() {
           icon: <UsersIcon className="h-[20px] w-[20px]" />
         },
         {
-          title: "Total Users",
+          title: "Current No. of Applicants",
+          value: 0,
+          icon: <UsersIcon className="h-[20px] w-[20px]" />
+        },
+        {
+          title: "Total No. of Users",
           value: data.totalUsers || 0,
           icon: <UsersIcon className="h-[20px] w-[20px]" />
         },
