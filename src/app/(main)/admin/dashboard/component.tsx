@@ -13,7 +13,7 @@ const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "600", "700"
 
 
 function Charts(props: any) {
-  const [chartSeries, setChartSeries] = useState([{
+  const [chartSeries, setChartSeries] = useState<ApexAxisChartSeries | ApexNonAxisChartSeries>([{
     data: props.data || []
   }]);
   const [chartOptions, setChartOptions] = useState<ApexCharts.ApexOptions>({
@@ -37,7 +37,7 @@ function Charts(props: any) {
   });
   useEffect(() => {
     setChartOptions({...chartOptions, xaxis: { categories: props.categories || [] }});
-    setChartSeries([{ data: props.data || []}]);
+    setChartSeries([{ name: "No. of Grantees", data: props.data || []}]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 
