@@ -42,7 +42,7 @@ function Charts(props: any) {
       },
       tickAmount: 5,
       min: 0,
-      max: Math.max(...(props.data) || []),
+      max: Math.max(...(props.data || [])),
     }
   });
   useEffect(() => {
@@ -57,7 +57,7 @@ function Charts(props: any) {
         },
         tickAmount: 5,
         min: 0,
-        max: Math.max(...(props.data) || []),
+        max: Math.max(...(props.data || [])),
       }
     });
     setChartSeries([{ name: "No. of Grantees", data: props.data || []}]);
