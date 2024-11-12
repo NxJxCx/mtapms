@@ -14,11 +14,11 @@ export async function addExamScore(academicYear: number, studentId: string, scor
     if (session?.user?.role === Roles.Admin) {
       const schedule = await Schedule.findOne({ academicYear }).exec()
       const student = !!schedule?._id ? (await Student.findOne({ _id: studentId, 'applicationForm.scheduleId': schedule._id.toHexString() }).exec()) : null;
-      if (!!student && !(schedule as ScheduleModel).examScores.map(student => student.studentId.toString()).some((studentId) => studentId === student._id.toString())) {
+      if (!!student && !(schedule as ScheduleModel).examScores.map(st => st.studentId.toString()).some((studentId) => studentId === student._id.toString())) {
         schedule.examScores.push({ studentId: student._id.toString(), percentageScore: scoreGrade })
-        const updated = await schedule.save({ new: true, upsert: false, runValidators: true })
-        const result = !!updated && updated.examScores.map((st: any) => ({ studentId: st.studentId.toHexString(), score: parseFloat(st.percentageScore) }))
-          .some((st: any) => st.studentId === student._id.toHexString() && st.score === parseFloat(scoreGrade))
+        // const updated = await schedule.save({ new: true, upsert: false, runValidators: true })
+        const updated = await Schedule.updateOne({ academicYear }, { $push: { examScores: { studentId: student._id.toString(), percentageScore: scoreGrade } } }, { runValidators: true});
+        const result = !!updated && updated.acknowledged && updated.modifiedCount > (0);
         return { success: result ? student.applicationForm.firstName + ' ' + student.applicationForm.lastName + ' (' + student.email + ")'s exam score has been set" : undefined }
       }
     }
