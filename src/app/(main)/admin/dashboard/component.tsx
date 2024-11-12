@@ -33,10 +33,33 @@ function Charts(props: any) {
     },
     xaxis: {
       categories: props.categories || [],
+    },
+    yaxis: {
+      labels: {
+        formatter: (value) => {
+          return Math.floor(value);
+        }
+      },
+      tickAmount: 5,
+      min: 0,
+      max: Math.max(...(props.data) || []),
     }
   });
   useEffect(() => {
-    setChartOptions({...chartOptions, xaxis: { categories: props.categories || [] }});
+    setChartOptions({
+      ...chartOptions,
+      xaxis: { categories: props.categories || [] },
+      yaxis: {
+        labels: {
+          formatter: (value) => {
+            return Math.floor(value);
+          }
+        },
+        tickAmount: 5,
+        min: 0,
+        max: Math.max(...(props.data) || []),
+      }
+    });
     setChartSeries([{ name: "No. of Grantees", data: props.data || []}]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
