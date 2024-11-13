@@ -421,7 +421,7 @@ export default function ScholarListPage() {
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-3 border-black text-black font-[700]">
-        SCHOLARSHIP STATUS A.Y. {schoolYear} - {parseInt(schoolYear.toString()) + 1}
+        SCHOLARSHIP STATUS
       </div>
       <div className="mb-2">
         <label htmlFor="schoolYear" className="text-[15px] mb-2 mr-2 font-bold text-lg">Academic Year:</label>

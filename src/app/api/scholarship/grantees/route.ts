@@ -77,13 +77,22 @@ export async function GET(request: NextRequest) {
                 .filter((req: RequirementSubmissionModel|any) => (req.requirementId as RequirementModel).forFirstYearOnly) })))
           : type === 'new'
           ? await Promise.all(students.filter((st: StudentModel) => {
-            const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
-            return sched.academicYear == academicYear && (st.applicationForm as ApplicationFormProps).yearLevel == YearLevel.FirstYear
-          }).map(async (st: StudentModel) => ({
-            ...st,
-            applicationSubmission: (await Promise.all((st.applicationSubmission as RequirementSubmissionModel[])
-              .map(async (item) => ({...item, requirementId: await Requirement.findById(item.requirementId).lean<RequirementModel>().exec() }))))
-              .filter((req: RequirementSubmissionModel|any) => !(req.requirementId as RequirementModel).forFirstYearOnly) })))
+              const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
+              return sched.academicYear == academicYear && (st.applicationForm as ApplicationFormProps).yearLevel !== YearLevel.FirstYear
+            })
+            .map(async (st: StudentModel) => ({
+              ...st,
+              applicationSubmission: (
+                await Promise.all(
+                  (st.applicationSubmission as RequirementSubmissionModel[])
+                    .map(async (item) => ({
+                      ...item,
+                      requirementId: await Requirement.findById(item.requirementId).lean<RequirementModel>().exec()
+                    })
+                  )
+                )
+              )
+                .filter((req: RequirementSubmissionModel|any) => !(req.requirementId as RequirementModel).forFirstYearOnly) })))
           : []
         return NextResponse.json({ data })
       }
