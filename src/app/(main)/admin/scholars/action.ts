@@ -7,7 +7,7 @@ import RequirementSubmission from "@app/models/RequirementSubmission";
 import { ActionResponseInterface, GranteeModel, Roles, SubmissionStatus } from "@app/types";
 import { Semester } from '@app/types/index';
 
-export async function approvePendingSubmission(type: 'new'|'new_firstYear'|'grantee', id: string, name: string): Promise<ActionResponseInterface>
+export async function approvePendingSubmission(type: 'new'|'new_firstYear'|'grantee', id: string, name: string, grade?: string|number): Promise<ActionResponseInterface>
 {
   await mongodbConnect()
   try {
@@ -18,6 +18,9 @@ export async function approvePendingSubmission(type: 'new'|'new_firstYear'|'gran
       if (!!submission) {
         if (type === 'grantee') {
           submission[name].status = SubmissionStatus.Approved
+          if (name === 'COG' && !!grade) {
+            submission.grade = Number.parseFloat(grade.toString())
+          }
         } else {
           submission.status = SubmissionStatus.Approved
         }

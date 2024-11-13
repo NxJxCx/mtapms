@@ -1,6 +1,7 @@
 'use server'
 
 import mongodbConnect from "@app/lib/db";
+import { getGradeStatus } from "@app/lib/gradeStatus";
 import { getSession } from "@app/lib/session";
 import Grantee from "@app/models/Grantee";
 import Requirement from "@app/models/Requirement";
@@ -56,10 +57,15 @@ export async function GET(request: NextRequest) {
           const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
           return sched.academicYear + 4 > academicYear
         })
-          .map(async (st: StudentModel) => ({...st, granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec())})))
+          .map(async (st: StudentModel) => ({
+            ...st,
+            granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec()),
+            gradeStatus: (await getGradeStatus(st._id?.toString()))
+          })))
         const data: (StudentModel & { granteeSubmissions?: GranteeModel }|any)[] =
           type === 'grantee'
-          ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions).map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
+          ? mappedStudents.filter((st: StudentModel & { granteeSubmissions?: GranteeModel }) => !!st.granteeSubmissions)
+            .map((st: StudentModel & { granteeSubmissions?: GranteeModel }) => ({ ...st, applicationSubmission: [] }))
           : type === 'new_firstYear'
           ? await Promise.all(students.filter((st: StudentModel) => {
               const sched = ((st.applicationForm as ApplicationFormProps).scheduleId as ScheduleModel);
@@ -112,7 +118,12 @@ export async function GET(request: NextRequest) {
         }).lean<StudentModel>().exec()
         if (!!student?._id) {
           const data: (StudentModel & any) = type === 'grantee'
-            ? ({...student, applicationSubmission: [], granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: student._id?.toString() }).exec())})
+            ? ({
+                ...student,
+                applicationSubmission: [],
+                granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: student._id?.toString() }).exec()),
+                gradeStatus: (await getGradeStatus(student._id?.toString()))
+              })
             : null
           return NextResponse.json({ data })
         }

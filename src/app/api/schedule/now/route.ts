@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         const recentStartDate = moment(dataRecent?.range.startDate).tz('Asia/Manila').toDate()
         const recentEndDate = moment(dataRecent?.range.endDate).tz('Asia/Manila').toDate()
         const now = moment.tz('Asia/Manila').toDate()
-        const data = !!dataRecent && recentStartDate.getTime() <= now.getTime() && recentEndDate.getTime() >= now.getTime() ? dataRecent : null
+        const data = !!dataRecent && (recentStartDate.getTime() <= now.getTime() && recentEndDate.getTime() >= now.getTime()) && dataRecent.isProfileOpen ? dataRecent : null
         if (!!data) {
           const student = await Student.findById(session.user._id).exec()
           if ((action === 'documents' || action === 'scheduleandresult') && !!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString()) {

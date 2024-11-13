@@ -53,9 +53,11 @@ export function SignupInput({
       <div className="flex flex-col flex-nowrap justify-start items-start">
       {!!label && <label htmlFor={name} className="font-[500] text-[13px] leading-[19.5px] text-[#004521]">{label}</label> }
         <div className="relative w-full">
-          <div className="absolute left-[6px] top-[8px] w-[17px] h-[17px] z-0">
-            <Image src={iconSrc} alt={label + ' Icon'} width={20} height={20} />
-          </div>
+          {!!iconSrc && (
+            <div className="absolute left-[6px] top-[8px] w-[17px] h-[17px] z-0">
+              <Image src={iconSrc} alt={label + ' Icon'} width={20} height={20} />
+            </div>
+          )}
           <input type={type === "password" && viewable ? "text" : type} required={required} disabled={disabled} name={name} id={name} placeholder={placeholder} className={clsx("w-full bg-transparent text-[16px] font-[400] leading-[24px] text-[#004521] placeholder:text-[#00452188] focus:bg-white/30 focus:rounded-sm py-[5px] pl-[32px] pr-2 outline-none focus:border-b-[#FBBC05] border-b-[2px] border-b-[#004521]", inputClassName)} />
           { type === "password" && (
             <button type="button" title={viewable ? "Hide Password" : "Show Password"} onClick={toggleViewable} className="text-[#004521] absolute right-[6px] top-[8px] w-[17px] h-[17px]">
@@ -68,10 +70,53 @@ export function SignupInput({
   )
 }
 
+export interface SelectOptions {
+  label: string
+  value: any
+}
+
+export function SignupSelect({
+  name,
+  label,
+  options = [],
+  placeholder,
+  className,
+  selectClassName,
+  required,
+  disabled,
+}: Readonly<{
+  name?: string;
+  label?: string;
+  options: SelectOptions[],
+  placeholder?: string;
+  className?: string;
+  selectClassName?: string,
+  required?: boolean;
+  disabled?: boolean;
+}>) {
+  return (
+    <div className={className}>
+      <div className="flex flex-col flex-nowrap justify-start items-start">
+      {!!label && <label htmlFor={name} className="font-[500] text-[13px] leading-[19.5px] text-[#004521]">{label}</label> }
+        <div className="relative w-full">
+          <select name={name} id={name} required={required} disabled={disabled} className={clsx("w-full bg-transparent text-[16px] font-[400] leading-[24px] text-[#004521] placeholder:text-[#00452188] focus:bg-white/30 focus:rounded-sm py-[5px] pl-[32px] pr-2 outline-none focus:border-b-[#FBBC05] border-b-[2px] border-b-[#004521]", selectClassName)}>
+            {!!placeholder && (
+              <option value="" disabled>{placeholder}</option>
+            )}
+            {options.map(({ label, value }) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const Inputs = {
   AuthInput,
   SignupInput,
+  SignupSelect
 }
 
 export default Inputs

@@ -42,7 +42,7 @@ export function SessionProvider({ children }: Readonly<{ children: React.ReactNo
     fetch(url)
       .then((response) => response.json())
       .then(async ({ data: session }: { data: JWTPayload | { [key: string]: any;} | null;}) => {
-        if (!session || moment(session!.expiresAt as Date|string).tz('Asia/Manila').toDate().getTime() < (moment.tz('Asia/Manila').toDate()).getTime()) {
+        if (!session || moment(session!.expiresAt as Date|string).tz('Asia/Manila').isBefore(moment.tz('Asia/Manila'))) {
           const signOut = destroySession
           await signOut()
           setData(null)

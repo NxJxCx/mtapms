@@ -32,8 +32,6 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
           error: 'Scholarship Slots Required'
         }
       }
-      const startDate = moment(dataForm['range.startDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate()
-      const endDate = moment(dataForm['range.endDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate()
       let orientationDate, examDate, interviewDate;
       if (dataForm.orientationDate) {
         const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
@@ -47,13 +45,14 @@ export async function scheduleAction(academicYear: number, prevState: ActionResp
         const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
         interviewDate = moment(combined).tz('Asia/Manila').toDate()
       }
+      const range = {
+        startDate: moment(dataForm['range.startDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate(),
+        endDate: moment(dataForm['range.endDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate()
+      };
       const scholarshipSlots = dataForm.scholarshipSlots as string
       const data = {
         academicYear,
-        range: {
-          startDate,
-          endDate
-        },
+        range,
         orientationDate,
         examDate,
         interviewDate,
@@ -103,7 +102,7 @@ export async function scheduleUpdateAction(academicYear: number, prevState: Acti
           error: 'Schedule not found'
         }
       }
-      let orientationDate, examDate, interviewDate;
+      let orientationDate, examDate, interviewDate, range, scholarshipSlots, isProfileOpen;
       if (dataForm.orientationDate) {
         const combined = `${dataForm.orientationDate}T${dataForm.orientationTime}:00`
         orientationDate = moment(combined).tz('Asia/Manila').toDate()
@@ -116,12 +115,28 @@ export async function scheduleUpdateAction(academicYear: number, prevState: Acti
         const combined = `${dataForm.interviewDate}T${dataForm.interviewTime}:00`
         interviewDate = moment(combined).tz('Asia/Manila').toDate()
       }
+      if (dataForm['range.startDate'] && dataForm['range.endDate']) {
+        range = {
+          startDate: moment(dataForm['range.startDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate(),
+          endDate: moment(dataForm['range.endDate'].toString() + 'T00:00:00').tz('Asia/Manila').toDate()
+        }
+      }
+      if (dataForm.isProfileOpen) {
+        isProfileOpen = dataForm.isProfileOpen === "true";
+      }
+      if (dataForm.scholarshipSlots) {
+        scholarshipSlots = parseInt(dataForm.scholarshipSlots as string)
+      }
       const dataSet = {
         orientationDate,
         examDate,
         interviewDate,
-      }
-      const $set = Object.fromEntries(Object.entries(dataSet).filter(([key, value]) => !!value && value))
+        'range.startDate': range?.startDate,
+        'range.endDate': range?.endDate,
+        scholarshipSlots,
+        isProfileOpen
+      };
+      const $set = Object.fromEntries(Object.entries(dataSet).filter(([key, value]: any[]) => value !== undefined))
       const result = await Schedule.findByIdAndUpdate(schedule?._id, { $set }, { new: true, upsert: false, runValidators: true }).exec();
       if (!!result?._id) {
         return {

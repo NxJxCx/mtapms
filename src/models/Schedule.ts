@@ -62,6 +62,10 @@ const ScheduleSchema = new Schema<ScheduleModel>({
     }],
     default: []
   },
+  isProfileOpen: {
+    type: Boolean,
+    default: false,
+  },
   scholarshipSlots: {
     type: Number,
     min: 1,

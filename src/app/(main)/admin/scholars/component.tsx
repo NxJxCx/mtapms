@@ -22,6 +22,7 @@ import { CheckBadgeIcon, CheckIcon, XMarkIcon } from "@heroicons/react/16/solid"
 import clsx from "clsx"
 import moment from 'moment-timezone'
 import { useCallback, useEffect, useMemo, useState } from "react"
+import Swal from 'sweetalert2'
 import { approvePendingSubmission, disapprovePendingSubmission } from './action'
 
 const getApplicantRequirements = async (academicYear: number, firstYearOnly: boolean, onViewSubmission?: (req: RequirementModel, student: StudentModel, data?: RequirementSubmissionModel) => void): Promise<TableColumnProps[]> => {
@@ -109,10 +110,23 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
 ] as TableColumnProps[])
 .concat(
   type === 'applicant'
-  ? (await getApplicantRequirements(academicYear, false, onViewSubmission))
+  ? [...(await getApplicantRequirements(academicYear, false, onViewSubmission))]
   : type === 'applicant_firstYear'
-  ? (await getApplicantRequirements(academicYear, true, onViewSubmission))
+  ? [...(await getApplicantRequirements(academicYear, true, onViewSubmission))]
   : [
+    {
+      label: 'Grade Status',
+      field: 'gradeStatus',
+      align: 'center',
+      sortable: true,
+      searchable: true,
+      render: (rowData: StudentModel & { gradeStatus: "Passed"|"Failed"|"Warning" }) => (
+        <span className={clsx(
+          "font-bold capitalize",
+          rowData.gradeStatus === "Passed" ? "text-green-600" : rowData.gradeStatus === "Warning" ? "text-orange-500" : "text-red-500"
+        )}>{rowData.gradeStatus}</span>
+      )
+    },
     {
       label: 'COG',
       field: 'COG',
@@ -331,6 +345,46 @@ export default function ScholarListPage() {
   const getURLFromSubmission = useCallback((photoId?: string) => (new URL("/api/user/photo/" + photoId, window.location.origin)).toString(), [])
 
   const onApprovePending = useCallback(async (type: 'new'|'new_firstYear'|'grantee', key: string, requirementId: string) => {
+    if (key === 'COG') {
+      Swal.fire({
+        title: 'Enter Grade of Student',
+        input: 'number',
+        inputAttributes: {
+          min: "1.0",
+          max: "5.0",
+          step: "0.01",
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        cancelButtonText: 'Cancel',
+        showLoaderOnConfirm: true,
+        preConfirm(input: string|number) {
+          return new Promise(async (resolve, reject) => {
+            try {
+              const approve = approvePendingSubmission.bind(null, type, requirementId, key, Number.parseFloat(input.toString()).toFixed(3))
+              const { success, error } = await approve()
+              if (error) {
+                reject(error)
+              } else if (success) {
+                resolve(success);
+              }
+            } catch (e) {
+              reject(e)
+            }
+          })
+            .then((_: any) => {
+              Toaster.success("Submission has been approved.")
+              fetchData()
+              setSelected(undefined)
+            })
+            .catch((error: any) => {
+              console.log(error)
+              Toaster.error('Failed to approve submission.');
+            })
+        }
+      })
+      return;
+    }
     try {
       const approve = approvePendingSubmission.bind(null, type, requirementId, key)
       const { success, error } = await approve()

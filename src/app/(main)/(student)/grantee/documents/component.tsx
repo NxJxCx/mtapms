@@ -31,7 +31,7 @@ export default function DocumentRequirementsPage() {
   const { data: sessionData, status } = useSession({ redirect: false })
   const { toggleDrawer, openDrawer } = useSidebar({ role: Roles.Grantee });
   const [loading, setLoading] = useState<boolean>(false)
-  const [data, setData] = useState<StudentModel & { granteeSubmissions?: GranteeModel }>();
+  const [data, setData] = useState<StudentModel & { granteeSubmissions?: GranteeModel, gradeStatus?: "Passed"|"Failed"|"Warning" }>();
 
   const [syData, setSYData] = useState<ScheduleModel[]>([])
   const schoolYearList = useMemo<number[]>(() => {
@@ -202,11 +202,15 @@ export default function DocumentRequirementsPage() {
           <option value={Semester.SecondSemester}>Second Semester</option>
         </select>
       </div>
+      <div className="py-2 font-[500] text-[15px] leading-[19px]">
+        <div className="mr-2 font-bold text-lg">Current Grade: {!!data?.granteeSubmissions?.grade ? (Number.parseFloat(data.granteeSubmissions.grade.toString()).toString().length === 1 ? data.granteeSubmissions.grade.toFixed(1) : Number.parseFloat(data.granteeSubmissions.grade.toFixed(3))) : "N/A"}</div>
+        <div className="mr-2 font-bold text-lg">Current Status: <span className={clsx("uppercase", data?.gradeStatus === "Passed" ? "text-green-600" : data?.gradeStatus === "Warning" ? "text-orange-500" : "text-red-500")}>{data?.gradeStatus}</span></div>
+      </div>
       <div className="flex flex-wrap justify-start items-start gap-4 p-4">
         { loading && <LoadingSpinner /> }
         {/* Document cards */}
         { !loading && !!data?.granteeSubmissions && requirements.map((req: RequirementTitles) => (
-          <button key={req.key} type="button" onClick={() => onSelectedRequirement({...req, submission: getRequirementSubmissionFromKey(req.key) })} className={clsx("relative w-[200px] bg-[#F9F9F9] border rounded-lg shadow-md p-6", selectedRequirement?.key === req.key ? 'bg-yellow-100' : '')} title={!getRequirementSubmissionFromKey(req.key) ? 'Submission needed' : getRequirementSubmissionFromKey(req.key)!.status}>
+          <button key={req.key} type="button" disabled={data.gradeStatus === "Failed"} onClick={() => onSelectedRequirement({...req, submission: getRequirementSubmissionFromKey(req.key) })} className={clsx("relative w-[200px] bg-[#F9F9F9] disabled:bg-gray-300 disabled:opacity-50 border rounded-lg shadow-md p-6", selectedRequirement?.key === req.key ? 'bg-yellow-100' : '')} title={!getRequirementSubmissionFromKey(req.key) ? 'Submission needed' : getRequirementSubmissionFromKey(req.key)!.status}>
             <ExclamationCircleIcon className={clsx("absolute top-2 right-2 w-10 h-10 text-yellow-500", !getRequirementSubmissionFromKey(req.key) ? '' : 'hidden')} />
             <ClockIcon className={clsx("absolute top-2 right-2 w-10 h-10 text-gray-500", getRequirementSubmissionFromKey(req.key)?.status === SubmissionStatus.Pending ? '' : 'hidden')} />
             <CheckBadgeIcon className={clsx("absolute top-2 right-2 w-10 h-10 text-green-500", getRequirementSubmissionFromKey(req.key)?.status === SubmissionStatus.Approved ? '' : 'hidden')} />

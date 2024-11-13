@@ -1,17 +1,19 @@
-'use client'
-
+'use client';
 /* eslint-disable @next/next/no-img-element */
 import { displayFullName, displayYearLevel } from "@app/components/display";
 import { LoadingSpinnerFull } from "@app/components/loadings";
 import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
-import { ApplicationFormProps, Roles, StudentModel, YearLevel } from '@app/types';
-import { CheckIcon, EyeIcon, PrinterIcon } from "@heroicons/react/16/solid";
+import Toaster from "@app/components/toaster";
+import { ApplicationFormProps, ApplicationStatus, Roles, StudentModel, YearLevel } from '@app/types';
+import { CheckIcon, EyeIcon, PrinterIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import clsx from 'clsx';
 import moment from "moment-timezone";
 import { Montserrat } from 'next/font/google';
 import { useCallback, useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { rejectApplicationForm } from "./action";
 
 const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) => void): TableColumnProps[] => [
   {
@@ -113,12 +115,12 @@ const columns = (onView: (rowData: StudentModel & ApplicationFormProps & { age: 
     searchable: true,
   },
   {
-    label: 'Grantee?',
-    field: 'isGrantee',
+    label: 'Status',
+    field: 'profile_status',
     sortable: true,
     searchable: true,
     render(rowData: StudentModel & ApplicationFormProps & { age: number, studId: string }) {
-      return rowData.isGrantee ? <div className="text-semibold text-green-700">Yes</div> : 'No'
+      return rowData.applicationStatus === ApplicationStatus.Rejected ? <div className="text-semibold text-red-700 font-bold">Application Rejected</div> : rowData.isGrantee ? <div className="font-semibold text-green-700">Grantee</div> : 'Applicant';
     }
   },
   {
@@ -156,7 +158,6 @@ export default function ApplicationListPage() {
     const url = new URL('/api/scholarship/applications', window.location.origin)
     url.searchParams.append('academicYear', sy.toString())
     url.searchParams.append('application', 'applicant')
-    console.log(url.toString())
     const response = await fetch(url)
     if (response.ok) {
       const { data } = await response.json()
@@ -194,6 +195,56 @@ export default function ApplicationListPage() {
     // open new window no toolbars for printing only
     window.open(url, '_blank', 'noopener,noreferrer,menubar=no,status=no,titlebar=no,scrollbars=yes,resizable=yes')
   }, [openViewModal, schoolYear])
+
+  const onRejectApplicationForm = useCallback(async () => {
+    Swal.fire({
+      title: 'Are you sure you want to reject this application form?',
+      text: 'Input reason for rejection',
+      input: 'text',
+      inputPlaceholder: 'Reason for rejection',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      icon: 'warning',
+      showLoaderOnConfirm: true,
+      preConfirm(inputValue: string) {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const formData = new FormData();
+            formData.append('studentId', openViewModal?.studId || '')
+            formData.append('academicYear', schoolYear.toString())
+            formData.append('rejectReason', inputValue);
+            const { error, success }: any = await rejectApplicationForm(formData);
+            if (success) {
+              resolve(success);
+            } else {
+              reject(error);
+            }
+          } catch (e: any) {
+            reject("Failed to reject application form: " + e.message);
+          }
+        })
+          .then((response) => response)
+          .catch((error) => {
+            Swal.showValidationMessage(error);
+          });
+      },
+    })
+    .then(({ isConfirmed, value }) => {
+      if (isConfirmed) {
+        Toaster.success(value);
+      }
+    });
+  }, [openViewModal, schoolYear]);
+
+  const onViewRejectedApplicationForm = useCallback(() => {
+    Swal.fire({
+      title: 'Reason for rejection',
+      html: '<p style="text-align:justify; padding: 10px; background-color: #f485851e; border-radius: 5px; font-size: 10pt; font-weight: 500; color: red;">'
+        + openViewModal?.rejectReason + '</p>',
+      confirmButtonText: 'Close',
+    })
+  }, [openViewModal]);
 
   return (<>
     <div className="p-6">
@@ -321,6 +372,16 @@ export default function ApplicationListPage() {
           <button type="button" onClick={onPrint} className="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
             <PrinterIcon className="w-4 h-4 inline" /> Print
           </button>
+          {openViewModal?.applicationStatus === ApplicationStatus.Submitted && (
+            <button type="button" onClick={onRejectApplicationForm} className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+              <XMarkIcon className="w-4 h-4 inline" /> Reject Application Form
+            </button>
+          )}
+          {openViewModal?.applicationStatus === ApplicationStatus.Rejected && (
+            <button type="button" onClick={onViewRejectedApplicationForm} className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+              <EyeIcon className="w-4 h-4 inline" /> View Reject Reason
+            </button>
+          )}
           <button type="button" onClick={onCloseViewModal} className="border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded">
             Close
           </button>

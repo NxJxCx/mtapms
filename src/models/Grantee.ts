@@ -33,6 +33,11 @@ const GranteeSchema = new Schema<GranteeModel>({
     enum: Semester,
     required: [true, 'Semester is required'],
   },
+  grade: {
+    type: Number,
+    min: 0,
+    max: 100,
+  },
   COG: GranteeRequirement,
   studyLoad: GranteeRequirement,
   statementOfAccount: GranteeRequirement,

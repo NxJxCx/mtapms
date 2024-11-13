@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { hashPassword } from '@app/lib/hash';
-import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from '@app/types';
+import { ApplicationFormProps, ApplicationStatus, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from '@app/types';
 import { model, models, Schema } from 'mongoose';
 
 const ApplicationFormSchema = new Schema<ApplicationFormProps>({
@@ -9,6 +9,15 @@ const ApplicationFormSchema = new Schema<ApplicationFormProps>({
     type: Schema.Types.ObjectId,
     ref: 'Schedule',
     required: [true, 'Schedule Id is required.']
+  },
+  applicationStatus: {
+    type: String,
+    enum: ApplicationStatus,
+    default: ApplicationStatus.Submitted
+  },
+  rejectReason: {
+    type: String,
+    default: "",
   },
   lastName: {
     type: String,

@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
           const results: any = await Promise.all(students.map(async (student) => ({
             ...student.applicationForm,
             _id: student._id?.toString(),
+            applicationStatus: student.applicationForm?.applicationStatus,
             studentId: student.studentId,
             fullName: displayFullName({ ...student, ...student.applicationForm } as any),
             grantee: student.isGrantee,
@@ -51,14 +52,18 @@ export async function GET(request: NextRequest) {
             ...result,
             overallPercentage: parseFloat((result.orientationPercentage + result.examPercentage + result.submittedDocumentsPercentage).toFixed(3))
           }))
-          result3.sort((a: any, b: any) => b.overallPercentage - a.totalPercentage)
+          result3.sort((a: any, b: any) => {
+            const aOP = Number.parseFloat(a.overallPercentage);
+            const bOP = Number.parseFloat(b.overallPercentage);
+            return bOP > aOP ? 1 : bOP < aOP ? -1 : 0;
+          });
           const data = result3.map((result: any, i: number) => ({
             ...result,
-            rank: i + 1
-          }))
+            rank: i + 1,
+          }));
           const filledSlots = data.filter((result: any) => !!result.grantee).length
           const totalSlots = schedule.scholarshipSlots
-          const isOpenSlots = moment(schedule.range.startDate).tz('Asia/Manila').toDate().getTime() <= (moment.tz('Asia/Manila').toDate()).getTime() && moment(schedule.range.endDate).tz('Asia/Manila').toDate().getTime() >= (moment.tz('Asia/Manila').toDate()).getTime() && totalSlots > filledSlots
+          const isOpenSlots = moment(schedule.range.startDate).tz('Asia/Manila').isSameOrBefore(moment.tz('Asia/Manila')) && moment(schedule.range.endDate).tz('Asia/Manila').isSameOrAfter(moment.tz('Asia/Manila')) && totalSlots > filledSlots
           return NextResponse.json({ data, filledSlots, totalSlots, isOpenSlots })
         }
       }

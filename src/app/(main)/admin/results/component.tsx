@@ -4,11 +4,11 @@ import { Modal } from "@app/components/modals";
 import { useSidebar } from "@app/components/sidebar";
 import Table, { TableColumnProps } from "@app/components/tables";
 import Toaster from "@app/components/toaster";
-import { Roles, ScheduleModel } from "@app/types";
+import { ApplicationStatus, Roles, ScheduleModel } from "@app/types";
 import clsx from "clsx";
+import moment from "moment-timezone";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { grantScholarship } from "./action";
-import moment from "moment-timezone";
 
 function getRankString(num: number): string {
   if (typeof num !== 'number' || num < 1 || !Number.isInteger(num)) {
@@ -99,6 +99,16 @@ const columns = (onDecideGrant: (rowData: any) => void): TableColumnProps[] => (
     align: 'center',
     render(rowData: any) {
       return <span className={clsx("font-bold", rowData.grantee ? 'text-green-600' : 'text-gray-500')}>{rowData.grantee ? 'Yes' : 'No'}</span>
+    }
+  },
+  {
+    label: 'Application Form Status',
+    field: 'applicationStatus',
+    sortable: true,
+    searchable: true,
+    align: 'center',
+    render(rowData: any) {
+      return <div className={clsx("capitalize font-500", rowData.applicationStatus === ApplicationStatus.Rejected ? "text-red-500" : "text-green-500")}>{rowData.applicationStatus}</div>
     }
   },
   {

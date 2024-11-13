@@ -78,6 +78,7 @@ export interface GranteeModel extends BaseDocument {
   studentId: string|StudentModel
   academicYear: number
   semester: Semester
+  grade?: number
   COG: SubmissionProps,
   studyLoad: SubmissionProps,
   statementOfAccount: SubmissionProps,
@@ -101,8 +102,15 @@ export interface RequirementSubmissionModel extends SubmissionProps {
   submittedBy: string|StudentModel
 }
 
+export enum ApplicationStatus {
+  Submitted = "submitted",
+  Rejected = "rejected"
+}
+
 export interface ApplicationFormProps extends BaseDocument {
   scheduleId: string|ScheduleModel,
+  applicationStatus: ApplicationStatus,
+  rejectReason: string,
   lastName: string
   firstName: string
   middleName?: string
@@ -168,7 +176,43 @@ export interface ScheduleModel extends BaseDocument {
   interviewDate?: string|Date
   orientationAttendance: AttendanceProps[]
   examScores: ExamProps[],
+  isProfileOpen: boolean,
   scholarshipSlots: number,
+}
+
+export enum SecretQuestions1 {
+  // Secret Q1: Personal and Family-Related Questions
+  FirstSchool = "What is the name of your first school?",
+  CityGrewUpIn = "What city did you grow up in?",
+  FavoriteTeacher = "What is the name of your favorite teacher?",
+  MothersMaidenName = "What is your mother's maiden name?",
+  FirstBestFriend = "What was the name of your first best friend?",
+  BirthCity = "In what city were you born?",
+  FirstEmployer = "What was the name of your first employer?",
+  StreetYouGrewUpOn = "What is the name of the street you grew up on?",
+  GrandparentsTown = "What is the name of the town or city where your grandparents lived?",
+  ChildhoodHero = "Who was your childhood hero?",
+}
+export enum SecretQuestions2 {
+  // Secret Q2: Childhood, Interests, and Experiences
+  FirstCarMakeModel = "What was the make and model of your first car?",
+  ChildhoodPetName = "What is the name of your childhood pet?",
+  FavoriteChildhoodMemory = "What is your favorite childhood memory?",
+  FavoriteBook = "What is your favorite book?",
+  FirstConcert = "What was your first concert or live event?",
+  FavoriteSportsTeam = "What is the name of your favorite sports team?",
+  FavoriteSubjectInHighSchool = "What was your favorite subject in high school?",
+  FirstMobilePhone = "What was the name of your first mobile phone?",
+  FavoriteMovieTitle = "What is the title of your favorite movie?",
+  FirstTeacher = "What was the name of your first teacher?",
+}
+
+export interface AccountRecoveryModel extends BaseDocument {
+  userId?: string
+  secretQ: SecretQuestions1
+  secretA: string
+  secretQ2: SecretQuestions2
+  secretA2: string
 }
 
 export type AuthenticationStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'error'

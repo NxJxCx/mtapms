@@ -4,7 +4,7 @@ import Buttons from "@app/components/buttons";
 import { LoadingFull, LoadingSpinnerFull } from "@app/components/loadings";
 import Toaster from "@app/components/toaster";
 import { useSession } from "@app/lib/useSession";
-import { ApplicationFormProps, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
+import { ApplicationFormProps, ApplicationStatus, CivilStatus, Gender, ScheduleModel, SchoolSector, StudentModel, YearLevel } from "@app/types";
 import { PrinterIcon } from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -31,6 +31,8 @@ export default function ApplicationComponent() {
 
   const [formData, setFormData] = useState<ApplicationFormProps & { studentId?: string }>({
     scheduleId,
+    applicationStatus: ApplicationStatus.Submitted,
+    rejectReason: '',
     lastName: '',
     firstName: '',
     middleName: '',

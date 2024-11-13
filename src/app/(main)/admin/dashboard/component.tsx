@@ -37,7 +37,7 @@ function Charts(props: any) {
     yaxis: {
       labels: {
         formatter: (value) => {
-          return Math.floor(value);
+          return Math.floor(value).toString();
         }
       },
       tickAmount: 5,
@@ -46,13 +46,20 @@ function Charts(props: any) {
     }
   });
   useEffect(() => {
+    console.log(props.categories);
     setChartOptions({
       ...chartOptions,
       xaxis: { categories: props.categories || [] },
       yaxis: {
         labels: {
-          formatter: (value) => {
-            return Math.floor(value);
+          formatter: (value: any) => {
+            if (/[a-zA-Z]/.test(value)) {
+              return value;
+            }
+            if (Number.isNaN(Number.parseInt(value))) {
+              return value;
+            }
+            return Math.floor(value).toString();
           }
         },
         tickAmount: 5,
@@ -203,8 +210,6 @@ export default function AdminDashboardComponent() {
             barCat.push(displayNominalYear(yr));
             barData.push(data.listOfGranteesPerYearLevel.find((v: any) => v.yearLevel.toString() === yr.toString())?.grantees || 0);
           });
-          console.log(data.listOfGranteesPerYearLevel);
-          console.log(barCat, barData);
           setBarChartCategories(barCat);
           setBarChartData(barData);
         }

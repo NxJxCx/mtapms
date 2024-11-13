@@ -95,18 +95,13 @@ export default function ScheduleAndResultPage() {
           <h1 className="px-4 py-3 pb-2 border-b text-xl font-bold bg-yellow-300">Result</h1>
           <div className="p-4 grid grid-cols-2">
             <div>Attended Orientation:</div>
-            <div className="font-bold text-gray-500">{data?.orientation ? 'Yes' : (moment(syData?.orientationDate).tz('Asia/Manila').toDate().getTime() > (moment.tz('Asia/Manila').toDate()).getTime() ? 'N/A' : 'No')}</div>
+            <div className="font-bold text-gray-500">{data?.orientation ? 'Yes' : (moment(syData?.orientationDate).tz('Asia/Manila').isAfter(moment.tz('Asia/Manila')) ? 'N/A' : 'No')}</div>
             <div>Exam Result:</div>
             <div className={clsx('font-bold', !examScore ? 'text-gray-500' : examScore < 75 ? 'text-red-600' : 'text-green-700')}>{!!examScore ? examScore + '%' : 'N/A'}</div>
             <div>Submitted Documents:</div>
             <div className="font-bold text-gray-500">{data?.submittedDocuments || 'N/A'}</div>
             <div>Overall Assessment:</div>
-            {moment(syData?.range?.endDate).tz('Asia/Manila').toDate().getTime() <= moment.tz('Asia/Manila').toDate().getTime() && (
-              <div className={clsx('font-bold', !data?.overallPercentage ? 'text-gray-500' : data.overallPercentage < 75 ? 'text-red-600' : 'text-green-700')}>{!!data?.overallPercentage ? (data.overallPercentage < 75 ? 'FAILED' : 'PASSED') : 'N/A'}</div>
-            )}
-            {moment(syData?.range?.endDate).tz('Asia/Manila').toDate().getTime() > moment.tz('Asia/Manila').toDate().getTime() && (
-              <div className="text-gray-500">Results are not yet available.</div>
-            )}
+            <div className={clsx('font-bold', !data?.overallPercentage ? 'text-gray-500' : data.overallPercentage < 75 ? 'text-red-600' : 'text-green-700')}>{!!data?.overallPercentage ? (data.overallPercentage < 75 ? 'FAILED' : 'PASSED') : <>Results are not yet available.</>}</div>
           </div>
         </div>
       </>)}
