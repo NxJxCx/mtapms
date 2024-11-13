@@ -4,7 +4,7 @@ import mongodbConnect from "@app/lib/db";
 import { getSession } from "@app/lib/session";
 import Schedule from "@app/models/Schedule";
 import Student from "@app/models/Student";
-import { Roles, ScheduleModel } from "@app/types";
+import { ApplicationStatus, Roles, ScheduleModel } from "@app/types";
 import moment from "moment-timezone";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -29,7 +29,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ data })
           } else  if (!student?.applicationForm && student?.applicationForm?.scheduleId.toString() !== data._id as string) {
             return NextResponse.json({ data })
-          } else if (!!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString()) {
+          } else if (!!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString() && student?.applicationForm?.applicationStatus === ApplicationStatus.Submitted) {
+            return NextResponse.json({ data })
+          } else if (!!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString() && student?.applicationForm?.applicationStatus === ApplicationStatus.Rejected) {
             return NextResponse.json({ data: true })
           }
         }

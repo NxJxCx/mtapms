@@ -133,6 +133,11 @@ export default function ApplicationComponent() {
       )}
       {data !== true && !!data && (<>
         <h1 className="text-2xl font-[600] mt-4">Scholarship Application Form</h1>
+        {applicationData?.applicationStatus === ApplicationStatus.Rejected && (
+          <div className="p-3 border-red-500 bg-red-100 text-red-500 font-500">
+            <p>{applicationData.rejectReason}</p>
+          </div>
+        )}
         <form onSubmit={handleFormAction} className="mt-4 border px-16 py-8 bg-white rounded-lg shadow mb-4">
           <div className="grid grid-cols-3 gap-x-3 gap-y-2">
             <div>
