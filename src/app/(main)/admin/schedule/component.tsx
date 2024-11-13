@@ -161,7 +161,7 @@ export default function SchedulePage() {
         setTimeout(getData, 100);
       }
     })
-  }, [selectedScheduleData]);
+  }, [selectedScheduleData, updateScheduleAction]);
 
   const displayDefaultDate = useCallback((date?: any) => {
     return !date || !moment(date).isValid() ? undefined : moment(date).tz('Asia/Manila').format('YYYY-MM-DD');
@@ -180,11 +180,11 @@ export default function SchedulePage() {
 
     return minDate.format('YYYY-MM-DD')
   };
-  console.log(selectedScheduleData);
+
   return (<>
     <div className="p-6">
       <div className="text-4xl uppercase py-4 border-b-4 border-black text-black font-[700] mb-4">
-        SCHEDULES (A.Y. {schoolYear} - {parseInt(schoolYear as string) + 1})
+        SCHEDULES
       </div>
       <div>
         <label htmlFor="schoolYear" className="font-[500] text-[15px] mb-2 mr-2">Select Academic Year:</label>
