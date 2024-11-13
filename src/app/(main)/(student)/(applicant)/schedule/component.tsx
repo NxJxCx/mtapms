@@ -97,7 +97,7 @@ export default function ScheduleAndResultPage() {
             <div>Attended Orientation:</div>
             <div className="font-bold text-gray-500">{data?.orientation ? 'Yes' : (moment(syData?.orientationDate).tz('Asia/Manila').isAfter(moment.tz('Asia/Manila')) ? 'N/A' : 'No')}</div>
             <div>Exam Result:</div>
-            <div className={clsx('font-bold', !examScore ? 'text-gray-500' : examScore < 75 ? 'text-red-600' : 'text-green-700')}>{!!examScore ? examScore + '%' : 'N/A'}</div>
+            <div className={clsx('font-bold', !examScore ? 'text-gray-500' : examScore < Number.parseFloat(process.env.NEXT_PUBLIC_EXAM_PASSING || "75") ? 'text-red-600' : 'text-green-700')}>{!!examScore ? examScore + '%' : 'N/A'}</div>
             <div>Submitted Documents:</div>
             <div className="font-bold text-gray-500">{data?.submittedDocuments || 'N/A'}</div>
             <div>Overall Assessment:</div>

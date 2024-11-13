@@ -174,7 +174,7 @@ function AdminAdditionalSidebar() {
           })
         }
         const examDate = moment(data.examDate).tz('Asia/Manila').toDate()
-        if (dateNow.getTime() >= examDate.getTime() && dateNow.getTime() <= examDate.getTime() + (1000 * 60 * 60 * 24 * 180)) {
+        if (dateNow.getTime() >= examDate.getTime() && dateNow.getTime() <= examDate.getTime() + (1000 * 60 * 60 * 24 *   180)) {
           additionalSidebars.push({
             label: 'Exam Scores',
             href: '/admin/exam'

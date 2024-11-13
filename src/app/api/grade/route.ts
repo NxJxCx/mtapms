@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
             sex: student.applicationForm.sex, civilStatus: student.applicationForm.civilStatus,
             nameOfSchoolAttended: student.applicationForm.nameOfSchoolAttended, schoolSector: student.applicationForm.schoolSector,
             grade: { score: schedule.examScores.find((item: { studentId: any, percentageScore: number }) => item.studentId.toString() === student._id.toString())?.percentageScore },
-            remarks: !!schedule.examScores.find((item: { studentId: any, percentageScore: number }) => item.studentId.toString() === student._id.toString())?.percentageScore ? (parseFloat(schedule.examScores.find((item: { studentId: any, percentageScore: number }) => item.studentId.toString() === student._id.toString())?.percentageScore) < 75 ? 'FAILED' : 'PASSED') : 'N/A'
+            remarks: !!schedule.examScores.find((item: { studentId: any, percentageScore: number }) => item.studentId.toString() === student._id.toString())?.percentageScore ? (parseFloat(schedule.examScores.find((item: { studentId: any, percentageScore: number }) => item.studentId.toString() === student._id.toString())?.percentageScore) < Number.parseFloat(process.env.NEXT_PUBLIC_EXAM_PASSING || "75") ? 'FAILED' : 'PASSED') : 'N/A'
           }));
         return NextResponse.json({ data })
       }
