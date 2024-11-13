@@ -29,9 +29,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ data })
           } else  if (!student?.applicationForm && student?.applicationForm?.scheduleId.toString() !== data._id as string) {
             return NextResponse.json({ data })
-          } else if (!!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString() && student?.applicationForm?.applicationStatus === ApplicationStatus.Submitted) {
-            return NextResponse.json({ data })
           } else if (!!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString() && student?.applicationForm?.applicationStatus === ApplicationStatus.Rejected) {
+            return NextResponse.json({ data })
+          } else if (!!student && student?.applicationForm?.scheduleId.toString() === data._id!.toString() && student?.applicationForm?.applicationStatus === ApplicationStatus.Submitted) {
             return NextResponse.json({ data: true })
           }
         }
