@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const session = await getSession()
     if (session?.user?.role === Roles.Applicant) {
       const action = request.nextUrl.searchParams.get('action')
-      const selection = 'academicYear range orientationDate examDate interviewDate' + (action === 'scheduleandresult' ? ' examScores' : '')
+      const selection = 'academicYear range orientationDate examDate interviewDate isProfileOpen' + (action === 'scheduleandresult' ? ' examScores' : '')
       const result = await Schedule.find({}).select(selection).lean<ScheduleModel[]>().exec()
       result.sort((a, b) => b.academicYear - a.academicYear)
       const dataRecent: ScheduleModel = result?.[0] || null
