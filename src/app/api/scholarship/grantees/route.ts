@@ -60,7 +60,8 @@ export async function GET(request: NextRequest) {
           .map(async (st: StudentModel) => ({
             ...st,
             granteeSubmissions: (await Grantee.findOne({ academicYear, semester, studentId: st._id?.toString() }).exec()),
-            gradeStatus: (await getGradeStatus(st._id?.toString()))
+            gradeStatus: (await getGradeStatus(st._id?.toString())),
+            granteeStatus: (await getGradeStatus(st._id?.toString())) !== "Failed"
           })))
         const data: (StudentModel & { granteeSubmissions?: GranteeModel }|any)[] =
           type === 'grantee'

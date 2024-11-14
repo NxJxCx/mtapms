@@ -191,6 +191,19 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
         </button>
       ),
     },
+    {
+      label: 'Status',
+      field: 'granteeStatus',
+      align: 'center',
+      sortable: true,
+      searchable: true,
+      render: (rowData: StudentModel & { granteeStatus: boolean }) => (
+        <span className={clsx(
+          "font-bold capitalize",
+          !rowData.granteeStatus ? "text-green-600" : "text-red-500"
+        )}>{rowData.granteeStatus}</span>
+      )
+    }
   ])
 
 export default function ScholarListPage() {
