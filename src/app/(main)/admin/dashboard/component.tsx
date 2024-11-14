@@ -37,7 +37,7 @@ function Charts(props: any) {
     yaxis: {
       labels: {
         formatter: (value: any) => {
-          return /^\d+(\.\d+)?$/.test(value) ? Number.parseInt(value) : value;
+          return /^\d+(\.\d+)?$/.test(value) ? Number.parseInt(value).toString() : value;
         }
       },
       tickAmount: 5,
@@ -46,14 +46,13 @@ function Charts(props: any) {
     }
   });
   useEffect(() => {
-    console.log(props.categories);
     setChartOptions({
       ...chartOptions,
       xaxis: { categories: props.categories || [] },
       yaxis: {
         labels: {
           formatter: (value: any) => {
-            return /^\d+(\.\d+)?$/.test(value) ? Number.parseInt(value) : value;
+            return /^\d+(\.\d+)?$/.test(value) ? Number.parseInt(value).toString() : value;
           }
         },
         tickAmount: 5,
