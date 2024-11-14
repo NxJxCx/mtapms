@@ -59,7 +59,7 @@ export default function Table({ data = [], columns = [], loading = false, sorted
       const col = columns.find((col) => col.field === key)
       return col?.searchable ? (
         ((typeof item[key] === "string" || typeof item[key] === "number") && ((col.searchMap && Object.hasOwn(col.searchMap, item[key]?.toString() || '')) ? col.searchMap[item[key]]?.toString().toLowerCase().includes(search.trimStart().toLowerCase()) : item[key].toString().trimStart().toString().toLowerCase().includes(search.trimStart().toLowerCase())))
-        || (typeof item[key] === "boolean" && ((col.searchMap && Object.hasOwn(col.searchMap, item[key] ? "true" : "false")) ? col.searchMap[item[key] ? "true" : "false"]?.toString().toLowerCase().includes(search.trimStart().toLowerCase()) : item[key] === Boolean(search.trimStart().toLowerCase())))
+        // || (typeof item[key] === "boolean" && ((col.searchMap && Object.hasOwn(col.searchMap, item[key] ? "true" : "false")) ? col.searchMap[item[key] ? "true" : "false"]?.toString().toLowerCase().includes(search.trimStart().toLowerCase()) : item[key] === Boolean(search.trimStart().toLowerCase())))
         || (item[key] instanceof Date && item[key].toISOString().toLowerCase().includes(search.trimStart().toLowerCase()))
         || (item[key] instanceof Date && item[key].toLocaleDateString('en-PH', { month: '2-digit', day: '2-digit', year: 'numeric' }).includes(search.trimStart().toLowerCase()))
         || (search.trimStart().startsWith('>') && typeof item[key] === "number" && item[key] > parseFloat(search.trimStart().slice(1)))

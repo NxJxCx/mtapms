@@ -199,7 +199,6 @@ export default function ResultsPage() {
   }, [syData])
   const [schoolYear, setSchoolYear] = useState<number|string>((moment.tz('Asia/Manila').toDate()).getFullYear())
   const scheduleId = useMemo<string>(() => syData.find((item: ScheduleModel) => item.academicYear.toString() === schoolYear.toString())?._id || '', [syData, schoolYear])
-
   const getSYData = async () => {
     setLoading(true)
     const url = new URL('/api/schedule/data', window.location.origin)
@@ -254,6 +253,8 @@ export default function ResultsPage() {
     setSelectedDecideGrant(rowData)
   }, [isOpenSlots, openDrawer, toggleDrawer])
 
+  const allColumns = useMemo(() => [...columns(onDecideGrant)], [onDecideGrant])
+
   const onCloseModal = useCallback(() => {
     setSelectedDecideGrant(undefined)
   }, [])
@@ -295,7 +296,7 @@ export default function ResultsPage() {
         )}>{isOpenSlots ? 'Open Slots' : 'Closed'}</span></h2>
       )}
       <Table
-        columns={columns(onDecideGrant)}
+        columns={allColumns}
         data={filteredData}
         loading={loading}
         searchable
