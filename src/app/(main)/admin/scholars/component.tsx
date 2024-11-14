@@ -201,7 +201,7 @@ const columns = async (type: 'applicant'|'applicant_firstYear'|'grantee', academ
         <span className={clsx(
           "font-bold capitalize",
           !!rowData.granteeStatus ? "text-green-600" : "text-red-500"
-        )}>{rowData.granteeStatus}</span>
+        )}>{!rowData.granteeStatus ? "Inactive" : "Active"}</span>
       )
     }
   ])
