@@ -36,8 +36,8 @@ function Charts(props: any) {
     },
     yaxis: {
       labels: {
-        formatter: (value) => {
-          return Math.floor(value).toString();
+        formatter: (value: any) => {
+          return /^\d+(\.\d+)?$/.test(value) ? Number.parseInt(value) : value;
         }
       },
       tickAmount: 5,
