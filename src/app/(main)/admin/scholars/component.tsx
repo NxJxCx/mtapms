@@ -312,10 +312,10 @@ export default function ScholarListPage() {
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
-        ...(applicantColumns.filter(({ field: key }: any) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
+        ...(applicantColumns.filter(({ field: key }: any) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email', 'studentId'].includes(key))
           .reduce((acc: any, { field: key }: any) => ({...acc, [key]: true }), ({})))
       })], [])
-      setDataApplicant(d);
+      setDataApplicant([...d]);
     }
     const url2 = new URL('/api/scholarship/grantees', window.location.origin)
     url2.searchParams.append('academicYear', schoolYear.toString())
@@ -328,10 +328,10 @@ export default function ScholarListPage() {
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
-        ...(applicant1stYearColumns.filter(({ field: key }) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email'].includes(key))
+        ...(applicant1stYearColumns.filter(({ field: key }) => !['lastName', 'firstName','middleName','sex', 'civilStatus', 'nameOfSchoolAttended','mobileNo', 'email', 'studentId'].includes(key))
           .reduce((acc: any, { field: key }) => ({...acc, [key]: true }), ({})))
       })], [])
-      setDataApplicant1stYear(d);
+      setDataApplicant1stYear([...d]);
     }
     const url3 = new URL('/api/scholarship/grantees', window.location.origin)
     url3.searchParams.append('academicYear', schoolYear.toString())
