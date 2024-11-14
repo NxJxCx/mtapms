@@ -8,7 +8,7 @@ import moment from "moment-timezone";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, Fragment, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { LoadingSpinnerFull } from "./loadings";
 
 export interface SidebarContextProps {
@@ -99,12 +99,12 @@ const sidebarLinks = {
       href: "/admin/applications",
     },
     {
-      label: "Results",
-      href: "/admin/results",
-    },
-    {
       label: "Scholar Information",
       href: "/admin/scholars",
+    },
+    {
+      label: "Results",
+      href: "/admin/results",
     },
     {
       label: "My Profile",
@@ -289,17 +289,19 @@ export function SidebarComponent({
           <div className="h-[16px]" />
           <div className="min-h-[100px]">
             {/* sidebar links here */}
-            { role === Roles.Admin && <AdminAdditionalSidebar />}
             { sidebarLinks[role || 'none'].map(({ label, href }, index) => (
-              <Link key={index} href={href} className={
-                clsx(
-                  "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
-                  "cursor-pointer",
-                  pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
-                )
-              }>
-                {label}
-              </Link>
+              <Fragment key={index+"_sidebar_nav"}>
+                { role === Roles.Admin && index === 4 && <AdminAdditionalSidebar />}
+                <Link href={href} className={
+                  clsx(
+                    "block w-[240px] ml-2 px-6 py-2 font-[700] text-[16px] hover:text-[#1D1D1D]",
+                    "cursor-pointer",
+                    pathname.startsWith(href) ? "text-[#00823E] border-l-[#00823E] border-l-4 rounded " : "text-[#1D1D1D]/50"
+                  )
+                }>
+                  {label}
+                </Link>
+              </Fragment>
             ))}
           </div>
           <div className="mx-auto text-center mt-6 hover:text-red-800 hover:font-semibold hover:underline">
