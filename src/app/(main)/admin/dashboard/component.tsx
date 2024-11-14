@@ -53,13 +53,7 @@ function Charts(props: any) {
       yaxis: {
         labels: {
           formatter: (value: any) => {
-            if (/[a-zA-Z]/.test(value)) {
-              return value;
-            }
-            if (Number.isNaN(Number.parseInt(value))) {
-              return value;
-            }
-            return Math.floor(value).toString();
+            return /^\d+(\.\d+)?$/.test(value) ? Number.parseInt(value) : value;
           }
         },
         tickAmount: 5,
