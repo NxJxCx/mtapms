@@ -340,11 +340,12 @@ export default function ScholarListPage() {
     const response3 = await fetch(url3)
     if (response3.ok) {
       const { data } = await response3.json()
-      const d = data.reduce((init: any[], item: StudentModel) => [...init, ({
+      const d = data.reduce((init: any[], item: StudentModel & any) => [...init, ({
         ...item, lastName: item.applicationForm!.lastName, firstName: item.applicationForm!.firstName, middleName: item.applicationForm!.middleName,
         sex: item.applicationForm!.sex, civilStatus: item.applicationForm!.civilStatus,
         nameOfSchoolAttended: item.applicationForm!.nameOfSchoolAttended, mobileNo: item.applicationForm!.mobileNo,
         COG: true, studyLoad: true, statementOfAccount: true, CONS: true,
+        gradeStatus: item.gradeStatus, granteeStatus: item.granteeStatus
       })], [])
       setDataGrantee(d);
     }
